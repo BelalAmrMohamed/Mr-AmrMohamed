@@ -1,0 +1,42 @@
+// Small update (Commit)
+git add .
+git commit -m "Comment here"
+git push --force-with-lease
+
+// Connect a new project to an existing Repository
+git init
+git branch -M main
+git remote add origin https://github.com/BelalAmrMohamed/repo.git
+
+// New version with a tag
+git tag -a v1.0.0 -m "v1.0.0 — Write a short message here, short and brief"
+git push origin v1.0.0
+
+// Release a version, with notes from a file or written manually
+gh release create v1.0.0 --notes "Bug fixes and improvements for version 1.0.0"
+gh release create v1.0.0 --title "v1.0.0" --notes-file CHANGELOG.md
+
+
+
+================== Branches ==================
+
+// Create
+git checkout -b [branch-name]
+
+// Push to GitHub
+git push origin [branch-name]
+
+// Delete Locally 
+git branch -d [branch-name]
+
+// Delete from GiHub
+git push origin --delete [branch-name]
+
+// Check current branch
+git branch
+
+// Switch to a branch
+git checkout [branch-name]
+
+// Merge from a branch to the current branch
+git merge [branch-name]

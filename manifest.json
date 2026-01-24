@@ -1,0 +1,93 @@
+{
+  "name": "Amr Mohamed Ahmed - Senior English Language Expert",
+  "short_name": "Amr Mohamed",
+  "description": "Professional portfolio of Amr Mohamed Ahmed - AUC Certified Trainer with 32 years of excellence in English Language Education. Specializing in IELTS, TOEFL, and Gulf region curricula.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#1e3a5f",
+  "background_color": "#ffffff",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": [
+    "education",
+    "professional",
+    "portfolio"
+  ],
+  "icons": [
+    {
+      "src": "assets/images/profile.jpg",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "assets/images/screenshot-desktop.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Mr. Amr's Portfolio on Desktop"
+    },
+    {
+      "src": "assets/images/screenshot-mobile.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "label": "Mr. Amr's Portfolio on Mobile"
+    }
+  ],
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "shortcuts": [
+    {
+      "name": "Contact via WhatsApp",
+      "short_name": "WhatsApp",
+      "description": "Start a conversation on WhatsApp",
+      "url": "https://wa.me/201550899245",
+      "icons": [
+        {
+          "src": "assets/images/profile.jpg",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Watch Sample Lesson",
+      "short_name": "Sample Lesson",
+      "description": "View teaching demonstration",
+      "url": "#video",
+      "icons": [
+        {
+          "src": "assets/images/profile.jpg",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "View Services",
+      "short_name": "Services",
+      "description": "Explore English language programs",
+      "url": "#services",
+      "icons": [
+        {
+          "src": "assets/images/profile.jpg",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "share_target": {
+    "action": "/share",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  }
+}
