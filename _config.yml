@@ -10,7 +10,7 @@ email: "amr.671390@t2.moe.edu.eg"
 # URL SETTINGS (Fixed)
 # ------------------------------------
 # ⚠️ FIX: URL must NOT include the folder name ("/Quiz")
-url: "https://divquizzes.vercel.app/"
+url: "https://portfolio-amr-mohamed.vercel.app/"
 # The folder name goes here
 baseurl: "/"
 
