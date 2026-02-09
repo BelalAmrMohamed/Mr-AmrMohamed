@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz In Progress</title>
+    <link rel="icon" href="favicon.png" type="image/x-icon">
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://portfolio-amr-mohamed/Quiz/index.html.vercel.app/">
+    <meta property="og:title" content="Can You Score 10/10 on this Hard History Quiz?">
+    <meta property="og:description"
+        content="Only 5% of people can pass this test. Click here to see if you are a history buff!">
+    <meta property="og:image" content="https://divquizzes.vercel.app/images/quiz-thumbnail.jpeg">
+    <meta property="og:image:width" content="1024">
+    <meta property="og:image:height" content="1024">
+    <meta property="og:site_name" content="Quiz by Belal Amr Mohamed">
+    <meta property="og:locale" content="en_US">
+
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#0088cc">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Quiz In Progress">
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="images/icon.png">
+
+    <!-- CRITICAL: Anti-flash script -->
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem("quiz_theme_pref") || "light";
+            const savedAnimations = localStorage.getItem("quiz_animations_pref") !== "disabled";
+            document.documentElement.setAttribute("data-theme", savedTheme);
+            document.documentElement.setAttribute("data-animations", savedAnimations ? "enabled" : "disabled");
+        })();
+    </script>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- CSS Files - CRITICAL ORDER -->
+    <link rel="stylesheet" href="CSS/themes.css">
+    <link rel="stylesheet" href="CSS/quiz.css">
+    <link rel="stylesheet" href="CSS/side-menu.css">
+    <link rel="stylesheet" href="CSS/notificatinos.css">
+
+    <!-- Theme Controller - Load once as module -->
+    <script type="module" src="Script/theme-controller.js"></script>
+
+    <!-- Canvas Animation Script - Only loads if user enabled animations -->
+    <script type="module" src="Script/canvas-animation.js"></script>
+
+</head>
+
+<body>
+    <!-- The status bar at the top -->
+    <div class="stats-bar" id="statsBar">
+        <div class="stats-content">
+            <div class="stat-item">
+                <span class="stat-icon">⭐</span>
+                <span class="stat-value" id="statLevel">Lv 1</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-icon">🏆</span>
+                <span class="stat-value" id="statPoints">0 pts</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-icon">🔥</span>
+                <span class="stat-value" id="statStreak">0 day</span>
+            </div>
+        </div>
+
+        <button class="hamburger-stats" id="menuBtn"
+            onclick="document.getElementById('sideMenu').classList.toggle('open')">☰</button>
+    </div>
+
+    <!-- The side menu -->
+    <div class="side-menu" id="sideMenu">
+        <div class="menu-header">
+            <h3>Quick Access</h3>
+            <button class="close-menu" onclick="document.getElementById('sideMenu').classList.remove('open')">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 6L6 18M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+        <nav>
+            <button id="finishBtn" class="menu-item action-btn" onclick="finishEarly()">
+                <span>✅</span> Complete Quiz
+            </button>
+
+            <button id="restartBtn" class="menu-item action-btn" onclick="restartQuiz()">
+                <span>🔁</span> Restart Quiz
+            </button>
+
+            <button id="exitBtn" class="menu-item action-btn" onclick="exitQuiz()">
+                <span>🔚</span> Exit Quiz
+            </button>
+
+            <div class="menu-divider"></div>
+
+            <!-- NEW THEME CONTROLS -->
+            <div class="theme-controls-section">
+                <div class="theme-section-header">Appearance</div>
+                <div class="theme-selector-grid">
+                    <button class="theme-selector-btn" data-theme="light">
+                        <span class="theme-btn-icon">☀️</span>
+                        <span class="theme-btn-label">Light</span>
+                    </button>
+                    <button class="theme-selector-btn" data-theme="dark-slate">
+                        <span class="theme-btn-icon">🌙</span>
+                        <span class="theme-btn-label">Slate</span>
+                    </button>
+                    <button class="theme-selector-btn" data-theme="dark">
+                        <span class="theme-btn-icon">🌑</span>
+                        <span class="theme-btn-label">Dark</span>
+                    </button>
+                </div>
+
+                <div class="animation-section-header">Animations</div>
+                <div class="animation-toggle-container" onclick="document.querySelector('.toggle-switch').click()">
+                    <div class="animation-toggle-label">
+                        <span class="animation-toggle-icon">✨</span>
+                        <span>Background Effects</span>
+                    </div>
+                    <div class="toggle-switch active animation-toggle-switch"></div>
+                </div>
+
+                <p class="theme-info-text">
+                    💡 Disable animations to improve performance
+                </p>
+            </div>
+            <!-- End of the new theme cotrolls -->
+
+            <div class="menu-divider"></div>
+
+            <button id="viewToggle" class="menu-item view-toggle-btn">
+                <span id="viewIcon">📋</span> <span id="viewText">Switch to List View</span>
+            </button>
+
+            <div class="menu-divider"></div>
+
+            <!-- List or Grid view navigations get displayed here -->
+            <div id="menuNavContainer">
+            </div>
+
+            <div class="menu-divider"></div>
+
+            <!-- bookmark and flag buttons for the grid view only -->
+            <button id="menuBookmarkBtn" class="menu-item action-btn" onclick="window.toggleBookmark()">
+                <span id="menuBookmarkIcon">☆</span> <span id="menuBookmarkText">Bookmark Question</span>
+            </button>
+
+            <button id="menuFlagBtn" class="menu-item action-btn" onclick="window.toggleFlag()">
+                <span id="menuFlagIcon">🏳️</span> <span id="menuFlagText">Flag for
+                    Review</span>
+            </button>
+        </nav>
+    </div>
+
+    <div class="container">
+        <!-- The top header containing the title and timer, etc... -->
+        <div class="header">
+            <div class="header-top">
+                <div class="header-title-section">
+                    <h1 id="quizTitle">Loading Quiz...</h1>
+                    <div class="header-subtitle">
+                        <div class="timer-badge" id="timerBadge">
+                            <svg class="timer-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span id="timer">00:00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="progress-section">
+                <div class="progress-header">
+                    <span class="progress-label">Progress</span>
+                    <span class="progress-percentage" id="progressText">0% (0/0)</span>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- The questions get displayed here from the javascript -->
+        <div id="questionContainer" class="loading">
+            <p>Preparing your quiz experience</p>
+        </div>
+
+        <!-- navigation buttons at the bottom -->
+        <div class="navigation">
+            <button class="nav-btn" id="prevBtn" onclick="prevQuestion()" disabled>
+                ← Previous
+            </button>
+            <button class="nav-btn" id="nextBtn" onclick="nextQuestion()">
+                Next →
+            </button>
+        </div>
+    </div>
+
+    <!-- <script type="module" src="Script/pwa-init.js"></script> -->
+    <script type="module" src="Script/quiz.js"></script>
+</body>
+
+</html>

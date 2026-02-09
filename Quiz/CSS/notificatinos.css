@@ -1,0 +1,307 @@
+/* CSS/notifications.css
+   Logic in Script/notificatinos.js
+   Include in an HTML page:
+   <link rel="stylesheet" href="CSS/notificatinos.css">
+*/
+
+/* ===================
+   Badge Notifications 
+   =================== */
+#notification-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 10000;
+}
+
+.notification {
+  background: var(--bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: var(--shadow-xl);
+  opacity: 0;
+  transform: translateX(100%);
+  transition: all 0.3s ease;
+  max-width: 300px;
+}
+
+.notification.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.notification.hide {
+  opacity: 0;
+  transform: translateX(100%);
+}
+
+.notification-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+}
+
+.notification-icon {
+  font-size: 2rem;
+}
+
+.close-btn {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: var(--bg-base);
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+
+/* ==================== 
+    Small notifications
+   ==================== */
+   
+.notification-container-small {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  flex-direction: column; /* Stack top-down in DOM order */
+  gap: 12px;
+  z-index: 10000;
+  pointer-events: none; /* Allows clicks to pass through empty space */
+}
+
+/* Toast Item */
+.notification-toast {
+  pointer-events: auto;
+  min-width: 300px;
+  max-width: 400px;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  padding: 16px 20px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-lg);
+  border-left: 5px solid var(--color-primary);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 500;
+  transform-origin: right center;
+
+  /* Animations */
+  animation: toastSlideIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform, opacity;
+  transition: all 0.3s ease;
+}
+
+/* Toast Themes */
+.notification-toast.success {
+  border-left-color: var(--color-success);
+  background: linear-gradient(
+    to right,
+    var(--color-surface),
+    var(--color-success-light) 150%
+  );
+}
+
+.notification-toast.success .toast-icon {
+  color: var(--color-success);
+}
+
+.notification-toast.error {
+  border-left-color: var(--color-error);
+  background: linear-gradient(
+    to right,
+    var(--color-surface),
+    var(--color-error-light) 150%
+  );
+}
+
+.notification-toast.error .toast-icon {
+  color: var(--color-error);
+}
+
+.notification-toast.info {
+  border-left-color: var(--color-primary);
+  background: linear-gradient(
+    to right,
+    var(--color-surface),
+    var(--color-primary-light) 150%
+  );
+}
+
+.notification-toast.info .toast-icon {
+  color: var(--color-primary);
+}
+
+/* Toast Icon */
+.toast-icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+/* Hiding State (for removal) */
+.notification-toast.hiding {
+  animation: toastSlideOut 0.3s ease forwards;
+  max-height: 0;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  border: none;
+}
+
+/* Animations */
+@keyframes toastSlideIn {
+  from {
+    transform: translateX(120%) scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes toastSlideOut {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+    max-height: 100px;
+  }
+  30% {
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(120%);
+    opacity: 0;
+    max-height: 0;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/* Dark Mode Adjustments */
+[data-theme="dark-slate"] .notification-toast,
+[data-theme="dark"] .notification-toast {
+  border: 1px solid var(--color-border);
+  border-left-width: 5px;
+}
+
+
+/* ===========================
+   Confirmation Modal Styles
+   =========================== */
+
+.confirmation-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4); /* Fallback */
+  backdrop-filter: blur(4px);
+  z-index: 11000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none; /* Prevent interaction while hidden */
+}
+
+.confirmation-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.confirmation-modal {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  box-shadow: var(--shadow-xl);
+  padding: 24px;
+  max-width: 400px;
+  width: 90%;
+  transform: scale(0.9);
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); /* Bouncy scale */
+}
+
+.confirmation-modal.show {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.confirmation-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.confirmation-message {
+  font-size: 1.1rem;
+  color: var(--color-text-primary);
+  text-align: center;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.confirmation-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.confirmation-btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.confirmation-btn.confirm {
+  background: var(--gradient-accent);
+  color: white;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+}
+
+.confirmation-btn.confirm:hover {
+  filter: brightness(1.1);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+}
+
+.confirmation-btn.confirm:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.confirmation-btn.cancel {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+}
+
+.confirmation-btn.cancel:hover {
+  background: var(--color-background-secondary);
+}
+
+/* Dark Mode specific overrides if needed (though vars handle most) */
+[data-theme="dark-slate"] .confirmation-overlay,
+[data-theme="dark"] .confirmation-overlay {
+  background: rgba(0, 0, 0, 0.6);
+}

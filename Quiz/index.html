@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <!-- Title and Favicon -->
+    <title>Quizzes</title>
+    <link rel="icon" href="favicon.png" type="image/png">
+
+    <!-- meta tags -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="description"
+        content="Test your knowledge with our free online quizzes! From general trivia and personality tests to deep dives into history and science. Challenge your friends now.">
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="College Quizzes Hub: Practice Exams for Computer Science & Logic Courses">
+    <meta property="og:description"
+        content="Access free quizzes, oral exams, and practice questions for many college courses">
+    <meta property="og:image" content="https://divquizzes.vercel.app/images/thumbnail.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+
+    <!-- Twitter Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image:alt" content="Thumbnail for Hard History Quiz">
+    <meta name="twitter:title" content="Can You Score 10/10 on this Hard History Quiz?">
+    <meta name="twitter:description" content="Take the challenge now on Quiz.">
+    <meta name="twitter:image" content="https://divquizzes.vercel.app/images/thumbnail.png">
+
+    <meta name="robots" content="index, follow">
+
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#0088cc">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Quiz Master">
+
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="images/icon.png">
+
+    <!-- CRITICAL: Anti-flash script -->
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem("quiz_theme_pref") || "light";
+            const savedAnimations = localStorage.getItem("quiz_animations_pref") !== "disabled";
+            document.documentElement.setAttribute("data-theme", savedTheme);
+            document.documentElement.setAttribute("data-animations", savedAnimations ? "enabled" : "disabled");
+        })();
+    </script>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="CSS/themes.css">
+    <link rel="stylesheet" href="CSS/index.css">
+    <link rel="stylesheet" href="CSS/side-menu.css">
+    <link rel="stylesheet" href="CSS/notificatinos.css">
+    <link rel="stylesheet" href="CSS/profile-styles.css">
+
+    <!-- Theme Controller Script -->
+    <script type="module" src="Script/theme-controller.js"></script>
+
+    <!-- Canvas Animation Script - Only loads if user enabled animations -->
+    <script type="module" src="Script/canvas-animation.js"></script>
+</head>
+
+<body>
+    <div class="menu-container">
+        <button class="hamburger" id="menuBtn"
+            onclick="document.getElementById('sideMenu').classList.toggle('open')">☰</button>
+        <div class="side-menu" id="sideMenu">
+            <div class="menu-header">
+                <h3>Quick Access</h3>
+                <button class="close-menu" onclick="document.getElementById('sideMenu').classList.remove('open')">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <nav>
+                <a href="index.html" class="menu-item active">🏠 Home</a>
+                <a href="dashboard.html" class="menu-item">📊 Dashboard</a>
+                <a href="create-quiz.html" class="menu-item">✏️ Create Quiz</a>
+
+
+                <div class="menu-divider"></div>
+                <button
+                    onclick="window.openProfileSettings(); document.getElementById('sideMenu').classList.remove('open')"
+                    class="menu-item">
+                    ⚙️ Profile Settings
+                </button>
+                <button
+                    onclick="window.openCourseManager(); document.getElementById('sideMenu').classList.remove('open')"
+                    class="menu-item">
+                    📚 Add/Remove Courses
+                </button>
+                <div class="menu-divider"></div>
+
+                <!-- THEME CONTROLS -->
+                <div class="theme-controls-section">
+                    <div class="theme-section-header">Appearance</div>
+                    <div class="theme-selector-grid">
+                        <button class="theme-selector-btn" data-theme="light">
+                            <span class="theme-btn-icon">☀️</span>
+                            <span class="theme-btn-label">Light</span>
+                        </button>
+                        <button class="theme-selector-btn" data-theme="dark-slate">
+                            <span class="theme-btn-icon">🌙</span>
+                            <span class="theme-btn-label">Slate</span>
+                        </button>
+                        <button class="theme-selector-btn" data-theme="dark">
+                            <span class="theme-btn-icon">🌑</span>
+                            <span class="theme-btn-label">Dark</span>
+                        </button>
+                    </div>
+
+                    <div class="animation-section-header">Animations</div>
+                    <div class="animation-toggle-container" onclick="document.querySelector('.toggle-switch').click()">
+                        <div class="animation-toggle-label">
+                            <span class="animation-toggle-icon">✨</span>
+                            <span>Background Effects</span>
+                        </div>
+                        <div class="toggle-switch active animation-toggle-switch"></div>
+                    </div>
+
+                    <p class="theme-info-text">
+                        💡 Disable animations to improve performance
+                    </p>
+
+                    <!-- This button should be connected to the browser's install message -->
+                    <div class="menu-divider"></div>
+                    <button class="menu-item install-app">📱 Install App</button>
+                </div>
+                <!-- End of the theme controls -->
+
+            </nav>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Breadcrumb -->
+        <div id="breadcrumb">
+            <span class="breadcrumb-text">Back to Categories</span>
+        </div>
+
+        <!-- Premium Header -->
+        <div class="header">
+            <div class="header-content">
+                <div class="header-badge" id="user-name"></div>
+                <h1 id="pageTitle">Loading...</h1>
+                <p>Elevate your knowledge with interactive quizzes designed to challenge and inspire.</p>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div id="contentArea" class="loading">
+            <p>Preparing your learning experience</p>
+        </div>
+
+        <!-- Premium Footer -->
+        <div class="watermark">Crafted by Belal Amr | <a target="_blank"
+                href="https://portfolio-of-belal.vercel.app/">Portfolio</a></div>
+    </div>
+    <script type="module" src="Script/index.js"></script>
+</body>
+
+</html>
