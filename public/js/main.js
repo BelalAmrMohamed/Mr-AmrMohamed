@@ -1,3 +1,4 @@
+// public\js\main.js — The main brain of the website
 // ===================================
 // MOBILE MENU TOGGLE
 // ===================================
