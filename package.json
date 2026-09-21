@@ -1,0 +1,14 @@
+{
+  "name": "mr-amr-mohamed",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "commit": "node scripts/commit.js",
+    "map": "node scripts/map.js",
+    "zip": "git archive --format=zip --output=basmagi-quiz.zip HEAD"
+  },
+  "dependencies": {
+    "ignore": "^7.0.9"
+  }
+}
