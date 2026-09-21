@@ -31,3 +31,5 @@ yarn-error.log*
 .env*
 *.local
 !.env.example
+
+mr-amr.zip

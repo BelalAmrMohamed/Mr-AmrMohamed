@@ -6,7 +6,7 @@
   "scripts": {
     "commit": "node scripts/commit.js",
     "map": "node scripts/map.js",
-    "zip": "git archive --format=zip --output=basmagi-quiz.zip HEAD"
+    "zip": "git archive --format=zip --output=mr-amr.zip HEAD"
   },
   "dependencies": {
     "ignore": "^7.0.9"
