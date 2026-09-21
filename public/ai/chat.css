@@ -1,4 +1,4 @@
-/* public\chat.css — Styles for the AI widget, chat modal, history sidebar, etc... */
+/* public\ai\chat.css — Styles for the AI widget, chat modal, history sidebar, etc... */
 /* ===================================
    AI ASSISTANT — WIDGET, MODAL, CHAT
    Uses the site's existing palette (see :root in style.css)
@@ -43,6 +43,15 @@
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+/* The browser's own [hidden] rule lives in the user-agent stylesheet, which
+   loses to any author rule of equal specificity (like ".ai-modal { display:
+   flex }" above) regardless of source order. Without this, the modal stays
+   laid out full-screen — invisible, but still on top and swallowing clicks —
+   even while the `hidden` attribute is set. */
+.ai-modal[hidden] {
+    display: none;
 }
 
 .ai-modal-backdrop {

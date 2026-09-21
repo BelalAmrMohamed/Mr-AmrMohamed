@@ -1,4 +1,4 @@
-// api.js — talks to /api/chat and drives the tool-call loop.
+// public\ai\api.js — talks to /api/chat and drives the tool-call loop.
 // Gemini's "contents" format: [{ role: 'user'|'model', parts: [...] }]
 
 const ENDPOINT = '/api/chat';
