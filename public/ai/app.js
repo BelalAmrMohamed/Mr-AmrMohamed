@@ -144,6 +144,7 @@ class AiChat {
                 <span class="ai-sidebar-collapse-icon">${icon('panelRight')}</span>
                 <span class="ai-sidebar-collapse-hover">${icon('panelRightOpen')}</span>
               </button>
+              <button type="button" class="ai-icon-btn ai-sidebar-close-btn" aria-label="Close sidebar" title="Close sidebar">${icon('close')}</button>
             </div>
             <div class="ai-sidebar-actions">
               <button type="button" class="ai-new-chat-btn">${icon('plus')}<span>New chat</span></button>
@@ -152,6 +153,7 @@ class AiChat {
           </aside>
           <section class="ai-main">
             <header class="ai-chat-header">
+              <button type="button" class="ai-icon-btn ai-mobile-menu-btn" aria-label="Toggle history" title="Toggle history">${icon('menu')}</button>
               <div class="ai-chat-title"><span class="ai-title-brand">${icon('brandSmall')}</span><span>Mr. Amr's AI</span></div>
               <button type="button" class="ai-icon-btn ai-close-btn" aria-label="Close">${icon('close')}</button>
             </header>
@@ -185,6 +187,7 @@ class AiChat {
     this.$micBtn = this.modal.querySelector('.ai-mic-btn');
     this.$sendBtn = this.modal.querySelector('.ai-send-btn');
     this.$stopBtn = this.modal.querySelector('.ai-stop-btn');
+    this.$mobileMenuBtn = this.modal.querySelector('.ai-mobile-menu-btn');
     this.$panel = this.modal.querySelector('.ai-modal-panel');
   }
 
@@ -192,6 +195,17 @@ class AiChat {
     this.launcher.addEventListener('click', () => this.open());
     this.modal.querySelector('.ai-close-btn').addEventListener('click', () => this.close());
     this.modal.querySelector('.ai-modal-backdrop').addEventListener('click', () => this.close());
+    if (this.$mobileMenuBtn) {
+      this.$mobileMenuBtn.addEventListener('click', () => {
+        this.$sidebar.classList.toggle('is-open');
+      });
+    }
+    const $sidebarCloseBtn = this.modal.querySelector('.ai-sidebar-close-btn');
+    if ($sidebarCloseBtn) {
+      $sidebarCloseBtn.addEventListener('click', () => {
+        this.$sidebar.classList.remove('is-open');
+      });
+    }
     this.$sidebarLogoBtn.addEventListener('click', () => {
       this.$panel.classList.remove('sidebar-collapsed');
     });

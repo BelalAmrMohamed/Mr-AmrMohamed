@@ -2,9 +2,9 @@
 
 ## AI Chat
 - Many icons are messed up or don't match what I want:
-    - Update the AI input send button icon.
-    - Update / fix the `.ai-sidebar-collapse-hover` icon; it's slightly off.
-    - Update / fix the delete icon in the more menu.
+    - Update the `ai-send-btn` icon.
+    - Update / fix the `.ai-sidebar-collapse-hover` icon; it's not the right icon, it's missing a path or something.
+    - Update / fix the delete icon in the `.ai-context-menu`.
     - Take a look at the other icons, too.
 - Some download options are missing, like PDF, for example; you removed them.
 - The stop AI button still doesn't work; if I click it, the AI doesn't stop, it keeps generating the response.

@@ -336,6 +336,9 @@ body.ai-modal-open {
     display: flex;
     flex-direction: column;
     min-width: 0;
+    min-height: 0;
+    height: 100%;
+    overflow: hidden;
 }
 
 .ai-chat-header {
@@ -344,6 +347,7 @@ body.ai-modal-open {
     gap: 10px;
     padding: 14px 18px;
     border-bottom: 1px solid rgba(30, 58, 95, 0.08);
+    flex-shrink: 0;
 }
 
 .ai-chat-title {
@@ -370,6 +374,11 @@ body.ai-modal-open {
     cursor: pointer;
     transition: var(--transition);
     flex-shrink: 0;
+}
+
+.ai-mobile-menu-btn,
+.ai-sidebar-close-btn {
+    display: none;
 }
 
 .ai-icon-btn svg {
@@ -551,6 +560,7 @@ body.ai-modal-open {
     display: flex;
     padding: 14px 18px;
     border-top: 1px solid rgba(30, 58, 95, 0.08);
+    flex-shrink: 0;
 }
 
 .ai-input-shell {
@@ -762,9 +772,26 @@ body.ai-modal-open {
     .ai-modal-panel {
         width: 100vw;
         height: 100vh;
+        height: 100dvh;
         max-width: none;
         max-height: none;
         border-radius: 0;
+        overflow: hidden;
+    }
+    .ai-chat-header {
+        padding: 12px 14px;
+        flex-shrink: 0;
+    }
+    .ai-messages {
+        padding: 14px 12px;
+    }
+    .ai-composer {
+        padding: 10px 12px;
+        padding-bottom: max(10px, env(safe-area-inset-bottom, 10px));
+        flex-shrink: 0;
+    }
+    .ai-input-shell {
+        padding: 6px 6px 6px 12px;
     }
     .ai-sidebar {
         position: absolute;
@@ -780,6 +807,10 @@ body.ai-modal-open {
     .ai-sidebar-logo-btn,
     .ai-sidebar-collapse-btn {
         display: none !important;
+    }
+    .ai-mobile-menu-btn,
+    .ai-sidebar-close-btn {
+        display: flex;
     }
     .ai-widget-btn {
         right: 16px;
@@ -1183,6 +1214,7 @@ body.ai-modal-open {
 
     .ai-input {
         min-width: 0;
+        font-size: 16px;
     }
 }
 
