@@ -15,10 +15,10 @@ Mr. Amr Mohamed/
 ├── package.json
 ├── PROJECT_STRUCTURE.md
 ├── README.md
-├── api/ [10.94 KB, 236 LOC]
+├── api/ [11.17 KB, 236 LOC]
 │   └── chat.js
 │
-├── docs/ [220.53 KB, 88 LOC]
+├── docs/ [220.19 KB, 79 LOC]
 │   ├── image-3.png
 │   ├── issues.md
 │   └── teacher-info.md
@@ -32,8 +32,8 @@ Mr. Amr Mohamed/
 │       ├── package.json
 │       └── README.md
 │
-├── public/ [1.98 MB, 4906 LOC]
-│   ├── ai/ [83.73 KB, 2641 LOC]
+├── public/ [1.98 MB, 4986 LOC]
+│   ├── ai/ [88.23 KB, 2721 LOC]
 │   │   ├── api.js
 │   │   ├── app.js
 │   │   ├── chat.css
@@ -47,7 +47,7 @@ Mr. Amr Mohamed/
 │   │       ├── profile.jpg
 │   │       └── profile.png
 │   │
-│   ├── css/ [18.23 KB, 1036 LOC]
+│   ├── css/ [19.24 KB, 1036 LOC]
 │   │   └── style.css
 │   │
 │   ├── js/ [11.78 KB, 340 LOC]
@@ -73,22 +73,22 @@ Mr. Amr Mohamed/
 
 | Directory | Lines of Code |
 |-----------|---------------|
-| `public` | 4906 |
+| `public` | 4986 |
 | `node_modules` | 3409 |
 | `scripts` | 499 |
-| `(root)` | 306 |
+| `(root)` | 317 |
 | `api` | 236 |
-| `docs` | 88 |
+| `docs` | 79 |
 
 ### Top 10 Largest Code Files
 
 | File | Lines of Code |
 |------|---------------|
 | `node_modules/ignore/index.js` | 1452 |
+| `public/ai/chat.css` | 1266 |
 | `node_modules/ignore/legacy.js` | 1255 |
-| `public/ai/chat.css` | 1200 |
 | `public/css/style.css` | 1036 |
-| `public/ai/app.js` | 825 |
+| `public/ai/app.js` | 839 |
 | `public/index.html` | 576 |
 | `node_modules/ignore/README.md` | 505 |
 | `public/ai/tools.js` | 440 |
@@ -99,16 +99,16 @@ Mr. Amr Mohamed/
 
 | Extension | Files | Lines of Code | Size |
 |-----------|-------|---------------|------------|
-| .js | 11 | 5429 | 193.56 KB |
-| .md | 5 | 884 | 26.86 KB |
+| .js | 11 | 5443 | 195.94 KB |
+| .md | 5 | 886 | 26.96 KB |
 | .json | 4 | 202 | 6.4 KB |
-| .css | 2 | 2236 | 44.07 KB |
-| .html | 2 | 577 | 32.92 KB |
+| .css | 2 | 2302 | 47.63 KB |
+| .html | 2 | 577 | 33.48 KB |
 | .ts | 1 | 82 | 1.91 KB |
 | (no extension) | 1 | 21 | 1.07 KB |
 | .txt | 1 | 4 | 88 B |
 | .xml | 1 | 9 | 294 B |
-| **Total** | **28** | **9444** | **307.17 KB** |
+| **Total** | **28** | **9526** | **313.76 KB** |
 
 ### Binary / Media Files (Physical Size)
 

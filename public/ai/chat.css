@@ -283,10 +283,6 @@ body.ai-modal-open {
     text-overflow: ellipsis;
 }
 
-.ai-history-more {
-    flex-shrink: 0;
-}
-
 .ai-context-menu {
     position: fixed;
     z-index: 3000;
@@ -960,7 +956,13 @@ body.ai-modal-open {
 }
 
 .ai-history-more {
+    flex-shrink: 0;
     display: none;
+    border-radius: 50%;
+}
+
+.ai-history-more:hover {
+    background: #d4dade;
 }
 
 .ai-history-item:not(.is-pinned):hover .ai-history-more,
