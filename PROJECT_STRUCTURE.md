@@ -15,12 +15,11 @@ Mr. Amr Mohamed/
 ├── package.json
 ├── PROJECT_STRUCTURE.md
 ├── README.md
-├── api/ (empty)
+├── api/ [10.94 KB, 236 LOC]
+│   └── chat.js
 │
-├── docs/ [9.4 KB, 277 LOC]
-│   ├── plans/ [6.65 KB, 201 LOC]
-│   │   └── ai.md
-│   │
+├── docs/ [220.53 KB, 88 LOC]
+│   ├── image-3.png
 │   ├── issues.md
 │   └── teacher-info.md
 │
@@ -33,7 +32,13 @@ Mr. Amr Mohamed/
 │       ├── package.json
 │       └── README.md
 │
-├── public/ [1.89 MB, 2170 LOC]
+├── public/ [1.98 MB, 4906 LOC]
+│   ├── ai/ [83.73 KB, 2641 LOC]
+│   │   ├── api.js
+│   │   ├── app.js
+│   │   ├── chat.css
+│   │   └── tools.js
+│   │
 │   ├── assets/ [1.78 MB, 0 LOC]
 │   │   └── images/ [1.78 MB, 0 LOC]
 │   │       ├── Main.png
@@ -42,14 +47,19 @@ Mr. Amr Mohamed/
 │   │       ├── profile.jpg
 │   │       └── profile.png
 │   │
+│   ├── css/ [18.23 KB, 1036 LOC]
+│   │   └── style.css
+│   │
+│   ├── js/ [11.78 KB, 340 LOC]
+│   │   └── main.js
+│   │
 │   ├── favicon.png
 │   ├── google0c1df2c3df22a824.html
 │   ├── index.html
-│   ├── main.js
 │   ├── manifest.json
 │   ├── robots.txt
 │   ├── sitemap.xml
-│   └── style.css
+│   └── storage.js
 │
 └── scripts/ [17.77 KB, 499 LOC]
     ├── commit.js
@@ -63,11 +73,12 @@ Mr. Amr Mohamed/
 
 | Directory | Lines of Code |
 |-----------|---------------|
+| `public` | 4906 |
 | `node_modules` | 3409 |
-| `public` | 2170 |
 | `scripts` | 499 |
-| `(root)` | 305 |
-| `docs` | 277 |
+| `(root)` | 306 |
+| `api` | 236 |
+| `docs` | 88 |
 
 ### Top 10 Largest Code Files
 
@@ -75,38 +86,38 @@ Mr. Amr Mohamed/
 |------|---------------|
 | `node_modules/ignore/index.js` | 1452 |
 | `node_modules/ignore/legacy.js` | 1255 |
-| `public/style.css` | 1087 |
-| `public/index.html` | 578 |
+| `public/ai/chat.css` | 1200 |
+| `public/css/style.css` | 1036 |
+| `public/ai/app.js` | 825 |
+| `public/index.html` | 576 |
 | `node_modules/ignore/README.md` | 505 |
-| `public/main.js` | 398 |
+| `public/ai/tools.js` | 440 |
 | `scripts/map.js` | 341 |
-| `docs/plans/ai.md` | 201 |
-| `README.md` | 178 |
-| `PROJECT_STRUCTURE.md` | 112 |
+| `public/js/main.js` | 340 |
 
 ### Code Files
 
 | Extension | Files | Lines of Code | Size |
 |-----------|-------|---------------|------------|
-| .md | 6 | 1072 | 32.33 KB |
-| .js | 6 | 3604 | 120.62 KB |
-| .json | 4 | 202 | 6.41 KB |
-| .html | 2 | 579 | 34.45 KB |
+| .js | 11 | 5429 | 193.56 KB |
+| .md | 5 | 884 | 26.86 KB |
+| .json | 4 | 202 | 6.4 KB |
+| .css | 2 | 2236 | 44.07 KB |
+| .html | 2 | 577 | 32.92 KB |
 | .ts | 1 | 82 | 1.91 KB |
 | (no extension) | 1 | 21 | 1.07 KB |
 | .txt | 1 | 4 | 88 B |
 | .xml | 1 | 9 | 294 B |
-| .css | 1 | 1087 | 20.27 KB |
-| **Total** | **23** | **6660** | **217.44 KB** |
+| **Total** | **28** | **9444** | **307.17 KB** |
 
 ### Binary / Media Files (Physical Size)
 
 | Extension | Files | Size |
 |-----------|-------|------------|
-| .png | 4 | 1.71 MB |
+| .png | 5 | 1.92 MB |
 | .jpeg | 1 | 36.16 KB |
 | .jpg | 1 | 77.24 KB |
-| **Total** | **6** | **1.82 MB** |
+| **Total** | **7** | **2.04 MB** |
 
-**Grand Total Files:** 29  
-**Total Repository Size:** 2.04 MB
+**Grand Total Files:** 35  
+**Total Repository Size:** 2.34 MB

@@ -260,6 +260,7 @@ body.ai-modal-open {
     align-items: center;
     justify-content: space-between;
     gap: 8px;
+    min-height: 32px;
     padding: 1px 12px;
     border-radius: 8px;
     cursor: pointer;

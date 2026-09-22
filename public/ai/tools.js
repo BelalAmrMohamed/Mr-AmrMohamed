@@ -359,17 +359,6 @@ function renderGrammarCard(data) {
   return wrap;
 }
 
-function renderQuizSummary(data) {
-  const total = data.total ?? 0;
-  const correct = data.correct ?? 0;
-  const pct = total ? Math.round((correct / total) * 100) : 0;
-  const wrap = el(`<div class="ai-card ai-quiz-summary"></div>`);
-  wrap.append(el(`<p class="ai-quiz-score">${correct} / ${total}</p>`));
-  wrap.append(el(`<div class="ai-progress-track"><div class="ai-progress-fill" style="width:${pct}%"></div></div>`));
-  if (data.message) wrap.append(el(`<p>${escapeHtml(data.message)}</p>`));
-  return wrap;
-}
-
 function renderProgress(data) {
   const wrap = el(`<div class="ai-card ai-progress-card"></div>`);
   wrap.append(el(`<p class="ai-progress-label">${escapeHtml(data.label || 'Level')}: <strong>${escapeHtml(data.level || '')}</strong></p>`));
@@ -419,7 +408,6 @@ const COMPONENT_RENDERERS = {
   flashcards: renderFlashcards,
   vocab_card: renderVocabCard,
   grammar_card: renderGrammarCard,
-  quiz_summary: renderQuizSummary,
   progress: renderProgress,
   pronunciation_card: renderPronunciationCard,
   lesson_card: renderLessonCard,

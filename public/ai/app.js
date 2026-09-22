@@ -60,6 +60,51 @@ function icon(name) {
   return icons[name] || '';
 }
 
+function normalizeToolCalls(toolCalls) {
+  if (!Array.isArray(toolCalls) || toolCalls.length < 2) return toolCalls;
+
+  const isQuizQuestion = (tc) =>
+    tc?.name === 'render_component' && ['mcq', 'fill_blank'].includes(tc?.args?.type);
+
+  const questionCalls = toolCalls.filter(isQuizQuestion);
+  if (questionCalls.length < 2) return toolCalls;
+
+  // The model emitted several standalone mcq/fill_blank calls in one turn
+  // instead of a single "quiz" call. Merge them into one quiz component so
+  // the UI shows one card with next/back navigation instead of N stacked
+  // cards, and so scoring is tracked in one place instead of N.
+  const quizId = questionCalls[0]?.args?.data?.quizId || `quiz-${Date.now()}`;
+  const questions = questionCalls.map((tc) => {
+    const d = tc.args.data || {};
+    if (tc.args.type === 'fill_blank') {
+      return {
+        type: 'fill_blank',
+        prompt: d.prompt || '',
+        answers: Array.isArray(d.answers) ? d.answers : [d.answer].filter(Boolean),
+        explanation: d.explanation || '',
+      };
+    }
+    return {
+      type: 'mcq',
+      question: d.question || '',
+      options: d.options || [],
+      correctIndex: d.correctIndex,
+      explanation: d.explanation || '',
+    };
+  });
+
+  const mergedQuizCall = {
+    name: 'render_component',
+    args: {
+      type: 'quiz',
+      data: { quizId, totalQuestions: questions.length, questions },
+    },
+  };
+
+  const rest = toolCalls.filter((tc) => !isQuizQuestion(tc));
+  return [mergedQuizCall, ...rest];
+}
+
 class AiChat {
   constructor() {
     this.speaking = null;
@@ -711,7 +756,8 @@ class AiChat {
 
     try {
       const contents = historyToContents(chat.messages);
-      const { text, toolCalls, geminiTurns } = await sendMessage(contents, { signal: controller.signal });
+      const { text, toolCalls: rawToolCalls, geminiTurns } = await sendMessage(contents, { signal: controller.signal });
+      const toolCalls = normalizeToolCalls(rawToolCalls);
       typingEl.remove();
       const msg = store.addMessage(chatId, {
         role: 'model',
@@ -754,13 +800,21 @@ class AiChat {
 
   setGenerating(isGenerating) {
     this.$sendBtn.hidden = isGenerating;
+    this.$sendBtn.style.display = isGenerating ? 'none' : '';
     this.$stopBtn.hidden = !isGenerating;
+    this.$stopBtn.style.display = isGenerating ? '' : 'none';
     this.$micBtn.disabled = isGenerating;
     if (!isGenerating) this.updateSendState();
   }
 
   stopGenerating() {
-    this.activeController?.abort();
+    if (!this.activeController) return;
+    this.activeController.abort();
+    // Optimistically reflect the stop immediately instead of waiting for the
+    // aborted fetch to reject and unwind through generateReply's catch —
+    // that round-trip can lag on some networks and make Stop feel dead.
+    this.activeController = null;
+    this.setGenerating(false);
   }
 
   scrollToBottom() {

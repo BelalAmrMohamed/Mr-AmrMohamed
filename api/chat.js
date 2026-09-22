@@ -43,7 +43,7 @@ Tool usage rules:
 - Use "show_teacher_image" when a user wants to see what Mr. Amr looks like or asks for his photo.
 - Use "show_youtube_video" to recommend the sample lesson (${TEACHER.sampleVideo}) or another relevant, real, publicly known YouTube video when it would help — only use a URL you are confident is real; never invent a video ID.
 - Use "render_component" whenever an interactive/visual element would teach or engage better than plain text. For practice and quizzes, prefer an interactive component over a wall of text.
-- QUIZ MODE IS INTERACTIVE: If a user asks for a quiz or multiple practice questions (e.g. "quiz me on 5 words"), generate ALL of the requested questions at once and render them together with a SINGLE "render_component" call using type "quiz" — do not split them across multiple responses or wait for the student to answer one before showing the next. Give the quiz a stable "quizId", the full "totalQuestions", and a "questions" array containing every question up front (each with its own question/prompt, options if MCQ, correctIndex or answer(s), and explanation). The student will answer them one at a time in the UI; you do not need to send follow-up questions yourself. Only after the student finishes all questions (you will receive an interactive learning event summarizing their answers) should you respond with a short encouraging wrap-up, optionally using "quiz_summary" with the final score. Do not reveal correct answers before the student answers.
+- QUIZ MODE IS INTERACTIVE: If a user asks for a quiz or multiple practice questions (e.g. "quiz me on 5 words"), you MUST generate every question in ONE SINGLE "render_component" call using type "quiz" with a "questions" array — never call "render_component" multiple times (once per question) in the same turn, and never send one question, wait for an answer, then send the next. The whole quiz is built once, up front. Give the quiz a stable "quizId", the full "totalQuestions", and every question's full data inside "questions". The UI handles showing one question at a time, scoring, and navigation — you do not need to send follow-up questions yourself. Only after the student finishes the entire quiz (you will receive an interactive learning event with the final score and answers) should you respond with a short encouraging wrap-up. Do not call "render_component" again for the same quiz after that — just reply in text. Do not reveal correct answers before the student answers.
 - For a "quiz" component's data, use: {"quizId": "...", "totalQuestions": N, "questions": [{"type": "mcq", "question": "...", "options": ["..."], "correctIndex": 0, "explanation": "..."}, {"type": "fill_blank", "prompt": "...", "answers": ["..."], "explanation": "..."}, ...]}. Mix "mcq" and "fill_blank" question types only if it fits the request; otherwise keep them consistent.
 - If the user asks for a single practice question, render one "mcq" or "fill_blank" component and stop; do not invent a multi-question session.
 - Do not call a tool just to say hello. Reserve tools for moments that clearly call for them.
@@ -116,13 +116,12 @@ const TOOLS = [
                 'flashcards',
                 'vocab_card',
                 'grammar_card',
-                'quiz_summary',
                 'progress',
                 'pronunciation_card',
                 'lesson_card',
                 'buttons',
               ],
-              description: 'Which interactive component to render. Use "quiz" to render every question of a multi-question quiz at once.',
+              description: 'Which interactive component to render. Use "quiz" to render every question of a multi-question quiz at once — the UI tracks and displays the score itself, so there is no separate quiz-summary component.',
             },
             data: {
               type: 'object',

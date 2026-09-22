@@ -1,18 +1,16 @@
 ## Platform Improvement
 
 ## AI Chat
-- There are many icons that are messed up or dont' match what I want:
-    - Update the ai input send button icon
-    - Update / fix the `.ai-sidebar-collapse-hover` icon, it's slightly off.
+- Many icons are messed up or don't match what I want:
+    - Update the AI input send button icon.
+    - Update / fix the `.ai-sidebar-collapse-hover` icon; it's slightly off.
     - Update / fix the delete icon in the more menu.
-    - Take a look on the other icons, too.
-- The history items physically move when I hover them, like I hover an item and evey other item under it moves, which is really weird, probably the hover state is playing with the height, it shouldn't play with the height.
-- Some download options are missing, like PDF for example, you removed them.
-- The stop ai button doesn't work, if I click it the AI doesn't stop.
-- The interactive quiz is now more messy and worse than what it already was:
-    - Instead of generating the quiz at once with next and back buttons, the AI generates questions one by one under each other.
-    - After finishing the generation of the 5 questions under each other, when I answer one of them, it generates more question.
-    - And then the score at the end was `0/0`, which doesn't make since, because they weren't 0 questions, and I did answer some questions right.
+    - Take a look at the other icons, too.
+- Some download options are missing, like PDF, for example; you removed them.
+- The stop AI button doesn't work; if I click it, the AI doesn't stop.
+- The interactive quiz is now messy: ![screenshot](image-3.png). I myself dont' even understand the problem with it so far. In the one test I ran after the latest changes, instead of generating a quiz in one card with next and previous buttons to go through the questions, it generated 3 cards, 2 of which where 1-question each, the 3rd was a quiz on its own and a score to it. But then in another test, it generated the quiz correctly, five questions in one card. If the problem is from the model itself not the tooling, try to make the tooling way simpler for the model.
+- The placeholder in the ai input becomes misaligned after the first prompt.
+
 
 ## `#navbar`'s Height
 - The height of the `#navbar` element at the top of the screen is too much, it should be slim.
