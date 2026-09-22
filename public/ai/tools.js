@@ -92,22 +92,41 @@ function renderTeacherImage(args) {
 
 function renderMcq(data, ctx) {
   const wrap = el(`<div class="ai-card ai-mcq-card"></div>`);
+  const meta = data.totalQuestions
+    ? `Question ${data.questionNumber || 1} of ${data.totalQuestions}`
+    : '';
+  if (meta) wrap.append(el(`<div class="ai-component-meta">${escapeHtml(meta)}</div>`));
   wrap.append(el(`<p class="ai-mcq-question">${escapeHtml(data.question || '')}</p>`));
+  const scoreBefore = Number.isFinite(Number(data.scoreBefore)) ? Number(data.scoreBefore) : 0;
+  const score = el(`<div class="ai-component-score">Score: ${scoreBefore}</div>`);
+  wrap.append(score);
+
   const list = el('<div class="ai-mcq-options" role="listbox"></div>');
   (data.options || []).forEach((opt, i) => {
     const btn = el(`<button type="button" class="ai-mcq-option" data-i="${i}">${escapeHtml(opt)}</button>`);
     btn.addEventListener('click', () => {
       if (list.dataset.answered) return;
       list.dataset.answered = '1';
+      const correct = i === data.correctIndex;
+      const scoreAfter = scoreBefore + (correct ? 1 : 0);
       [...list.children].forEach((c, ci) => {
         c.disabled = true;
         if (ci === data.correctIndex) c.classList.add('is-correct');
       });
-      if (i !== data.correctIndex) btn.classList.add('is-wrong');
+      if (!correct) btn.classList.add('is-wrong');
+      score.textContent = `Score: ${scoreAfter} / ${data.questionNumber || 1}`;
       if (data.explanation) {
         wrap.append(el(`<p class="ai-mcq-explanation">${escapeHtml(data.explanation)}</p>`));
       }
-      ctx?.onInteract?.(i === data.correctIndex ? 'correct' : 'incorrect');
+      ctx?.onInteract?.({
+        correct,
+        answer: opt,
+        answerIndex: i,
+        scoreBefore,
+        scoreAfter,
+        questionNumber: data.questionNumber ?? null,
+        totalQuestions: data.totalQuestions ?? null,
+      });
     });
     list.append(btn);
   });
@@ -117,7 +136,12 @@ function renderMcq(data, ctx) {
 
 function renderFillBlank(data, ctx) {
   const wrap = el(`<div class="ai-card ai-fillblank-card"></div>`);
+  if (data.totalQuestions) {
+    wrap.append(el(`<div class="ai-component-meta">Question ${escapeHtml(String(data.questionNumber || 1))} of ${escapeHtml(String(data.totalQuestions))}</div>`));
+  }
   wrap.append(el(`<p class="ai-fillblank-prompt">${escapeHtml(data.prompt || '')}</p>`));
+  const scoreBefore = Number.isFinite(Number(data.scoreBefore)) ? Number(data.scoreBefore) : 0;
+  const score = el(`<div class="ai-component-score">Score: ${scoreBefore}</div>`);
   const form = el('<form class="ai-fillblank-form"></form>');
   const input = el(`<input type="text" class="ai-fillblank-input" placeholder="Type your answer" dir="auto" autocomplete="off">`);
   const submit = el('<button type="submit" class="ai-btn-mini">Check</button>');
@@ -125,18 +149,30 @@ function renderFillBlank(data, ctx) {
   const result = el('<p class="ai-fillblank-result" hidden></p>');
   form.addEventListener('submit', (e) => {
     e.preventDefault();
-    const answers = (Array.isArray(data.answers) ? data.answers : [data.answer]).filter(Boolean).map((a) => a.trim().toLowerCase());
-    const correct = answers.includes(input.value.trim().toLowerCase());
+    const answers = (Array.isArray(data.answers) ? data.answers : [data.answer])
+      .filter(Boolean)
+      .map((answer) => answer.trim().toLowerCase());
+    const answer = input.value.trim();
+    const correct = answers.includes(answer.toLowerCase());
+    const scoreAfter = scoreBefore + (correct ? 1 : 0);
     result.hidden = false;
     result.textContent = correct
       ? 'Correct! ' + (data.explanation || '')
       : `Not quite. Correct answer: ${answers[0] || ''}. ${data.explanation || ''}`;
     result.className = `ai-fillblank-result ${correct ? 'is-correct' : 'is-wrong'}`;
+    score.textContent = `Score: ${scoreAfter} / ${data.questionNumber || 1}`;
     input.disabled = true;
     submit.disabled = true;
-    ctx?.onInteract?.(correct ? 'correct' : 'incorrect');
+    ctx?.onInteract?.({
+      correct,
+      answer,
+      scoreBefore,
+      scoreAfter,
+      questionNumber: data.questionNumber ?? null,
+      totalQuestions: data.totalQuestions ?? null,
+    });
   });
-  wrap.append(form, result);
+  wrap.append(score, form, result);
   return wrap;
 }
 

@@ -8,7 +8,7 @@ const SUGGESTED_PROMPTS = [
   'Explain the present perfect tense',
   'Quiz me on 5 intermediate vocabulary words',
   'Correct my writing: "I have went to school yesterday."',
-  'How can I contact Mr. Amr?',
+  'Tell me info about Mr. Amr, his contact details, his picture, and any videos.',
   'Let’s practice a job interview conversation',
 ];
 
@@ -45,14 +45,21 @@ function icon(name) {
     plus: '<svg viewBox="0 0 24 24"><path d="M11 5v6H5v2h6v6h2v-6h6v-2h-6V5h-2Z"/></svg>',
     close: '<svg viewBox="0 0 24 24"><path d="M18.3 5.71 12 12l6.3 6.29-1.41 1.42L10.59 13.4l-6.3 6.3-1.41-1.41L9.17 12 2.88 5.71 4.3 4.29l6.3 6.3 6.29-6.3z"/></svg>',
     menu: '<svg viewBox="0 0 24 24"><path d="M3 6h18v2H3V6Zm0 5h18v2H3v-2Zm0 5h18v2H3v-2Z"/></svg>',
-    chat: '<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 5.94 2 10.8c0 2.62 1.32 4.96 3.4 6.56V22l3.62-2.12c.94.24 1.94.37 2.98.37 5.52 0 10-3.94 10-8.8S17.52 2 12 2Z"/></svg>',
+    brand: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19 10.5 5h3L20 19h-3l-1.3-3H8.3L7 19H4Zm5.5-6h5L12 7.5 9.5 13Z"/><path d="M18.4 2.5 19.2 4l1.5.8-1.5.7-.8 1.5-.7-1.5-1.5-.7 1.5-.8.7-1.5Z"/></svg>',
+    mic: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 14a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v5a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21H9v2h6v-2h-2v-3.08A7 7 0 0 0 19 11h-2Z"/></svg>',
+    send: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 20 18-8L3 4v6l11 2-11 2v6Z"/></svg>',
+    brandSmall: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19 10.5 5h3L20 19h-3l-1.3-3H8.3L7 19H4Zm5.5-6h5L12 7.5 9.5 13Z"/><path d="M18.4 2.5 19.2 4l1.5.8-1.5.7-.8 1.5-.7-1.5-1.5-.7 1.5-.8.7-1.5Z"/></svg>',
   };
   return icons[name] || '';
 }
 
 class AiChat {
   constructor() {
-    this.speaking = null; // messageId currently being read aloud
+    this.speaking = null;
+    this.recognition = null;
+    this.isListening = false;
+    this.voiceBaseText = '';
+    this.voiceShouldSend = false;
     this.build();
     this.wire();
     this.renderHistory();
@@ -62,7 +69,7 @@ class AiChat {
   build() {
     this.launcher = el(`
       <button class="ai-widget-btn" type="button" aria-label="Open Mr. Amr's AI assistant">
-        ${icon('chat')}
+        ${icon('brand')}
       </button>
     `);
     document.body.append(this.launcher);
@@ -80,14 +87,15 @@ class AiChat {
           <section class="ai-main">
             <header class="ai-chat-header">
               <button type="button" class="ai-icon-btn ai-sidebar-toggle" aria-label="Toggle history">${icon('menu')}</button>
-              <div class="ai-chat-title">Mr. Amr's AI</div>
+              <div class="ai-chat-title"><span class="ai-title-brand">${icon('brandSmall')}</span><span>Mr. Amr's AI</span></div>
               <button type="button" class="ai-icon-btn ai-close-btn" aria-label="Close">${icon('close')}</button>
             </header>
             <div class="ai-messages"></div>
             <div class="ai-suggested-prompts"></div>
             <form class="ai-composer">
               <textarea class="ai-input" placeholder="Ask anything about English or Mr. Amr…" dir="auto" rows="1"></textarea>
-              <button type="submit" class="ai-send-btn" aria-label="Send">➤</button>
+              <button type="button" class="ai-mic-btn" aria-label="Start voice input" title="Voice input">${icon('mic')}</button>
+              <button type="submit" class="ai-send-btn" aria-label="Send" title="Send">${icon('send')}</button>
             </form>
           </section>
         </div>
@@ -102,6 +110,9 @@ class AiChat {
     this.$composer = this.modal.querySelector('.ai-composer');
     this.$input = this.modal.querySelector('.ai-input');
     this.$newChatBtn = this.modal.querySelector('.ai-new-chat-btn');
+    this.$micBtn = this.modal.querySelector('.ai-mic-btn');
+    this.$sendBtn = this.modal.querySelector('.ai-send-btn');
+    this.$panel = this.modal.querySelector('.ai-modal-panel');
   }
 
   wire() {
@@ -109,8 +120,13 @@ class AiChat {
     this.modal.querySelector('.ai-close-btn').addEventListener('click', () => this.close());
     this.modal.querySelector('.ai-modal-backdrop').addEventListener('click', () => this.close());
     this.modal.querySelector('.ai-sidebar-toggle').addEventListener('click', () => {
-      this.$sidebar.classList.toggle('is-open');
+      if (window.matchMedia('(max-width: 860px)').matches) {
+        this.$sidebar.classList.toggle('is-open');
+      } else {
+        this.$panel.classList.toggle('sidebar-collapsed');
+      }
     });
+    this.$micBtn.addEventListener('click', () => this.toggleVoiceInput());
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && !this.modal.hidden) this.close();
     });
@@ -119,11 +135,7 @@ class AiChat {
 
     this.$composer.addEventListener('submit', (e) => {
       e.preventDefault();
-      const text = this.$input.value.trim();
-      if (!text) return;
-      this.$input.value = '';
-      this.autoGrow();
-      this.handleSend(text);
+      this.submitCurrentInput();
     });
     this.$input.addEventListener('input', () => this.autoGrow());
     this.$input.addEventListener('keydown', (e) => {
@@ -135,8 +147,94 @@ class AiChat {
   }
 
   autoGrow() {
-    this.$input.style.height = 'auto';
-    this.$input.style.height = `${Math.min(this.$input.scrollHeight, 160)}px`;
+    const maxHeight = 160;
+    this.$input.style.height = '0px';
+    this.$input.style.height = `${Math.min(this.$input.scrollHeight, maxHeight)}px`;
+    this.$input.style.overflowY = this.$input.scrollHeight > maxHeight ? 'auto' : 'hidden';
+  }
+
+  submitCurrentInput() {
+    const text = this.$input.value.trim();
+    if (!text) return;
+    if (this.isListening) {
+      this.voiceShouldSend = true;
+      this.stopVoiceInput();
+    }
+    this.$input.value = '';
+    this.autoGrow();
+    this.handleSend(text);
+  }
+
+  getSpeechRecognition() {
+    return window.SpeechRecognition || window.webkitSpeechRecognition || null;
+  }
+
+  toggleVoiceInput() {
+    if (this.isListening) {
+      this.voiceShouldSend = true;
+      this.stopVoiceInput();
+      setTimeout(() => this.submitCurrentInput(), 80);
+      return;
+    }
+    const Recognition = this.getSpeechRecognition();
+    if (!Recognition) {
+      this.showCustomNotice('Voice input is not supported by this browser.');
+      return;
+    }
+    this.recognition = new Recognition();
+    this.recognition.lang = /[\\u0600-\\u06FF]/.test(this.$input.value) ? 'ar-EG' : 'en-US';
+    this.recognition.continuous = true;
+    this.recognition.interimResults = true;
+    this.voiceBaseText = this.$input.value.trim();
+    this.voiceShouldSend = false;
+    this.isListening = true;
+    this.$micBtn.classList.add('is-listening');
+    this.$micBtn.innerHTML = icon('stop');
+    this.$micBtn.setAttribute('aria-label', 'Stop voice input and send');
+    this.$micBtn.title = 'Stop and send';
+    this.recognition.onresult = (event) => {
+      let transcript = '';
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        transcript += event.results[i][0].transcript;
+      }
+      const base = this.voiceBaseText ? `${this.voiceBaseText} ` : '';
+      this.$input.value = `${base}${transcript}`.trimStart();
+      this.autoGrow();
+    };
+    this.recognition.onerror = (event) => {
+      if (event.error !== 'aborted') this.showCustomNotice(`Voice input error: ${event.error}.`);
+      this.stopVoiceInput(false);
+    };
+    this.recognition.onend = () => {
+      const shouldSend = this.voiceShouldSend;
+      this.stopVoiceInput(false);
+      if (shouldSend) setTimeout(() => this.submitCurrentInput(), 0);
+    };
+    this.recognition.start();
+  }
+
+  stopVoiceInput(clearSendFlag = true) {
+    const recognition = this.recognition;
+    this.isListening = false;
+    this.$micBtn.classList.remove('is-listening');
+    this.$micBtn.innerHTML = icon('mic');
+    this.$micBtn.setAttribute('aria-label', 'Start voice input');
+    this.$micBtn.title = 'Voice input';
+    if (clearSendFlag) this.voiceShouldSend = false;
+    if (recognition) {
+      try { recognition.stop(); } catch {}
+    }
+    this.recognition = null;
+  }
+
+  showCustomNotice(message) {
+    this.closeHistoryMenu();
+    const notice = el(`<div class="ai-custom-dialog ai-notice-dialog" role="alertdialog" aria-modal="true">
+      <div class="ai-dialog-card"><div class="ai-dialog-icon">${icon('brandSmall')}</div><p>${this.escape(message)}</p>
+      <button type="button" class="ai-btn-mini ai-btn-primary" data-act="close">OK</button></div></div>`);
+    document.body.append(notice);
+    notice.querySelector('[data-act="close"]').addEventListener('click', () => notice.remove());
+    requestAnimationFrame(() => notice.classList.add('is-visible'));
   }
 
   open() {
@@ -166,9 +264,12 @@ class AiChat {
     const active = store.getActive();
     for (const chat of chats) {
       const item = el(`
-        <div class="ai-history-item ${active?.id === chat.id ? 'is-active' : ''}" data-id="${chat.id}">
-          <span class="ai-history-title">${chat.pinned ? '📌 ' : ''}${this.escape(chat.title)}</span>
-          <button type="button" class="ai-icon-btn ai-history-more" aria-label="More options" data-id="${chat.id}">${icon('more')}</button>
+        <div class="ai-history-item ${active?.id === chat.id ? 'is-active' : ''} ${chat.pinned ? 'is-pinned' : ''}" data-id="${chat.id}">
+          <span class="ai-history-title">${this.escape(chat.title)}</span>
+          <span class="ai-history-actions">
+            <button type="button" class="ai-icon-btn ai-history-pin" aria-label="${chat.pinned ? 'Pinned chat' : 'Pin chat'}" data-id="${chat.id}">${icon('pin')}</button>
+            <button type="button" class="ai-icon-btn ai-history-more" aria-label="More options" data-id="${chat.id}">${icon('more')}</button>
+          </span>
         </div>
       `);
       item.addEventListener('click', (e) => {
@@ -178,6 +279,15 @@ class AiChat {
       item.querySelector('.ai-history-more').addEventListener('click', (e) => {
         e.stopPropagation();
         this.openHistoryMenu(chat.id, e.currentTarget);
+      });
+      item.querySelector('.ai-history-pin').addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (!chat.pinned) {
+          store.togglePin(chat.id);
+          this.renderHistory();
+        } else {
+          this.openHistoryMenu(chat.id, e.currentTarget);
+        }
       });
       this.$historyList.append(item);
     }
@@ -225,15 +335,9 @@ class AiChat {
         store.togglePin(chatId);
         this.renderHistory();
         break;
-      case 'rename': {
-        const name = prompt('Rename chat', chat.title);
-        if (name && name.trim()) {
-          store.renameChat(chatId, name.trim());
-          this.renderHistory();
-          if (store.getActive()?.id === chatId) this.renderChatTitle();
-        }
+      case 'rename':
+        this.startInlineRename(chatId);
         break;
-      }
       case 'export-md':
         this.download(`${chat.title}.md`, store.exportAsMarkdown(chat), 'text/markdown');
         break;
@@ -244,14 +348,59 @@ class AiChat {
         this.exportPdf(chat);
         break;
       case 'delete':
-        if (confirm(`Delete "${chat.title}"? This cannot be undone.`)) {
-          const wasActive = store.getActive()?.id === chatId;
-          store.deleteChat(chatId);
-          this.renderHistory();
-          if (wasActive) this.renderActiveChat();
-        }
+        this.openDeleteDialog(chatId);
         break;
     }
+  }
+
+  startInlineRename(chatId) {
+    const item = this.$historyList.querySelector(`[data-id="${CSS.escape(chatId)}"]`);
+    const chat = store.get(chatId);
+    if (!item || !chat) return;
+    const title = item.querySelector('.ai-history-title');
+    const input = el(`<input class="ai-history-rename" type="text" value="${this.escape(chat.title)}" maxlength="80" aria-label="Rename chat">`);
+    title.replaceWith(input);
+    input.focus();
+    input.select();
+    const finish = (save) => {
+      if (!input.isConnected) return;
+      if (save) store.renameChat(chatId, input.value);
+      this.renderHistory();
+      if (store.getActive()?.id === chatId) this.renderChatTitle();
+    };
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); finish(true); }
+      if (e.key === 'Escape') { e.preventDefault(); finish(false); }
+    });
+    input.addEventListener('blur', () => finish(true), { once: true });
+  }
+
+  openDeleteDialog(chatId) {
+    const chat = store.get(chatId);
+    if (!chat) return;
+    const dialog = el(`<div class="ai-custom-dialog" role="dialog" aria-modal="true">
+      <div class="ai-dialog-card">
+        <div class="ai-dialog-icon">${icon('brandSmall')}</div>
+        <h3>Delete conversation?</h3>
+        <p>This will permanently delete “${this.escape(chat.title)}”.</p>
+        <div class="ai-dialog-actions">
+          <button type="button" class="ai-btn-mini" data-act="cancel">Cancel</button>
+          <button type="button" class="ai-btn-mini ai-btn-danger" data-act="delete">Delete</button>
+        </div>
+      </div>
+    </div>`);
+    document.body.append(dialog);
+    const close = () => dialog.remove();
+    dialog.querySelector('[data-act="cancel"]').addEventListener('click', close);
+    dialog.querySelector('[data-act="delete"]').addEventListener('click', () => {
+      const wasActive = store.getActive()?.id === chatId;
+      store.deleteChat(chatId);
+      close();
+      this.renderHistory();
+      if (wasActive) this.renderActiveChat();
+    });
+    dialog.addEventListener('click', (e) => { if (e.target === dialog) close(); });
+    requestAnimationFrame(() => dialog.classList.add('is-visible'));
   }
 
   download(filename, content, mime) {
@@ -328,7 +477,7 @@ class AiChat {
     }
     this.$suggested.innerHTML = '';
     if (chat.parentId) this.renderBranchBanner(chat);
-    chat.messages.forEach((m) => this.$messages.append(this.buildMessageEl(chat.id, m)));
+    chat.messages.filter((m) => m.role !== 'interaction').forEach((m) => this.$messages.append(this.buildMessageEl(chat.id, m)));
     this.scrollToBottom();
   }
 
@@ -367,7 +516,9 @@ class AiChat {
     if (msg.toolCalls?.length) {
       const toolsWrap = el('<div class="ai-message-tools"></div>');
       for (const tc of msg.toolCalls) {
-        const node = renderToolCall(tc.name, tc.args);
+        const node = renderToolCall(tc.name, tc.args, {
+          onInteract: (result) => this.handleComponentInteraction(chatId, tc, result),
+        });
         if (node) toolsWrap.append(node);
       }
       bubble.append(toolsWrap);
@@ -478,6 +629,38 @@ class AiChat {
     await this.generateReply(chatId);
   }
 
+  async handleComponentInteraction(chatId, toolCall, result) {
+    const chat = store.get(chatId);
+    if (!chat) return;
+    const data = toolCall?.args?.data || {};
+    const component = toolCall?.args?.type || '';
+    const quizId = data.quizId || null;
+    if (!quizId && !['mcq', 'fill_blank'].includes(component)) return;
+
+    const interaction = {
+      component,
+      quizId,
+      questionNumber: data.questionNumber ?? null,
+      totalQuestions: data.totalQuestions ?? null,
+      result,
+      prompt: data.question || data.prompt || '',
+      answer: typeof result === 'object' ? result.answer : undefined,
+    };
+    store.addMessage(chatId, {
+      role: 'interaction',
+      text: JSON.stringify(interaction),
+      interaction,
+    });
+    if (store.getActive()?.id === chatId) {
+      const typingEl = el(`<div class="ai-message is-model is-typing"><div class="ai-message-content"><div class="ai-thinking"><span class="ai-thinking-orb">${icon('brandSmall')}</span><span>Checking your answer…</span></div></div></div>`);
+      this.$messages.append(typingEl);
+      this.scrollToBottom();
+      await this.generateReply(chatId, typingEl);
+    } else {
+      await this.generateReply(chatId);
+    }
+  }
+
   async handleSend(text) {
     const chat = this.ensureActiveChat();
     store.addMessage(chat.id, { role: 'user', text });
@@ -487,21 +670,22 @@ class AiChat {
     await this.generateReply(chat.id);
   }
 
-  async generateReply(chatId) {
+  async generateReply(chatId, existingTypingEl = null) {
     const chat = store.get(chatId);
     if (!chat) return;
-    const typingEl = el(`<div class="ai-message is-model is-typing"><div class="ai-message-content"><span></span><span></span><span></span></div></div>`);
-    this.$messages.append(typingEl);
+    const typingEl = existingTypingEl || el(`<div class="ai-message is-model is-typing"><div class="ai-message-content"><div class="ai-thinking"><span class="ai-thinking-orb">${icon('brandSmall')}</span><span>Thinking…</span></div></div></div>`);
+    if (!typingEl.isConnected) this.$messages.append(typingEl);
     this.scrollToBottom();
 
     try {
       const contents = historyToContents(chat.messages);
-      const { text, toolCalls } = await sendMessage(contents);
+      const { text, toolCalls, geminiTurns } = await sendMessage(contents);
       typingEl.remove();
       const msg = store.addMessage(chatId, {
         role: 'model',
         text: text || (toolCalls.length ? '' : "Sorry, I couldn't come up with a reply. Please try again."),
         toolCalls: toolCalls.length ? toolCalls : null,
+        geminiTurns,
       });
       if (store.getActive()?.id === chatId) {
         this.$messages.append(this.buildMessageEl(chatId, msg));

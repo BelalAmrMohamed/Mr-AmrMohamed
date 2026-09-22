@@ -879,46 +879,6 @@ p {
 }
 
 /* ===================================
-   FLOATING WHATSAPP BUTTON
-   =================================== */
-.whatsapp-float {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    width: 60px;
-    height: 60px;
-    background: #25D366;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
-    z-index: 999;
-    transition: var(--transition);
-    animation: pulse 2s infinite;
-}
-
-.whatsapp-float:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.6);
-}
-
-.whatsapp-float svg {
-    width: 35px;
-    height: 35px;
-    fill: var(--crisp-white);
-}
-
-@keyframes pulse {
-    0%, 100% {
-        box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
-    }
-    50% {
-        box-shadow: 0 4px 20px rgba(37, 211, 102, 0.7);
-    }
-}
-
-/* ===================================
    RESPONSIVE DESIGN
    =================================== */
 
@@ -1045,18 +1005,6 @@ p {
     
     .section-header {
         margin-bottom: 40px;
-    }
-    
-    .whatsapp-float {
-        bottom: 20px;
-        right: 20px;
-        width: 55px;
-        height: 55px;
-    }
-    
-    .whatsapp-float svg {
-        width: 30px;
-        height: 30px;
     }
 }
 

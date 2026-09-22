@@ -1,7 +1,8 @@
 ## Platform Improvement
 
 ## AI Chat
-- See `docs\plans\ai.md`
+- Broken Loading animation ![screenshot](image.png)
+- Quizzes aren't interactive
 
 ## Application
 Make the website an installable app.

@@ -7,7 +7,7 @@
 .ai-widget-btn {
     position: fixed;
     right: 24px;
-    bottom: 96px; /* sits above the existing WhatsApp float button */
+    bottom: 24px;
     width: 58px;
     height: 58px;
     border-radius: 50%;
@@ -550,6 +550,10 @@ body.ai-modal-open {
 }
 .ai-video-frame iframe { width: 100%; height: 100%; border: 0; }
 
+.ai-image-card {
+    text-align: center;
+}
+
 .ai-image-card img {
     width: 100%;
     max-width: 220px;
@@ -658,11 +662,399 @@ body.ai-modal-open {
     }
     .ai-widget-btn {
         right: 16px;
-        bottom: 88px;
+        bottom: 24px;
         width: 52px;
         height: 52px;
     }
     .ai-message {
         max-width: 90%;
+    }
+}
+
+/* ===================================
+   POLISH: identity, responsive sidebar,
+   custom dialogs, voice composer
+   =================================== */
+
+.ai-widget-btn {
+    right: 24px;
+    bottom: 24px;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(145deg, var(--navy-blue), var(--dark-navy));
+}
+
+.ai-widget-btn svg {
+    width: 29px;
+    height: 29px;
+}
+
+.ai-title-brand,
+.ai-dialog-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--rich-gold);
+}
+
+.ai-title-brand svg {
+    width: 22px;
+    height: 22px;
+    fill: currentColor;
+}
+
+.ai-chat-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ai-sidebar-toggle {
+    display: flex;
+}
+
+.ai-modal-panel.sidebar-collapsed .ai-sidebar {
+    width: 0;
+    border-right-width: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.ai-modal-panel.sidebar-collapsed .ai-main {
+    width: 100%;
+}
+
+.ai-history-actions {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.ai-history-actions .ai-icon-btn {
+    width: 30px;
+    height: 30px;
+}
+
+.ai-history-pin {
+    display: none;
+    color: var(--rich-gold);
+}
+
+.ai-history-more {
+    display: flex;
+    opacity: 0;
+}
+
+.ai-history-item.is-pinned .ai-history-pin {
+    display: flex;
+}
+
+.ai-history-item.is-pinned:hover .ai-history-pin,
+.ai-history-item.is-pinned:focus-within .ai-history-pin {
+    display: none;
+}
+
+.ai-history-item.is-pinned:hover .ai-history-more,
+.ai-history-item.is-pinned:focus-within .ai-history-more,
+.ai-history-item:not(.is-pinned):hover .ai-history-more,
+.ai-history-item:not(.is-pinned):focus-within .ai-history-more {
+    opacity: 1;
+}
+
+.ai-history-item:not(.is-pinned) .ai-history-pin {
+    display: flex;
+    opacity: 0;
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.ai-history-rename {
+    min-width: 0;
+    flex: 1;
+    border: 1px solid rgba(30, 58, 95, 0.25);
+    border-radius: 7px;
+    padding: 6px 8px;
+    background: var(--crisp-white);
+    color: var(--navy-blue);
+    font: inherit;
+}
+
+.ai-history-rename:focus {
+    outline: 2px solid rgba(201, 169, 97, 0.35);
+    border-color: var(--rich-gold);
+}
+
+.ai-custom-dialog {
+    position: fixed;
+    inset: 0;
+    z-index: 4000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(10, 18, 30, 0.45);
+    opacity: 0;
+    transition: opacity .18s ease;
+}
+
+.ai-custom-dialog.is-visible {
+    opacity: 1;
+}
+
+.ai-dialog-card {
+    width: min(420px, 94vw);
+    padding: 22px;
+    border-radius: 16px;
+    background: var(--crisp-white);
+    box-shadow: var(--shadow-lg);
+    color: var(--slate-gray);
+}
+
+.ai-dialog-card h3 {
+    margin: 10px 0 6px;
+    color: var(--navy-blue);
+}
+
+.ai-dialog-card p {
+    margin: 0 0 16px;
+}
+
+.ai-dialog-icon svg {
+    width: 30px;
+    height: 30px;
+    fill: currentColor;
+}
+
+.ai-dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.ai-btn-danger {
+    color: #fff;
+    background: #c0392b;
+    border-color: #c0392b;
+}
+
+.ai-btn-danger:hover {
+    background: #a93226;
+}
+
+.ai-notice-dialog .ai-dialog-card {
+    text-align: center;
+}
+
+.ai-notice-dialog .ai-btn-primary {
+    margin-top: 4px;
+}
+
+.ai-composer {
+    align-items: flex-end;
+    gap: 8px;
+}
+
+.ai-input {
+    min-height: 42px;
+    height: 42px;
+    max-height: 160px;
+    overflow-y: hidden;
+    box-sizing: border-box;
+    line-height: 1.45;
+    border-radius: 16px;
+    background: var(--crisp-white);
+}
+
+.ai-mic-btn,
+.ai-send-btn {
+    position: relative;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    flex: 0 0 42px;
+    border: 1px solid rgba(30, 58, 95, 0.14);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform .18s ease, background .18s ease, color .18s ease, box-shadow .18s ease;
+}
+
+.ai-mic-btn {
+    background: var(--crisp-white);
+    color: var(--navy-blue);
+}
+
+.ai-mic-btn svg,
+.ai-send-btn svg {
+    width: 19px;
+    height: 19px;
+    fill: currentColor;
+    transition: transform .2s ease;
+}
+
+.ai-mic-btn:hover,
+.ai-send-btn:hover {
+    transform: translateY(-1px);
+}
+
+.ai-mic-btn.is-listening {
+    color: #c0392b;
+    border-color: rgba(192, 57, 43, .3);
+    box-shadow: 0 0 0 0 rgba(192, 57, 43, .22);
+    animation: ai-mic-pulse 1.35s ease-out infinite;
+}
+
+.ai-mic-btn.is-listening::before,
+.ai-mic-btn.is-listening::after {
+    content: "";
+    position: absolute;
+    inset: -5px;
+    border: 1px solid rgba(192, 57, 43, .28);
+    border-radius: 50%;
+    animation: ai-voice-ring 1.35s ease-out infinite;
+}
+
+.ai-mic-btn.is-listening::after {
+    animation-delay: .45s;
+}
+
+@keyframes ai-mic-pulse {
+    50% { transform: scale(1.06); }
+}
+
+@keyframes ai-voice-ring {
+    0% { transform: scale(.82); opacity: .7; }
+    100% { transform: scale(1.35); opacity: 0; }
+}
+
+.ai-send-btn {
+    background: var(--navy-blue);
+    color: var(--rich-gold);
+    border-color: var(--navy-blue);
+}
+
+.ai-thinking {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    min-height: 20px;
+}
+
+.ai-thinking-orb {
+    width: 23px;
+    height: 23px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--rich-gold);
+    animation: ai-thinking-orbit 1.5s ease-in-out infinite;
+}
+
+.ai-thinking-orb svg {
+    width: 22px;
+    height: 22px;
+    fill: currentColor;
+}
+
+.ai-thinking::after {
+    content: "";
+    width: 26px;
+    height: 4px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, transparent, rgba(201,169,97,.75), transparent);
+    background-size: 200% 100%;
+    animation: ai-thinking-sweep 1.15s ease-in-out infinite;
+}
+
+@keyframes ai-thinking-orbit {
+    0%, 100% { transform: rotate(-8deg) scale(.94); opacity: .65; }
+    50% { transform: rotate(8deg) scale(1.08); opacity: 1; }
+}
+
+@keyframes ai-thinking-sweep {
+    0% { background-position: 100% 0; opacity: .35; }
+    50% { background-position: 0 0; opacity: 1; }
+    100% { background-position: -100% 0; opacity: .35; }
+}
+
+/* Subtle motion instead of a noisy typing animation. */
+.ai-icon-btn svg,
+.ai-new-chat-btn svg,
+.ai-title-brand svg {
+    transform-origin: center;
+}
+
+.ai-icon-btn:hover svg,
+.ai-icon-btn:focus-visible svg,
+.ai-new-chat-btn:hover:not(:disabled) svg {
+    animation: ai-icon-nudge .65s cubic-bezier(.45,0,.55,1);
+}
+
+@keyframes ai-icon-nudge {
+    0% { transform: scale(.92) rotate(-3deg); opacity: .7; }
+    55% { transform: scale(1.08) rotate(2deg); opacity: 1; }
+    100% { transform: scale(1) rotate(0); }
+}
+
+.ai-component-meta {
+    display: inline-block;
+    margin-bottom: 7px;
+    color: var(--slate-gray);
+    font-size: .76rem;
+    font-weight: 700;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+}
+
+.ai-component-score {
+    margin: 0 0 9px;
+    color: var(--navy-blue);
+    font-size: .8rem;
+    font-weight: 700;
+}
+
+@media (max-width: 860px) {
+    .ai-widget-btn {
+        right: 16px;
+        bottom: 24px;
+        width: 54px;
+        height: 54px;
+    }
+
+    .ai-sidebar {
+        width: 280px;
+    }
+
+    .ai-modal-panel.sidebar-collapsed .ai-sidebar {
+        width: 280px;
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateX(-100%);
+        border-right-width: 1px;
+    }
+
+    .ai-modal-panel:not(.sidebar-collapsed) .ai-sidebar {
+        transform: translateX(0);
+    }
+
+    .ai-input {
+        min-width: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ai-widget-btn *,
+    .ai-mic-btn,
+    .ai-mic-btn::before,
+    .ai-mic-btn::after,
+    .ai-thinking-orb,
+    .ai-thinking::after,
+    .ai-icon-btn svg,
+    .ai-new-chat-btn svg {
+        animation: none !important;
+        transition: none !important;
     }
 }

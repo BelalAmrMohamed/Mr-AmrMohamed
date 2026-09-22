@@ -27,6 +27,18 @@ function load() {
     const parsed = JSON.parse(raw);
     if (!parsed || typeof parsed !== 'object') return { chats: {}, activeChatId: null };
     parsed.chats ||= {};
+    for (const chat of Object.values(parsed.chats)) {
+      if (!Array.isArray(chat.messages)) chat.messages = [];
+      // New Gemini turns contain the exact model Parts returned by the API,
+      // including thought signatures. Legacy toolCalls are intentionally kept
+      // for rendering but are not reconstructed into Gemini history because a
+      // missing signature cannot be safely invented after the fact.
+      for (const message of chat.messages) {
+        if (message.role === 'model' && !Array.isArray(message.geminiTurns)) {
+          message.geminiTurns = null;
+        }
+      }
+    }
     return parsed;
   } catch {
     return { chats: {}, activeChatId: null };
@@ -121,10 +133,18 @@ export const store = {
     }
   },
 
-  addMessage(chatId, { role, text, toolCalls = null }) {
+  addMessage(chatId, { role, text, toolCalls = null, geminiTurns = null, interaction = null }) {
     const chat = this.get(chatId);
     if (!chat) return null;
-    const msg = { id: uid(), role, text, toolCalls, createdAt: Date.now() };
+    const msg = {
+      id: uid(),
+      role,
+      text,
+      toolCalls,
+      geminiTurns,
+      interaction,
+      createdAt: Date.now(),
+    };
     chat.messages.push(msg);
     chat.updatedAt = Date.now();
     this.autoTitle(chat);
@@ -168,7 +188,7 @@ export const store = {
 
   exportAsMarkdown(chat) {
     const lines = [`# ${chat.title}`, ''];
-    for (const m of chat.messages) {
+    for (const m of chat.messages.filter((m) => m.role !== 'interaction')) {
       const who = m.role === 'user' ? 'You' : "Mr. Amr's AI";
       lines.push(`**${who}:**`, '', m.text || '_[interactive content]_', '');
     }
@@ -177,7 +197,7 @@ export const store = {
 
   exportAsText(chat) {
     const lines = [chat.title, ''];
-    for (const m of chat.messages) {
+    for (const m of chat.messages.filter((m) => m.role !== 'interaction')) {
       const who = m.role === 'user' ? 'You' : "Mr. Amr's AI";
       lines.push(`${who}: ${m.text || '[interactive content]'}`, '');
     }
