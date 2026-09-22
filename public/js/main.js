@@ -250,65 +250,6 @@ if (videoContainer && youtubePlayer) {
 }
 
 // ===================================
-// SCROLL TO TOP FUNCTIONALITY
-// ===================================
-let scrollToTopButton = document.createElement('button');
-scrollToTopButton.className = 'scroll-to-top';
-scrollToTopButton.innerHTML = '↑';
-scrollToTopButton.setAttribute('aria-label', 'Scroll to top');
-scrollToTopButton.style.cssText = `
-    position: fixed;
-    bottom: 100px;
-    right: 30px;
-    width: 50px;
-    height: 50px;
-    background: var(--navy-blue);
-    color: var(--rich-gold);
-    border: 2px solid var(--rich-gold);
-    border-radius: 50%;
-    font-size: 24px;
-    cursor: pointer;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s ease;
-    z-index: 998;
-    box-shadow: 0 4px 12px rgba(30, 58, 95, 0.3);
-`;
-
-document.body.appendChild(scrollToTopButton);
-
-// Show/hide scroll to top button
-window.addEventListener('scroll', () => {
-    if (window.pageYOffset > 500) {
-        scrollToTopButton.style.opacity = '1';
-        scrollToTopButton.style.visibility = 'visible';
-    } else {
-        scrollToTopButton.style.opacity = '0';
-        scrollToTopButton.style.visibility = 'hidden';
-    }
-});
-
-// Scroll to top when clicked
-scrollToTopButton.addEventListener('click', () => {
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-    });
-});
-
-scrollToTopButton.addEventListener('mouseenter', () => {
-    scrollToTopButton.style.background = 'var(--rich-gold)';
-    scrollToTopButton.style.color = 'var(--navy-blue)';
-    scrollToTopButton.style.transform = 'scale(1.1)';
-});
-
-scrollToTopButton.addEventListener('mouseleave', () => {
-    scrollToTopButton.style.background = 'var(--navy-blue)';
-    scrollToTopButton.style.color = 'var(--rich-gold)';
-    scrollToTopButton.style.transform = 'scale(1)';
-});
-
-// ===================================
 // PRELOAD CRITICAL RESOURCES
 // ===================================
 window.addEventListener('load', () => {
