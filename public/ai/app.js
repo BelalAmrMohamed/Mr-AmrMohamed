@@ -53,6 +53,7 @@ function icon(name) {
     panelRight: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M15 3v18"/></svg>',
     panelRightOpen: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M15 3v18"/><path d="m10 15-3-3 3-3"/></svg>',
     download: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v10.59l3.3-3.3 1.4 1.42L12 17.4l-4.7-4.7 1.4-1.42 3.3 3.3V3h2ZM5 19h14v2H5v-2Z"/></svg>',
+    pdf: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9.5 8.5c0 .83-.67 1.5-1.5 1.5H7v2H5.5V8H8c.83 0 1.5.67 1.5 1.5v2zm5 3.5h-3.5V8h3.5c.83 0 1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5zm-5-3.5H8v-2h1.5v2zm5 2H16v-4h1.5v4zM19 13h-2.5v-1.5H18V10h-1.5V9.5H19V8h-4v7h1.5v-2H19v-1z"/></svg>',
     clipboard: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 2h6a1 1 0 0 1 1 1v1h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2V3a1 1 0 0 1 1-1Zm1 2v1h4V4h-4ZM6 6v14h12V6h-2v1H8V6H6Z"/></svg>',
     rename: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25ZM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83Z"/></svg>',
     trash: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>',
@@ -400,6 +401,7 @@ class AiChat {
         <button type="button" data-act="rename">${icon('rename')}<span>Rename</span></button>
         <button type="button" data-act="copy">${icon('clipboard')}<span>Copy to clipboard</span></button>
         <button type="button" data-act="download">${icon('download')}<span>Download as file</span></button>
+        <button type="button" data-act="pdf">${icon('pdf')}<span>Export as PDF</span></button>
         <button type="button" data-act="delete" class="is-danger">${icon('trash')}<span>Delete</span></button>
       </div>
     `);
@@ -440,10 +442,27 @@ class AiChat {
       case 'download':
         this.download(`${chat.title}.md`, store.exportAsMarkdown(chat), 'text/markdown');
         break;
+      case 'pdf':
+        this.exportAsPdf(chatId);
+        break;
       case 'delete':
         this.openDeleteDialog(chatId);
         break;
     }
+  }
+
+  exportAsPdf(chatId) {
+    const chat = store.get(chatId);
+    if (!chat) return;
+    if (store.getActive()?.id !== chatId) {
+      this.selectChat(chatId);
+    }
+    if (this.modal.hidden) {
+      this.open();
+    }
+    requestAnimationFrame(() => {
+      window.print();
+    });
   }
 
   startInlineRename(chatId) {
