@@ -176,6 +176,113 @@ function renderFillBlank(data, ctx) {
   return wrap;
 }
 
+function renderQuiz(data, ctx) {
+  const questions = Array.isArray(data.questions) ? data.questions : [];
+  const total = data.totalQuestions || questions.length;
+  const wrap = el(`<div class="ai-card ai-quiz-card"></div>`);
+  const meta = el(`<div class="ai-component-meta"></div>`);
+  const score = el(`<div class="ai-component-score"></div>`);
+  const body = el(`<div class="ai-quiz-body"></div>`);
+  const nextWrap = el(`<div class="ai-quiz-next" hidden></div>`);
+  const nextBtn = el(`<button type="button" class="ai-btn-mini ai-btn-primary">Next question</button>`);
+  nextWrap.append(nextBtn);
+  wrap.append(meta, score, body, nextWrap);
+
+  let index = 0;
+  let correctCount = 0;
+  const answers = [];
+
+  function updateMeta() {
+    meta.textContent = `Question ${index + 1} of ${total}`;
+    score.textContent = `Score: ${correctCount} / ${index}`;
+  }
+
+  function renderQuestion() {
+    body.innerHTML = '';
+    nextWrap.hidden = true;
+    const q = questions[index] || {};
+    updateMeta();
+
+    if (q.type === 'fill_blank') {
+      body.append(el(`<p class="ai-fillblank-prompt">${escapeHtml(q.prompt || '')}</p>`));
+      const form = el('<form class="ai-fillblank-form"></form>');
+      const input = el(`<input type="text" class="ai-fillblank-input" placeholder="Type your answer" dir="auto" autocomplete="off">`);
+      const submit = el('<button type="submit" class="ai-btn-mini">Check</button>');
+      form.append(input, submit);
+      const result = el('<p class="ai-fillblank-result" hidden></p>');
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const validAnswers = (Array.isArray(q.answers) ? q.answers : [q.answer])
+          .filter(Boolean)
+          .map((a) => a.trim().toLowerCase());
+        const answer = input.value.trim();
+        const correct = validAnswers.includes(answer.toLowerCase());
+        finishQuestion(q, correct, answer, result, () => {
+          result.hidden = false;
+          result.textContent = correct
+            ? 'Correct! ' + (q.explanation || '')
+            : `Not quite. Correct answer: ${validAnswers[0] || ''}. ${q.explanation || ''}`;
+          result.className = `ai-fillblank-result ${correct ? 'is-correct' : 'is-wrong'}`;
+          input.disabled = true;
+          submit.disabled = true;
+        });
+      });
+      body.append(form, result);
+    } else {
+      body.append(el(`<p class="ai-mcq-question">${escapeHtml(q.question || '')}</p>`));
+      const list = el('<div class="ai-mcq-options" role="listbox"></div>');
+      (q.options || []).forEach((opt, i) => {
+        const btn = el(`<button type="button" class="ai-mcq-option" data-i="${i}">${escapeHtml(opt)}</button>`);
+        btn.addEventListener('click', () => {
+          if (list.dataset.answered) return;
+          list.dataset.answered = '1';
+          const correct = i === q.correctIndex;
+          [...list.children].forEach((c, ci) => {
+            c.disabled = true;
+            if (ci === q.correctIndex) c.classList.add('is-correct');
+          });
+          if (!correct) btn.classList.add('is-wrong');
+          finishQuestion(q, correct, opt, list, () => {
+            if (q.explanation) body.append(el(`<p class="ai-mcq-explanation">${escapeHtml(q.explanation)}</p>`));
+          });
+        });
+        list.append(btn);
+      });
+      body.append(list);
+    }
+  }
+
+  function finishQuestion(q, correct, answer, _resultNode, applyUi) {
+    if (correct) correctCount += 1;
+    answers.push({ question: q.question || q.prompt || '', correct, answer });
+    applyUi();
+    score.textContent = `Score: ${correctCount} / ${index + 1}`;
+    const isLast = index === questions.length - 1;
+    if (!isLast) {
+      nextWrap.hidden = false;
+    } else {
+      wrap.append(el(`<p class="ai-quiz-done">Quiz complete! Final score: ${correctCount} / ${questions.length}</p>`));
+      ctx?.onInteract?.({
+        quizComplete: true,
+        correct: correctCount,
+        total: questions.length,
+        answers,
+        quizId: data.quizId || null,
+      });
+    }
+  }
+
+  nextBtn.addEventListener('click', () => {
+    index += 1;
+    renderQuestion();
+  });
+
+  if (questions.length) renderQuestion();
+  else body.append(el(`<p>No questions were generated.</p>`));
+
+  return wrap;
+}
+
 function renderFlashcards(data) {
   const cards = Array.isArray(data.cards) ? data.cards : [];
   const wrap = el(`<div class="ai-card ai-flashcards-card"></div>`);
@@ -308,6 +415,7 @@ function renderButtons(data) {
 const COMPONENT_RENDERERS = {
   mcq: renderMcq,
   fill_blank: renderFillBlank,
+  quiz: renderQuiz,
   flashcards: renderFlashcards,
   vocab_card: renderVocabCard,
   grammar_card: renderGrammarCard,

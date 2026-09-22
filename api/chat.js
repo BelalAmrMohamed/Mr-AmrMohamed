@@ -43,9 +43,9 @@ Tool usage rules:
 - Use "show_teacher_image" when a user wants to see what Mr. Amr looks like or asks for his photo.
 - Use "show_youtube_video" to recommend the sample lesson (${TEACHER.sampleVideo}) or another relevant, real, publicly known YouTube video when it would help — only use a URL you are confident is real; never invent a video ID.
 - Use "render_component" whenever an interactive/visual element would teach or engage better than plain text. For practice and quizzes, prefer an interactive component over a wall of text.
-- QUIZ MODE IS INTERACTIVE: If a user asks for a quiz or multiple practice questions, create a quiz session with a stable "quizId", "totalQuestions", "questionNumber", and "scoreBefore". Render exactly ONE question per component call. Never put several quiz questions into one MCQ/fill_blank component. Start at questionNumber 1 and scoreBefore 0. After the student answers, acknowledge/check the result, use the returned scoreAfter to create the NEXT question, increment questionNumber, and continue until totalQuestions is reached. At the end, use "quiz_summary" with the final score. Do not reveal the correct answer before the student answers.
-- For each MCQ, include question, options, correctIndex, explanation, quizId, questionNumber, totalQuestions, and scoreBefore. For fill_blank, include prompt, answer(s), explanation, quizId, questionNumber, totalQuestions, and scoreBefore.
-- If the user asks for a single practice question, render one component and stop; do not invent a multi-question session.
+- QUIZ MODE IS INTERACTIVE: If a user asks for a quiz or multiple practice questions (e.g. "quiz me on 5 words"), generate ALL of the requested questions at once and render them together with a SINGLE "render_component" call using type "quiz" — do not split them across multiple responses or wait for the student to answer one before showing the next. Give the quiz a stable "quizId", the full "totalQuestions", and a "questions" array containing every question up front (each with its own question/prompt, options if MCQ, correctIndex or answer(s), and explanation). The student will answer them one at a time in the UI; you do not need to send follow-up questions yourself. Only after the student finishes all questions (you will receive an interactive learning event summarizing their answers) should you respond with a short encouraging wrap-up, optionally using "quiz_summary" with the final score. Do not reveal correct answers before the student answers.
+- For a "quiz" component's data, use: {"quizId": "...", "totalQuestions": N, "questions": [{"type": "mcq", "question": "...", "options": ["..."], "correctIndex": 0, "explanation": "..."}, {"type": "fill_blank", "prompt": "...", "answers": ["..."], "explanation": "..."}, ...]}. Mix "mcq" and "fill_blank" question types only if it fits the request; otherwise keep them consistent.
+- If the user asks for a single practice question, render one "mcq" or "fill_blank" component and stop; do not invent a multi-question session.
 - Do not call a tool just to say hello. Reserve tools for moments that clearly call for them.
 - Keep replies concise, warm, and encouraging. Match the student's language (Arabic or English) and level.
 - When correcting writing, first restate the type of mistake in plain terms, then explain, then optionally give the corrected version.
@@ -112,6 +112,7 @@ const TOOLS = [
               enum: [
                 'mcq',
                 'fill_blank',
+                'quiz',
                 'flashcards',
                 'vocab_card',
                 'grammar_card',
@@ -121,12 +122,12 @@ const TOOLS = [
                 'lesson_card',
                 'buttons',
               ],
-              description: 'Which interactive component to render.',
+              description: 'Which interactive component to render. Use "quiz" to render every question of a multi-question quiz at once.',
             },
             data: {
               type: 'object',
               description:
-                'Component payload. Shape depends on type, e.g. {"question":"...","options":["a","b","c"],"correctIndex":1,"explanation":"..."} for mcq; {"cards":[{"front":"...","back":"..."}]} for flashcards; {"word":"...","definition":"...","examples":["..."],"synonyms":["..."],"antonyms":["..."],"collocations":["..."]} for vocab_card; {"level":"B1","label":"..."} for progress. Always pass valid JSON matching the type.',
+                'Component payload. Shape depends on type, e.g. {"question":"...","options":["a","b","c"],"correctIndex":1,"explanation":"..."} for a single mcq; {"quizId":"...","totalQuestions":5,"questions":[{"type":"mcq","question":"...","options":["..."],"correctIndex":0,"explanation":"..."},{"type":"fill_blank","prompt":"...","answers":["..."],"explanation":"..."}]} for quiz (ALL questions generated up front); {"cards":[{"front":"...","back":"..."}]} for flashcards; {"word":"...","definition":"...","examples":["..."],"synonyms":["..."],"antonyms":["..."],"collocations":["..."]} for vocab_card; {"level":"B1","label":"..."} for progress. Always pass valid JSON matching the type.',
             },
           },
           required: ['type', 'data'],
