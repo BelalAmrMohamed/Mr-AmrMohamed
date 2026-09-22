@@ -12,7 +12,8 @@
     height: 58px;
     border-radius: 50%;
     border: none;
-    background-color: transparent;
+    background-color: white;
+    box-shadow: var(--shadow-sm);
     color: var(--rich-gold);
     display: flex;
     align-items: center;

@@ -18,8 +18,7 @@ Mr. Amr Mohamed/
 ├── api/ [11.17 KB, 236 LOC]
 │   └── chat.js
 │
-├── docs/ [220.19 KB, 79 LOC]
-│   ├── image-3.png
+├── docs/ [3.39 KB, 77 LOC]
 │   ├── issues.md
 │   └── teacher-info.md
 │
@@ -32,8 +31,8 @@ Mr. Amr Mohamed/
 │       ├── package.json
 │       └── README.md
 │
-├── public/ [1.98 MB, 4986 LOC]
-│   ├── ai/ [88.23 KB, 2721 LOC]
+├── public/ [2 MB, 5146 LOC]
+│   ├── ai/ [92.49 KB, 2859 LOC]
 │   │   ├── api.js
 │   │   ├── app.js
 │   │   ├── chat.css
@@ -47,7 +46,7 @@ Mr. Amr Mohamed/
 │   │       ├── profile.jpg
 │   │       └── profile.png
 │   │
-│   ├── css/ [19.24 KB, 1036 LOC]
+│   ├── css/ [19.51 KB, 1055 LOC]
 │   │   └── style.css
 │   │
 │   ├── js/ [11.78 KB, 340 LOC]
@@ -73,23 +72,23 @@ Mr. Amr Mohamed/
 
 | Directory | Lines of Code |
 |-----------|---------------|
-| `public` | 4986 |
+| `public` | 5146 |
 | `node_modules` | 3409 |
 | `scripts` | 499 |
 | `(root)` | 317 |
 | `api` | 236 |
-| `docs` | 79 |
+| `docs` | 77 |
 
 ### Top 10 Largest Code Files
 
 | File | Lines of Code |
 |------|---------------|
 | `node_modules/ignore/index.js` | 1452 |
-| `public/ai/chat.css` | 1266 |
+| `public/ai/chat.css` | 1385 |
 | `node_modules/ignore/legacy.js` | 1255 |
-| `public/css/style.css` | 1036 |
-| `public/ai/app.js` | 839 |
-| `public/index.html` | 576 |
+| `public/css/style.css` | 1055 |
+| `public/ai/app.js` | 858 |
+| `public/index.html` | 579 |
 | `node_modules/ignore/README.md` | 505 |
 | `public/ai/tools.js` | 440 |
 | `scripts/map.js` | 341 |
@@ -99,25 +98,25 @@ Mr. Amr Mohamed/
 
 | Extension | Files | Lines of Code | Size |
 |-----------|-------|---------------|------------|
-| .js | 11 | 5443 | 195.94 KB |
-| .md | 5 | 886 | 26.96 KB |
+| .js | 11 | 5462 | 196.8 KB |
+| .md | 5 | 884 | 26.79 KB |
 | .json | 4 | 202 | 6.4 KB |
-| .css | 2 | 2302 | 47.63 KB |
-| .html | 2 | 577 | 33.48 KB |
+| .css | 2 | 2440 | 51.3 KB |
+| .html | 2 | 580 | 33.61 KB |
 | .ts | 1 | 82 | 1.91 KB |
 | (no extension) | 1 | 21 | 1.07 KB |
 | .txt | 1 | 4 | 88 B |
 | .xml | 1 | 9 | 294 B |
-| **Total** | **28** | **9526** | **313.76 KB** |
+| **Total** | **28** | **9684** | **318.26 KB** |
 
 ### Binary / Media Files (Physical Size)
 
 | Extension | Files | Size |
 |-----------|-------|------------|
-| .png | 5 | 1.92 MB |
+| .png | 4 | 1.73 MB |
 | .jpeg | 1 | 36.16 KB |
 | .jpg | 1 | 77.24 KB |
-| **Total** | **7** | **2.04 MB** |
+| **Total** | **6** | **1.84 MB** |
 
-**Grand Total Files:** 35  
-**Total Repository Size:** 2.34 MB
+**Grand Total Files:** 34  
+**Total Repository Size:** 2.15 MB
