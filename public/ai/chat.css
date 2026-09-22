@@ -566,17 +566,18 @@ body.ai-modal-open {
 .ai-input-shell {
     flex: 1;
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     gap: 8px;
     border: 1px solid rgba(30, 58, 95, 0.2);
     border-radius: 24px;
-    padding: 6px 6px 6px 16px;
+    padding: 6px 8px 6px 16px;
     background: var(--crisp-white);
-    transition: border-color 0.15s ease;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .ai-input-shell:focus-within {
     border-color: var(--navy-blue);
+    box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.08);
 }
 
 .ai-input {
@@ -587,7 +588,11 @@ body.ai-modal-open {
     padding: 8px 0;
     font-family: inherit;
     font-size: 0.94rem;
+    line-height: 1.45;
     max-height: 160px;
+    box-sizing: border-box;
+    display: block;
+    margin: 0;
 }
 
 .ai-input:focus {
@@ -597,30 +602,63 @@ body.ai-modal-open {
 .ai-input-actions {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
     flex-shrink: 0;
+    align-self: flex-end;
+    margin-bottom: 2px;
 }
 
+.ai-mic-btn,
 .ai-send-btn,
 .ai-stop-btn {
-    width: 40px;
-    height: 40px;
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
     border: none;
-    background: var(--navy-blue);
-    color: var(--rich-gold);
-    font-size: 1.1rem;
+    background: transparent;
+    color: var(--slate-gray);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
     flex-shrink: 0;
     transition: var(--transition);
+    padding: 0;
 }
 
-.ai-send-btn:hover,
-.ai-stop-btn:hover { background: var(--dark-navy); }
+.ai-send-btn svg,
+.ai-stop-btn svg,
+.ai-mic-btn svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+}
+
+.ai-send-btn svg {
+    fill: none;
+    stroke: currentColor;
+}
+
+.ai-mic-btn:hover:not(:disabled),
+.ai-send-btn:hover:not(:disabled),
+.ai-stop-btn:hover {
+    background: rgba(30, 58, 95, 0.08);
+    color: var(--navy-blue);
+}
+
+.ai-send-btn:not(:disabled) {
+    color: var(--navy-blue);
+}
+
+.ai-stop-btn {
+    color: var(--navy-blue);
+}
 
 .ai-send-btn:disabled {
-    opacity: 0.4;
+    opacity: 0.3;
+    color: var(--slate-gray);
     cursor: not-allowed;
+    background: transparent;
 }
 
 /* ---- interactive tool cards ---- */
@@ -1109,12 +1147,6 @@ body.ai-modal-open {
 @keyframes ai-voice-ring {
     0% { transform: scale(.82); opacity: .7; }
     100% { transform: scale(1.35); opacity: 0; }
-}
-
-.ai-send-btn,
-.ai-stop-btn {
-    background: var(--navy-blue);
-    color: var(--rich-gold);
 }
 
 .ai-thinking {
