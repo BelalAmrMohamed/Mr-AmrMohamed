@@ -122,7 +122,7 @@ class AiChat {
   build() {
     this.launcher = el(`
       <button class="ai-widget-btn" type="button" aria-label="Open Mr. Amr's AI assistant">
-        ${icon('brand')}
+        <img src="favicon.png" height="50" width="50" alt="AI">
       </button>
     `);
     document.body.append(this.launcher);
