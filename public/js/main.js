@@ -157,7 +157,7 @@ Service: ${formData.service || 'Not specified'}
 Message:
 ${formData.message}`;
             
-            const whatsappURL = `https://wa.me/201550899245?text=${encodeURIComponent(whatsappMessage)}`;
+            const whatsappURL = `https://wa.me/201205452322?text=${encodeURIComponent(whatsappMessage)}`;
             
             // Show success message
             formMessage.textContent = 'Thank you for your message! Redirecting to WhatsApp...';
