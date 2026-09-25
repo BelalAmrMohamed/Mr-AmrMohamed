@@ -12,3 +12,7 @@ Online First rules (for users that install the app):
 - When the user is offline, the cached code gets displayed with a very tiny offline banner at the bottom of the screen, that has a cancel button.
 - When the user is online they always update the cached code.
 - Users that didn't instal the app never cache anything at all.
+
+## SEO & GEO
+Improve the SEO and GEO of the website:
+- Sign it in Google Search Console and bing search, too.

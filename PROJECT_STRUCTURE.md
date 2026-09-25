@@ -18,7 +18,7 @@ Mr. Amr Mohamed/
 ├── api/ [11.17 KB, 236 LOC]
 │   └── chat.js
 │
-├── docs/ [3.39 KB, 77 LOC]
+├── docs/ [3.5 KB, 81 LOC]
 │   ├── issues.md
 │   └── teacher-info.md
 │
@@ -31,20 +31,19 @@ Mr. Amr Mohamed/
 │       ├── package.json
 │       └── README.md
 │
-├── public/ [2 MB, 5146 LOC]
+├── public/ [1.21 MB, 5146 LOC]
 │   ├── ai/ [92.49 KB, 2859 LOC]
 │   │   ├── api.js
 │   │   ├── app.js
 │   │   ├── chat.css
 │   │   └── tools.js
 │   │
-│   ├── assets/ [1.78 MB, 0 LOC]
-│   │   └── images/ [1.78 MB, 0 LOC]
-│   │       ├── Main.png
-│   │       ├── Personal picuter (no bg).png
+│   ├── assets/ [1008.19 KB, 0 LOC]
+│   │   └── images/ [1008.19 KB, 0 LOC]
 │   │       ├── Personal picuter.jpeg
 │   │       ├── profile.jpg
-│   │       └── profile.png
+│   │       ├── profile.png
+│   │       └── thumbnail.jpg
 │   │
 │   ├── css/ [19.51 KB, 1055 LOC]
 │   │   └── style.css
@@ -75,9 +74,9 @@ Mr. Amr Mohamed/
 | `public` | 5146 |
 | `node_modules` | 3409 |
 | `scripts` | 499 |
-| `(root)` | 317 |
+| `(root)` | 316 |
 | `api` | 236 |
-| `docs` | 77 |
+| `docs` | 81 |
 
 ### Top 10 Largest Code Files
 
@@ -99,24 +98,24 @@ Mr. Amr Mohamed/
 | Extension | Files | Lines of Code | Size |
 |-----------|-------|---------------|------------|
 | .js | 11 | 5462 | 196.8 KB |
-| .md | 5 | 884 | 26.79 KB |
+| .md | 5 | 887 | 26.87 KB |
 | .json | 4 | 202 | 6.4 KB |
 | .css | 2 | 2440 | 51.3 KB |
-| .html | 2 | 580 | 33.61 KB |
+| .html | 2 | 580 | 33.58 KB |
 | .ts | 1 | 82 | 1.91 KB |
 | (no extension) | 1 | 21 | 1.07 KB |
-| .txt | 1 | 4 | 88 B |
-| .xml | 1 | 9 | 294 B |
-| **Total** | **28** | **9684** | **318.26 KB** |
+| .txt | 1 | 4 | 81 B |
+| .xml | 1 | 9 | 287 B |
+| **Total** | **28** | **9687** | **318.29 KB** |
 
 ### Binary / Media Files (Physical Size)
 
 | Extension | Files | Size |
 |-----------|-------|------------|
-| .png | 4 | 1.73 MB |
+| .jpg | 2 | 229.37 KB |
+| .png | 2 | 803.99 KB |
 | .jpeg | 1 | 36.16 KB |
-| .jpg | 1 | 77.24 KB |
-| **Total** | **6** | **1.84 MB** |
+| **Total** | **5** | **1.04 MB** |
 
-**Grand Total Files:** 34  
-**Total Repository Size:** 2.15 MB
+**Grand Total Files:** 33  
+**Total Repository Size:** 1.36 MB
