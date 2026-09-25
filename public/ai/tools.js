@@ -16,7 +16,7 @@ const CONTACT_METHODS = {
   },
   email: {
     label: 'Email',
-    href: 'mailto:amr.671390@t2.moe.edu.eg',
+    href: 'mailto:amrmohammed4111@gmail.com',
     icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 4h20v16H2V4Zm2 2v.01L12 12l8-5.99V6H4Zm16 2.24-7.4 5.55a1 1 0 0 1-1.2 0L4 8.24V18h16V8.24Z"/></svg>',
   },
   telegram: {

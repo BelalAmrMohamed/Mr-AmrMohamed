@@ -48,7 +48,7 @@
 
 # social
 
-- Work Email: amr.671390@t2.moe.edu.eg
+- Work Email: amrmohammed4111@gmail.com
 
 - Phone 1: 01550899245
 

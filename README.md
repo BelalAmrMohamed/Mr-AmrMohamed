@@ -89,7 +89,7 @@ Then add this CSS to `style.css`:
 
 In `index.html`, search for and update:
 - WhatsApp numbers: `201550899245` and `201024394486`
-- Email: `amr.671390@t2.moe.edu.eg`
+- Email: `amrmohammed4111@gmail.com`
 - Telegram: `@01024394486`
 - LinkedIn: Update the URL
 
@@ -162,8 +162,8 @@ Tested and working on:
 ## 📞 Support
 
 For issues or questions about the website:
-- Email: amr.671390@t2.moe.edu.eg
-- WhatsApp: +20 155 089 9245
+- Email: amrmohammed4111@gmail.com
+- WhatsApp: +20 12 0545 2322
 
 ## 📄 License
 

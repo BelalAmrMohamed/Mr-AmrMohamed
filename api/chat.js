@@ -19,7 +19,7 @@ function getKeys() {
 const TEACHER = {
   name: 'Amr Mohamed Ahmed',
   title: 'Senior English Language Expert & AUC Certified Trainer',
-  email: 'amr.671390@t2.moe.edu.eg',
+  email: 'amrmohammed4111@gmail.com',
   whatsapp: 'https://wa.me/201205452322',
   telegram: 'https://t.me/01024394486',
   linkedin: 'https://www.linkedin.com/in/amr-mohammed-94694435b/',
