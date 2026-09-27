@@ -971,7 +971,7 @@ p {
 }
 
 /* Mobile */
-@media (max-width: 768px) {
+@media (max-width: 900px) {
     :root {
         --section-padding: 60px 0;
     }
