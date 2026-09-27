@@ -31,7 +31,7 @@ Mr. Amr Mohamed/
 │       ├── package.json
 │       └── README.md
 │
-├── public/ [1.21 MB, 5146 LOC]
+├── public/ [1.21 MB, 5193 LOC]
 │   ├── ai/ [92.49 KB, 2859 LOC]
 │   │   ├── api.js
 │   │   ├── app.js
@@ -45,7 +45,7 @@ Mr. Amr Mohamed/
 │   │       ├── profile.png
 │   │       └── thumbnail.jpg
 │   │
-│   ├── css/ [19.51 KB, 1055 LOC]
+│   ├── css/ [19.66 KB, 1103 LOC]
 │   │   └── style.css
 │   │
 │   ├── js/ [11.78 KB, 340 LOC]
@@ -71,10 +71,10 @@ Mr. Amr Mohamed/
 
 | Directory | Lines of Code |
 |-----------|---------------|
-| `public` | 5146 |
+| `public` | 5193 |
 | `node_modules` | 3409 |
 | `scripts` | 499 |
-| `(root)` | 316 |
+| `(root)` | 317 |
 | `api` | 236 |
 | `docs` | 81 |
 
@@ -85,9 +85,9 @@ Mr. Amr Mohamed/
 | `node_modules/ignore/index.js` | 1452 |
 | `public/ai/chat.css` | 1385 |
 | `node_modules/ignore/legacy.js` | 1255 |
-| `public/css/style.css` | 1055 |
+| `public/css/style.css` | 1103 |
 | `public/ai/app.js` | 858 |
-| `public/index.html` | 579 |
+| `public/index.html` | 578 |
 | `node_modules/ignore/README.md` | 505 |
 | `public/ai/tools.js` | 440 |
 | `scripts/map.js` | 341 |
@@ -98,15 +98,15 @@ Mr. Amr Mohamed/
 | Extension | Files | Lines of Code | Size |
 |-----------|-------|---------------|------------|
 | .js | 11 | 5462 | 196.8 KB |
-| .md | 5 | 887 | 26.87 KB |
-| .json | 4 | 202 | 6.4 KB |
-| .css | 2 | 2440 | 51.3 KB |
-| .html | 2 | 580 | 33.58 KB |
+| .md | 5 | 886 | 26.83 KB |
+| .json | 4 | 204 | 6.52 KB |
+| .css | 2 | 2488 | 51.46 KB |
+| .html | 2 | 579 | 33.49 KB |
 | .ts | 1 | 82 | 1.91 KB |
 | (no extension) | 1 | 21 | 1.07 KB |
 | .txt | 1 | 4 | 81 B |
 | .xml | 1 | 9 | 287 B |
-| **Total** | **28** | **9687** | **318.29 KB** |
+| **Total** | **28** | **9735** | **318.44 KB** |
 
 ### Binary / Media Files (Physical Size)
 
