@@ -752,6 +752,12 @@ class AiChat {
       prompt: data.question || data.prompt || '',
       answer: typeof result === 'object' ? result.answer : undefined,
     };
+    if (window.mrAmrAnalytics && result?.quizComplete) {
+      window.mrAmrAnalytics.trackAiEvent('quiz_completed', {
+        quizScore: result.total ? result.correct / result.total : null,
+        quizTotal: result.total ?? null,
+      });
+    }
     store.addMessage(chatId, {
       role: 'interaction',
       text: JSON.stringify(interaction),
@@ -769,10 +775,15 @@ class AiChat {
 
   async handleSend(text) {
     const chat = this.ensureActiveChat();
+    const isFirstMessage = chat.messages.length === 0;
     store.addMessage(chat.id, { role: 'user', text });
     this.renderHistory();
     this.renderActiveChat();
     this.updateNewChatState();
+    if (window.mrAmrAnalytics) {
+      if (isFirstMessage) window.mrAmrAnalytics.trackAiEvent('chat_started');
+      window.mrAmrAnalytics.trackAiEvent('message_sent');
+    }
     await this.generateReply(chat.id);
   }
 
@@ -798,6 +809,11 @@ class AiChat {
         toolCalls: toolCalls.length ? toolCalls : null,
         geminiTurns,
       });
+      if (window.mrAmrAnalytics && toolCalls.length) {
+        for (const tc of toolCalls) {
+          window.mrAmrAnalytics.trackAiEvent('tool_used', { toolName: tc.name });
+        }
+      }
       if (store.getActive()?.id === chatId) {
         this.$messages.append(this.buildMessageEl(chatId, msg));
         this.scrollToBottom();

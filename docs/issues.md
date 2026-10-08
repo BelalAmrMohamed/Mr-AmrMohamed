@@ -17,13 +17,11 @@ Online First rules (for users that install the app):
 Improve the SEO and GEO of the website:
 - Sign it in Google Search Console and bing search, too.
 
-## Page For the Teacher
-- The teacher (my father) requested a page for himself, where he can view the live count of the visitors of the website. We may try to integrate something like Vercel Insights like this and wire it to the website, or implement something of our own.
-
-Implement an admin Page for me, and add features to it if you can, go all out and impress my father (the teacher).
-
-Use this template for the sign in page: [sign in template](animated-ui-components/sign-in-page-template.html). You can modify the colors as needed.
-
-To give you the full power, I craeted a Database for the website, use `supabase migration new <migration_name>` to create a new migration (or create it manually), and I'll use `supabase db push` when I finish. 
-
-You can configure any new environment variables in `.env.example`, and I'll update `.env.local` and Vercel myself.
+## Page For the Teacher — ✅ Done, see [docs/admin-dashboard-setup.md](admin-dashboard-setup.md)
+- `/admin` — sign-in page (adapted from the template, navy/gold themed)
+- `/admin/dashboard.html` — live visitor count, 30-day traffic chart, top
+  pages/referrers/countries/devices/browsers, AI assistant usage stats,
+  contact-click counts, and a recent-visitor feed. Auto-refreshes every 15s.
+- Own implementation (no Vercel Insights dependency): `public/js/analytics.js`
+  beacons page views + heartbeats to `api/track.js`; Supabase stores it.
+- Setup steps (migration, env vars, creating the login): see the linked doc.
