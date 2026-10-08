@@ -50,8 +50,6 @@
 
 - Work Email: amrmohammed4111@gmail.com
 
-- Phone 1: 01550899245
-
 - Phone 2: 00201024394486
 
 - A sample explanation video: https://youtu.be/EaqgiH3RU_4

@@ -18,7 +18,10 @@ Mr. Amr Mohamed/
 ├── api/ [11.17 KB, 236 LOC]
 │   └── chat.js
 │
-├── docs/ [3.5 KB, 81 LOC]
+├── docs/ [27.61 KB, 697 LOC]
+│   ├── animated-ui-components/ [23.29 KB, 607 LOC]
+│   │   └── sign-in-page-template.html
+│   │
 │   ├── issues.md
 │   └── teacher-info.md
 │
@@ -59,10 +62,13 @@ Mr. Amr Mohamed/
 │   ├── sitemap.xml
 │   └── storage.js
 │
-└── scripts/ [17.77 KB, 499 LOC]
-    ├── commit.js
-    ├── git-changes.js
-    └── map.js
+├── scripts/ [17.77 KB, 499 LOC]
+│   ├── commit.js
+│   ├── git-changes.js
+│   └── map.js
+│
+└── supabase/ [15.21 KB, 415 LOC]
+    └── config.toml
 ```
 
 ## Codebase Summary
@@ -73,10 +79,11 @@ Mr. Amr Mohamed/
 |-----------|---------------|
 | `public` | 5193 |
 | `node_modules` | 3409 |
+| `docs` | 697 |
 | `scripts` | 499 |
-| `(root)` | 317 |
+| `supabase` | 415 |
 | `api` | 236 |
-| `docs` | 81 |
+| `(root)` | 151 |
 
 ### Top 10 Largest Code Files
 
@@ -87,26 +94,27 @@ Mr. Amr Mohamed/
 | `node_modules/ignore/legacy.js` | 1255 |
 | `public/css/style.css` | 1103 |
 | `public/ai/app.js` | 858 |
+| `docs/animated-ui-components/sign-in-page-template.html` | 607 |
 | `public/index.html` | 578 |
 | `node_modules/ignore/README.md` | 505 |
 | `public/ai/tools.js` | 440 |
-| `scripts/map.js` | 341 |
-| `public/js/main.js` | 340 |
+| `supabase/config.toml` | 415 |
 
 ### Code Files
 
 | Extension | Files | Lines of Code | Size |
 |-----------|-------|---------------|------------|
 | .js | 11 | 5462 | 196.8 KB |
-| .md | 5 | 886 | 26.83 KB |
-| .json | 4 | 204 | 6.52 KB |
+| .md | 5 | 729 | 23.75 KB |
+| .json | 4 | 204 | 6.61 KB |
+| .html | 3 | 1186 | 56.78 KB |
 | .css | 2 | 2488 | 51.46 KB |
-| .html | 2 | 579 | 33.49 KB |
 | .ts | 1 | 82 | 1.91 KB |
 | (no extension) | 1 | 21 | 1.07 KB |
 | .txt | 1 | 4 | 81 B |
 | .xml | 1 | 9 | 287 B |
-| **Total** | **28** | **9735** | **318.44 KB** |
+| .toml | 1 | 415 | 15.21 KB |
+| **Total** | **30** | **10600** | **353.95 KB** |
 
 ### Binary / Media Files (Physical Size)
 
@@ -117,5 +125,5 @@ Mr. Amr Mohamed/
 | .jpeg | 1 | 36.16 KB |
 | **Total** | **5** | **1.04 MB** |
 
-**Grand Total Files:** 33  
-**Total Repository Size:** 1.36 MB
+**Grand Total Files:** 35  
+**Total Repository Size:** 1.39 MB

@@ -9,7 +9,7 @@
     "vercel": "vercel dev",
     "commit": "node scripts/commit.js",
     "map": "node scripts/map.js",
-    "zip": "git archive --format=zip --output=mr-amr.zip HEAD"
+    "zip": "node scripts/map.js && node scripts/commit.js && git archive --format=zip --output=mr-amr.zip HEAD && echo mr-amr.zip is ready!"
   },
   "dependencies": {
     "ignore": "^7.0.9"
