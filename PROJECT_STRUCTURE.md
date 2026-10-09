@@ -11,28 +11,67 @@ Note: Some of the contents listed in this structure may not appear in the output
 
 ```text
 Mr. Amr Mohamed/
+├── jsconfig.json
+├── next.config.js
 ├── package-lock.json
 ├── package.json
+├── postcss.config.js
 ├── PROJECT_STRUCTURE.md
 ├── README.md
+├── tailwind.config.js
 ├── vercel.json
-├── api/ [39.89 KB, 1088 LOC]
-│   ├── _lib/ [10.64 KB, 311 LOC]
-│   │   ├── auth.js
-│   │   ├── env.js
-│   │   ├── request-meta.js
-│   │   └── supabase.js
+├── app/ [7.49 KB, 164 LOC]
+│   ├── api/ [2.36 KB, 72 LOC]
+│   │   ├── admin/ [1.19 KB, 36 LOC]
+│   │   │   ├── cleanup/ [307 B, 9 LOC]
+│   │   │   │   └── route.js
+│   │   │   │
+│   │   │   ├── diag/ [304 B, 9 LOC]
+│   │   │   │   └── route.js
+│   │   │   │
+│   │   │   ├── me/ [302 B, 9 LOC]
+│   │   │   │   └── route.js
+│   │   │   │
+│   │   │   └── stats/ [305 B, 9 LOC]
+│   │   │       └── route.js
+│   │   │
+│   │   ├── chat/ [298 B, 9 LOC]
+│   │   │   └── route.js
+│   │   │
+│   │   ├── event/ [299 B, 9 LOC]
+│   │   │   └── route.js
+│   │   │
+│   │   ├── public-config/ [307 B, 9 LOC]
+│   │   │   └── route.js
+│   │   │
+│   │   └── track/ [299 B, 9 LOC]
+│   │       └── route.js
 │   │
-│   ├── admin/ [10.78 KB, 309 LOC]
-│   │   ├── cleanup.js
-│   │   ├── diag.js
-│   │   ├── me.js
-│   │   └── stats.js
-│   │
-│   ├── chat.js
-│   ├── event.js
-│   ├── public-config.js
-│   └── track.js
+│   ├── globals.css
+│   ├── layout.jsx
+│   └── page.jsx
+│
+├── components/ [29.99 KB, 627 LOC]
+│   ├── About.jsx
+│   ├── AboutFlat.jsx
+│   ├── AboutPan.jsx
+│   ├── Contact.jsx
+│   ├── Footer.jsx
+│   ├── Hero.jsx
+│   ├── Lesson.jsx
+│   ├── Marquee.jsx
+│   ├── Nav.jsx
+│   ├── Scene.jsx
+│   ├── Services.jsx
+│   ├── ServicesFlat.jsx
+│   ├── ServicesFly.jsx
+│   ├── SmoothScroll.jsx
+│   ├── Theme.jsx
+│   ├── Tunnel.jsx
+│   └── ui.jsx
+│
+├── data/ [3.02 KB, 33 LOC]
+│   └── content.js
 │
 ├── docs/ [35.81 KB, 881 LOC]
 │   ├── animated-ui-components/ [23.29 KB, 607 LOC]
@@ -42,16 +81,10 @@ Mr. Amr Mohamed/
 │   ├── issues.md
 │   └── teacher-info.md
 │
-├── node_modules/ [110.7 KB, 3409 LOC]
-│   └── ignore/ [110.7 KB, 3409 LOC]
-│       ├── index.d.ts
-│       ├── index.js
-│       ├── legacy.js
-│       ├── LICENSE-MIT
-│       ├── package.json
-│       └── README.md
+├── lib/ [1.76 KB, 35 LOC]
+│   └── vercel-adapter.js
 │
-├── public/ [1.26 MB, 6514 LOC]
+├── public/ [1.21 MB, 4830 LOC]
 │   ├── admin/ [47.78 KB, 1157 LOC]
 │   │   ├── dashboard.html
 │   │   └── index.html
@@ -69,16 +102,12 @@ Mr. Amr Mohamed/
 │   │       ├── profile.png
 │   │       └── thumbnail.jpg
 │   │
-│   ├── css/ [19.66 KB, 1103 LOC]
-│   │   └── style.css
-│   │
 │   ├── js/ [16.33 KB, 485 LOC]
 │   │   ├── analytics.js
 │   │   └── main.js
 │   │
 │   ├── favicon.png
 │   ├── google0c1df2c3df22a824.html
-│   ├── index.html
 │   ├── manifest.json
 │   ├── robots.txt
 │   ├── sitemap.xml
@@ -89,8 +118,26 @@ Mr. Amr Mohamed/
 │   ├── git-changes.js
 │   └── map.js
 │
-└── supabase/ [24.53 KB, 602 LOC]
-    ├── migrations/ [8.91 KB, 187 LOC]
+├── server/ [39.96 KB, 1088 LOC]
+│   ├── _lib/ [10.71 KB, 311 LOC]
+│   │   ├── auth.js
+│   │   ├── env.js
+│   │   ├── request-meta.js
+│   │   └── supabase.js
+│   │
+│   ├── admin/ [10.78 KB, 309 LOC]
+│   │   ├── cleanup.js
+│   │   ├── diag.js
+│   │   ├── me.js
+│   │   └── stats.js
+│   │
+│   ├── chat.js
+│   ├── event.js
+│   ├── public-config.js
+│   └── track.js
+│
+└── supabase/ [24.55 KB, 602 LOC]
+    ├── migrations/ [8.93 KB, 187 LOC]
     │   ├── 20261009000000_admin_analytics.sql
     │   ├── 20261009103000_admin_analytics_auth_update.sql
     │   └── 20261009150000_grant_service_role.sql
@@ -104,45 +151,47 @@ Mr. Amr Mohamed/
 
 | Directory | Lines of Code |
 |-----------|---------------|
-| `public` | 6514 |
-| `node_modules` | 3409 |
-| `api` | 1088 |
+| `public` | 4830 |
+| `server` | 1088 |
 | `docs` | 881 |
+| `components` | 627 |
 | `supabase` | 602 |
 | `scripts` | 499 |
-| `(root)` | 201 |
+| `(root)` | 235 |
+| `app` | 164 |
+| `lib` | 35 |
+| `data` | 33 |
 
 ### Top 10 Largest Code Files
 
 | File | Lines of Code |
 |------|---------------|
-| `node_modules/ignore/index.js` | 1452 |
 | `public/ai/chat.css` | 1385 |
-| `node_modules/ignore/legacy.js` | 1255 |
-| `public/css/style.css` | 1103 |
 | `public/ai/app.js` | 874 |
 | `docs/animated-ui-components/sign-in-page-template.html` | 607 |
 | `public/admin/dashboard.html` | 587 |
-| `public/index.html` | 581 |
 | `public/admin/index.html` | 570 |
-| `node_modules/ignore/README.md` | 505 |
+| `public/ai/tools.js` | 440 |
+| `supabase/config.toml` | 415 |
+| `scripts/map.js` | 341 |
+| `public/js/main.js` | 340 |
+| `server/chat.js` | 238 |
 
 ### Code Files
 
 | Extension | Files | Lines of Code | Size |
 |-----------|-------|---------------|------------|
-| .js | 23 | 6475 | 230.75 KB |
-| .md | 6 | 943 | 33.08 KB |
-| .html | 5 | 2346 | 104.69 KB |
-| .json | 5 | 224 | 7.34 KB |
-| .sql | 3 | 187 | 8.91 KB |
-| .css | 2 | 2488 | 51.46 KB |
-| .ts | 1 | 82 | 1.91 KB |
-| (no extension) | 1 | 21 | 1.07 KB |
+| .js | 34 | 3924 | 149.17 KB |
+| .jsx | 19 | 687 | 32.8 KB |
+| .md | 5 | 440 | 18.4 KB |
+| .json | 5 | 146 | 67.38 KB |
+| .html | 4 | 1765 | 71.12 KB |
+| .sql | 3 | 187 | 8.93 KB |
+| .css | 2 | 1417 | 34.1 KB |
 | .txt | 1 | 4 | 81 B |
 | .xml | 1 | 9 | 287 B |
 | .toml | 1 | 415 | 15.62 KB |
-| **Total** | **49** | **13194** | **455.18 KB** |
+| **Total** | **75** | **8994** | **397.88 KB** |
 
 ### Binary / Media Files (Physical Size)
 
@@ -153,5 +202,5 @@ Mr. Amr Mohamed/
 | .jpeg | 1 | 36.16 KB |
 | **Total** | **5** | **1.04 MB** |
 
-**Grand Total Files:** 54  
-**Total Repository Size:** 1.49 MB
+**Grand Total Files:** 80  
+**Total Repository Size:** 1.43 MB

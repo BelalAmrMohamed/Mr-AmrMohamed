@@ -23,7 +23,9 @@ body{@apply bg-bg text-fg font-sans antialiased;transition:background .4s,color 
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
 /* The AI widget (public/ai/chat.css) was written against the old stylesheet's palette.
-   Re-declare those variables here so it renders as designed (a light panel in both themes). */
-.ai-widget-btn,.ai-modal{--navy-blue:#1e3a5f;--dark-navy:#152844;--rich-gold:#c9a961;--crisp-white:#fff;--slate-gray:#4a5568;
+   Re-declare those variables on :root so it renders as designed (a light panel in both themes). */
+:root{--navy-blue:#1e3a5f;--dark-navy:#152844;--rich-gold:#c9a961;--crisp-white:#fff;--slate-gray:#4a5568;
   --light-gray:#f7fafc;--emerald-green:#059669;--font-heading:var(--font-display),Georgia,serif;--font-accent:var(--font-sans),system-ui,sans-serif;
-  --shadow-sm:0 2px 8px rgba(0,0,0,.1);--shadow-lg:0 8px 24px rgba(0,0,0,.2);--transition:all .3s ease;color:#1e293b}
+  --shadow-sm:0 2px 8px rgba(0,0,0,.1);--shadow-lg:0 8px 24px rgba(0,0,0,.2);--transition:all .3s ease}
+/* Also covers dialogs the widget appends straight to <body>, outside .ai-modal */
+.ai-widget-btn,.ai-modal,.ai-custom-dialog{color:#1e293b}
