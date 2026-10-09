@@ -18,21 +18,18 @@ Mr. Amr Mohamed/
 ├── PROJECT_STRUCTURE.md
 ├── README.md
 ├── vercel.json
-├── api/ [46.6 KB, 1294 LOC]
-│   ├── admin/ [17.49 KB, 515 LOC]
-│   │   ├── cleanup.js
-│   │   ├── diag.js
-│   │   ├── login.js
-│   │   ├── logout.js
-│   │   ├── me.js
-│   │   ├── setup.js
-│   │   └── stats.js
-│   │
-│   ├── lib/ [10.64 KB, 311 LOC]
+├── api/ [39.88 KB, 1088 LOC]
+│   ├── _lib/ [10.64 KB, 311 LOC]
 │   │   ├── auth.js
 │   │   ├── env.js
 │   │   ├── request-meta.js
 │   │   └── supabase.js
+│   │
+│   ├── admin/ [10.77 KB, 309 LOC]
+│   │   ├── cleanup.js
+│   │   ├── diag.js
+│   │   ├── me.js
+│   │   └── stats.js
 │   │
 │   ├── chat.js
 │   ├── event.js
@@ -111,11 +108,11 @@ Mr. Amr Mohamed/
 |-----------|---------------|
 | `public` | 6514 |
 | `node_modules` | 3409 |
-| `api` | 1294 |
+| `api` | 1088 |
 | `docs` | 881 |
 | `supabase` | 602 |
 | `scripts` | 499 |
-| `(root)` | 198 |
+| `(root)` | 203 |
 
 ### Top 10 Largest Code Files
 
@@ -136,8 +133,8 @@ Mr. Amr Mohamed/
 
 | Extension | Files | Lines of Code | Size |
 |-----------|-------|---------------|------------|
-| .js | 26 | 6681 | 237.45 KB |
-| .md | 6 | 942 | 33.03 KB |
+| .js | 23 | 6475 | 230.73 KB |
+| .md | 6 | 947 | 33.2 KB |
 | .html | 5 | 2346 | 104.7 KB |
 | .json | 5 | 222 | 7.03 KB |
 | .sql | 3 | 187 | 8.91 KB |
@@ -147,7 +144,7 @@ Mr. Amr Mohamed/
 | .txt | 1 | 4 | 81 B |
 | .xml | 1 | 9 | 287 B |
 | .toml | 1 | 415 | 15.62 KB |
-| **Total** | **52** | **13397** | **461.54 KB** |
+| **Total** | **49** | **13196** | **454.99 KB** |
 
 ### Binary / Media Files (Physical Size)
 
@@ -159,5 +156,5 @@ Mr. Amr Mohamed/
 | .jpeg | 1 | 36.16 KB |
 | **Total** | **7** | **3.33 MB** |
 
-**Grand Total Files:** 59  
-**Total Repository Size:** 3.78 MB
+**Grand Total Files:** 56  
+**Total Repository Size:** 3.77 MB
