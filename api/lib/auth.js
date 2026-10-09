@@ -1,10 +1,11 @@
 // api/lib/auth.js
-// Admin auth, fully delegated to Supabase Auth (Google Sign-In). There is no
-// password of ours anywhere -- the teacher signs in with his Google account,
-// Supabase issues a JWT, the browser sends it on every /api/admin/* request,
-// and we verify it here by asking Supabase who it belongs to, then checking
-// that email against the admin_emails allowlist table. Changing a Google
-// password never touches this project at all.
+// Admin auth, fully delegated to Supabase Auth -- either Google Sign-In or
+// Supabase's own built-in email/password. There is no password of ours
+// anywhere: Supabase issues a JWT on sign-in (via either method), the
+// browser sends it on every /api/admin/* request, and we verify it here by
+// asking Supabase who it belongs to, then checking that email against the
+// admin_emails allowlist table. This file doesn't care which method was
+// used to sign in -- a valid Supabase session is a valid Supabase session.
 
 import { db } from './supabase.js';
 
@@ -46,9 +47,10 @@ function getBearerToken(req) {
 }
 
 /**
- * Require a signed-in Google account whose email is on the admin_emails
- * allowlist. Returns { email, name, avatarUrl } on success, or writes a
- * 401/403 response and returns null (caller should `if (!admin) return;`).
+ * Require a signed-in Supabase account (Google OR email/password) whose
+ * email is on the admin_emails allowlist. Returns { email, name, avatarUrl }
+ * on success, or writes a 401/403 response and returns null (caller should
+ * `if (!admin) return;`).
  */
 export async function requireAdmin(req, res) {
   const token = getBearerToken(req);

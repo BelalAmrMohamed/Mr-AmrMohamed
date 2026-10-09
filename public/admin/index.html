@@ -118,6 +118,15 @@
     }
     #google-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
     #google-btn .icon { width: 1.15rem; height: 1.15rem; }
+    .btn-outline {
+      background: transparent; color: var(--primary); border: 1px solid var(--primary);
+    }
+    .btn-outline:hover { background: color-mix(in srgb, var(--primary) 8%, transparent); }
+
+    .divider { display: flex; align-items: center; gap: 0.75rem; color: var(--muted-foreground); font-size: 0.78rem; }
+    .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+
+    .email-form { display: flex; flex-direction: column; gap: 1rem; }
 
     .icon { width: 1.1rem; height: 1.1rem; flex-shrink: 0; }
 
@@ -302,12 +311,31 @@
             </span>
             <span class="btn-label">Continue with Google</span>
           </button>
+
+          <div class="divider enter" style="--i: 3.5"><span>or</span></div>
+
+          <form id="email-form" class="email-form">
+            <div class="field">
+              <label class="label" for="email">Email</label>
+              <input class="input" id="email" name="email" type="email" required
+                     autocomplete="username" inputmode="email" placeholder="you@example.com" />
+            </div>
+            <div class="field">
+              <label class="label" for="password">Password</label>
+              <input class="input" id="password" name="password" type="password" required
+                     autocomplete="current-password" />
+            </div>
+            <button type="submit" id="email-submit-btn" class="btn btn-outline btn-lg btn-full btn-gap-2">
+              <span class="icon-slot" id="email-icon-slot" aria-hidden="true"></span>
+              <span class="btn-label">Sign in</span>
+            </button>
+          </form>
         </div>
 
         <span role="status" id="auth-status" class="sr-only"></span>
 
         <p class="footnote enter" style="--i: 4">
-          Only Mr. Amr's and the developer's Google accounts can sign in — this page isn't linked anywhere on the public site.
+          Only authorized accounts can sign in — this page isn't linked anywhere on the public site.
         </p>
       </div>
     </div>
@@ -322,58 +350,59 @@
       '<path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>';
 
     const googleBtn = document.getElementById("google-btn");
-    const iconSlot = document.getElementById("google-icon-slot");
-    const label = googleBtn.querySelector(".btn-label");
+    const googleIconSlot = document.getElementById("google-icon-slot");
+    const googleLabel = googleBtn.querySelector(".btn-label");
+    const googleOriginalIcon = googleIconSlot.innerHTML;
+
+    const emailForm = document.getElementById("email-form");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const emailSubmitBtn = document.getElementById("email-submit-btn");
+    const emailIconSlot = document.getElementById("email-icon-slot");
+    const emailLabel = emailSubmitBtn.querySelector(".btn-label");
+
     const errorBanner = document.getElementById("error-banner");
     const statusEl = document.getElementById("auth-status");
-    const originalIcon = iconSlot.innerHTML;
 
     function showError(msg) {
       errorBanner.textContent = msg;
       errorBanner.classList.add("is-visible");
     }
-    function setPending(pending, text) {
+    function clearError() {
+      errorBanner.textContent = "";
+      errorBanner.classList.remove("is-visible");
+    }
+
+    function setGooglePending(pending, text) {
       googleBtn.disabled = pending;
-      iconSlot.innerHTML = pending ? SPINNER_ICON : originalIcon;
-      label.textContent = text || (pending ? "Redirecting\u2026" : "Continue with Google");
-      statusEl.textContent = pending ? (text || "Working") : "";
+      googleIconSlot.innerHTML = pending ? SPINNER_ICON : googleOriginalIcon;
+      googleLabel.textContent = text || (pending ? "Redirecting\u2026" : "Continue with Google");
+      if (pending) statusEl.textContent = text || "Working";
+    }
+    function setEmailPending(pending, text) {
+      emailSubmitBtn.disabled = pending;
+      emailInput.disabled = pending;
+      passwordInput.disabled = pending;
+      emailIconSlot.innerHTML = pending ? SPINNER_ICON : "";
+      emailLabel.textContent = text || (pending ? "Signing in\u2026" : "Sign in");
+      if (pending) statusEl.textContent = text || "Signing in";
     }
 
     async function init() {
       let config;
       try {
         const resp = await fetch("/api/public-config");
-        if (!resp.ok) throw new Error();
-        config = await resp.json();
-      } catch {
-        showError("Couldn't load sign-in configuration. Please try again shortly.");
-        setPending(true, "Unavailable");
+        const data = await resp.json().catch(() => ({}));
+        if (!resp.ok) throw new Error(data.error || "Couldn't load sign-in configuration.");
+        config = data;
+      } catch (err) {
+        showError(err.message || "Couldn't load sign-in configuration. Please try again shortly.");
+        setGooglePending(true, "Unavailable");
+        emailSubmitBtn.disabled = true;
         return;
       }
 
       const supabase = createClient(config.supabaseUrl, config.supabasePublishableKey);
-
-      // Already signed in with an authorized account? Skip straight to the dashboard.
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        setPending(true, "Already signed in\u2026");
-        const ok = await verifyAndRedirect(session.access_token);
-        if (!ok) await supabase.auth.signOut();
-      }
-
-      // After the OAuth redirect comes back here with a session, verify &
-      // redirect. onAuthStateChange fires for both the initial getSession()
-      // above and the post-redirect SIGNED_IN event.
-      supabase.auth.onAuthStateChange(async (event, newSession) => {
-        if (event === "SIGNED_IN" && newSession) {
-          setPending(true, "Checking access\u2026");
-          const ok = await verifyAndRedirect(newSession.access_token);
-          if (!ok) {
-            await supabase.auth.signOut();
-            setPending(false);
-          }
-        }
-      });
 
       async function verifyAndRedirect(accessToken) {
         try {
@@ -385,7 +414,7 @@
             return true;
           }
           const data = await resp.json().catch(() => ({}));
-          showError(data.error || "That Google account isn't authorized for this dashboard.");
+          showError(data.error || "That account isn't authorized for this dashboard.");
           return false;
         } catch {
           showError("Couldn't reach the server. Check your connection and try again.");
@@ -393,17 +422,59 @@
         }
       }
 
+      // Already signed in with an authorized account? Skip straight to the dashboard.
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        setGooglePending(true, "Already signed in\u2026");
+        const ok = await verifyAndRedirect(session.access_token);
+        if (!ok) { await supabase.auth.signOut(); setGooglePending(false); }
+      }
+
+      // After the Google OAuth redirect comes back here with a session,
+      // verify & redirect. onAuthStateChange also fires for email sign-in.
+      supabase.auth.onAuthStateChange(async (event, newSession) => {
+        if (event === "SIGNED_IN" && newSession) {
+          setGooglePending(true, "Checking access\u2026");
+          setEmailPending(true, "Checking access\u2026");
+          const ok = await verifyAndRedirect(newSession.access_token);
+          if (!ok) {
+            await supabase.auth.signOut();
+            setGooglePending(false);
+            setEmailPending(false);
+          }
+        }
+      });
+
       googleBtn.addEventListener("click", async () => {
-        errorBanner.classList.remove("is-visible");
-        setPending(true, "Redirecting to Google\u2026");
+        clearError();
+        setGooglePending(true, "Redirecting to Google\u2026");
         const { error } = await supabase.auth.signInWithOAuth({
           provider: "google",
           options: { redirectTo: window.location.href },
         });
         if (error) {
           showError(error.message || "Couldn't start Google sign-in.");
-          setPending(false);
+          setGooglePending(false);
         }
+      });
+
+      emailForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        clearError();
+        setEmailPending(true);
+        const { error } = await supabase.auth.signInWithPassword({
+          email: emailInput.value.trim(),
+          password: passwordInput.value,
+        });
+        if (error) {
+          showError(
+            error.message === "Invalid login credentials"
+              ? "Incorrect email or password."
+              : (error.message || "Couldn't sign in. Please try again.")
+          );
+          setEmailPending(false);
+        }
+        // On success, onAuthStateChange above handles verification + redirect.
       });
     }
 

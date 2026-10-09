@@ -330,16 +330,17 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
   }
 
   async function init(){
-    var cfgResp;
+    var config;
     try {
-      cfgResp = await fetch("/api/public-config");
-      if (!cfgResp.ok) throw new Error();
+      var cfgResp = await fetch("/api/public-config");
+      var cfgData = await cfgResp.json().catch(function(){ return {}; });
+      if (!cfgResp.ok) throw new Error(cfgData.error || "Couldn't load configuration.");
+      config = cfgData;
     } catch(e) {
       document.getElementById("gate").querySelector("p").textContent =
-        "Couldn't load configuration. Please refresh.";
+        e.message || "Couldn't load configuration. Please refresh.";
       return;
     }
-    var config = await cfgResp.json();
     supabase = createClient(config.supabaseUrl, config.supabasePublishableKey);
 
     var sessionRes = await supabase.auth.getSession();

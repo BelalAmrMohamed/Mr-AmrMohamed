@@ -13,7 +13,15 @@ export default function handler(req, res) {
   const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || null;
 
   if (!url || !publishableKey) {
-    res.status(500).json({ error: 'Supabase is not configured yet.' });
+    const missing = [
+      !url && 'NEXT_PUBLIC_SUPABASE_URL',
+      !publishableKey && 'NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY',
+    ].filter(Boolean);
+    // Named explicitly so a misconfigured .env.local / Vercel env is obvious
+    // from the response instead of a bare 500.
+    res.status(500).json({
+      error: `Missing environment variable(s): ${missing.join(', ')}. Set them in .env.local (and restart the dev server) or in Vercel.`,
+    });
     return;
   }
 
