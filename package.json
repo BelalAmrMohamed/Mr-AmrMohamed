@@ -10,7 +10,8 @@
     "commit": "node scripts/commit.js",
     "map": "node scripts/map.js",
     "zip": "node scripts/map.js && node scripts/commit.js && git archive --format=zip --output=mr-amr.zip HEAD && echo mr-amr.zip is ready!",
-    "push": "npm run zip && git switch production && git merge main && git push && git switch main"
+    "push": "npm run zip && git switch production && git merge main && git push && git switch main",
+    "push:all": "npm run push && git push"
   },
   "dependencies": {
     "ignore": "^7.0.9"

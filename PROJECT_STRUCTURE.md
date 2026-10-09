@@ -16,8 +16,8 @@ Mr. Amr Mohamed/
 ├── PROJECT_STRUCTURE.md
 ├── README.md
 ├── vercel.json
-├── api/ [42.4 KB, 1199 LOC]
-│   ├── admin/ [16.89 KB, 511 LOC]
+├── api/ [43.33 KB, 1199 LOC]
+│   ├── admin/ [17.38 KB, 511 LOC]
 │   │   ├── cleanup.js
 │   │   ├── diag.js
 │   │   ├── login.js
@@ -26,7 +26,7 @@ Mr. Amr Mohamed/
 │   │   ├── setup.js
 │   │   └── stats.js
 │   │
-│   ├── lib/ [7.34 KB, 224 LOC]
+│   ├── lib/ [7.56 KB, 224 LOC]
 │   │   ├── auth.js
 │   │   ├── request-meta.js
 │   │   └── supabase.js
@@ -36,7 +36,7 @@ Mr. Amr Mohamed/
 │   ├── public-config.js
 │   └── track.js
 │
-├── docs/ [35.64 KB, 881 LOC]
+├── docs/ [35.81 KB, 881 LOC]
 │   ├── animated-ui-components/ [23.29 KB, 607 LOC]
 │   │   └── sign-in-page-template.html
 │   │
@@ -54,7 +54,7 @@ Mr. Amr Mohamed/
 │       └── README.md
 │
 ├── public/ [1.26 MB, 6514 LOC]
-│   ├── admin/ [46.67 KB, 1157 LOC]
+│   ├── admin/ [47.8 KB, 1157 LOC]
 │   │   ├── dashboard.html
 │   │   └── index.html
 │   │
@@ -74,7 +74,7 @@ Mr. Amr Mohamed/
 │   ├── css/ [19.66 KB, 1103 LOC]
 │   │   └── style.css
 │   │
-│   ├── js/ [16.18 KB, 485 LOC]
+│   ├── js/ [16.33 KB, 485 LOC]
 │   │   ├── analytics.js
 │   │   └── main.js
 │   │
@@ -91,8 +91,8 @@ Mr. Amr Mohamed/
 │   ├── git-changes.js
 │   └── map.js
 │
-└── supabase/ [23.28 KB, 579 LOC]
-    ├── migrations/ [7.66 KB, 164 LOC]
+└── supabase/ [23.31 KB, 579 LOC]
+    ├── migrations/ [7.69 KB, 164 LOC]
     │   ├── 20261009000000_admin_analytics.sql
     │   └── 20261009103000_admin_analytics_auth_update.sql
     │
@@ -111,7 +111,7 @@ Mr. Amr Mohamed/
 | `docs` | 881 |
 | `supabase` | 579 |
 | `scripts` | 499 |
-| `(root)` | 161 |
+| `(root)` | 191 |
 
 ### Top 10 Largest Code Files
 
@@ -132,18 +132,18 @@ Mr. Amr Mohamed/
 
 | Extension | Files | Lines of Code | Size |
 |-----------|-------|---------------|------------|
-| .js | 25 | 6586 | 233.12 KB |
-| .md | 6 | 913 | 31.91 KB |
-| .html | 5 | 2346 | 103.58 KB |
-| .json | 5 | 214 | 6.83 KB |
+| .js | 25 | 6586 | 234.18 KB |
+| .md | 6 | 942 | 33.03 KB |
+| .html | 5 | 2346 | 104.71 KB |
+| .json | 5 | 215 | 6.89 KB |
 | .css | 2 | 2488 | 51.46 KB |
-| .sql | 2 | 164 | 7.66 KB |
+| .sql | 2 | 164 | 7.69 KB |
 | .ts | 1 | 82 | 1.91 KB |
 | (no extension) | 1 | 21 | 1.07 KB |
 | .txt | 1 | 4 | 81 B |
 | .xml | 1 | 9 | 287 B |
 | .toml | 1 | 415 | 15.62 KB |
-| **Total** | **50** | **13242** | **453.52 KB** |
+| **Total** | **50** | **13272** | **456.91 KB** |
 
 ### Binary / Media Files (Physical Size)
 
