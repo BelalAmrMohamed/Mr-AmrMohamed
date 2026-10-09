@@ -11,17 +11,21 @@ Note: Some of the contents listed in this structure may not appear in the output
 
 ```text
 Mr. Amr Mohamed/
+├── mr-amr-fixed (1).zip
 ├── mr-amr-fixed.zip
 ├── package-lock.json
 ├── package.json
 ├── PROJECT_STRUCTURE.md
 ├── README.md
 ├── vercel.json
-├── api/ [39.88 KB, 1088 LOC]
-│   ├── admin/ [10.77 KB, 309 LOC]
+├── api/ [46.6 KB, 1294 LOC]
+│   ├── admin/ [17.49 KB, 515 LOC]
 │   │   ├── cleanup.js
 │   │   ├── diag.js
+│   │   ├── login.js
+│   │   ├── logout.js
 │   │   ├── me.js
+│   │   ├── setup.js
 │   │   └── stats.js
 │   │
 │   ├── lib/ [10.64 KB, 311 LOC]
@@ -53,7 +57,7 @@ Mr. Amr Mohamed/
 │       └── README.md
 │
 ├── public/ [1.26 MB, 6514 LOC]
-│   ├── admin/ [47.8 KB, 1157 LOC]
+│   ├── admin/ [47.79 KB, 1157 LOC]
 │   │   ├── dashboard.html
 │   │   └── index.html
 │   │
@@ -107,11 +111,11 @@ Mr. Amr Mohamed/
 |-----------|---------------|
 | `public` | 6514 |
 | `node_modules` | 3409 |
-| `api` | 1088 |
+| `api` | 1294 |
 | `docs` | 881 |
 | `supabase` | 602 |
 | `scripts` | 499 |
-| `(root)` | 191 |
+| `(root)` | 198 |
 
 ### Top 10 Largest Code Files
 
@@ -132,10 +136,10 @@ Mr. Amr Mohamed/
 
 | Extension | Files | Lines of Code | Size |
 |-----------|-------|---------------|------------|
-| .js | 23 | 6475 | 230.73 KB |
+| .js | 26 | 6681 | 237.45 KB |
 | .md | 6 | 942 | 33.03 KB |
-| .html | 5 | 2346 | 104.71 KB |
-| .json | 5 | 215 | 6.88 KB |
+| .html | 5 | 2346 | 104.7 KB |
+| .json | 5 | 222 | 7.03 KB |
 | .sql | 3 | 187 | 8.91 KB |
 | .css | 2 | 2488 | 51.46 KB |
 | .ts | 1 | 82 | 1.91 KB |
@@ -143,17 +147,17 @@ Mr. Amr Mohamed/
 | .txt | 1 | 4 | 81 B |
 | .xml | 1 | 9 | 287 B |
 | .toml | 1 | 415 | 15.62 KB |
-| **Total** | **49** | **13184** | **454.68 KB** |
+| **Total** | **52** | **13397** | **461.54 KB** |
 
 ### Binary / Media Files (Physical Size)
 
 | Extension | Files | Size |
 |-----------|-------|------------|
+| .zip | 2 | 2.28 MB |
 | .jpg | 2 | 229.37 KB |
 | .png | 2 | 803.99 KB |
-| .zip | 1 | 1.14 MB |
 | .jpeg | 1 | 36.16 KB |
-| **Total** | **6** | **2.18 MB** |
+| **Total** | **7** | **3.33 MB** |
 
-**Grand Total Files:** 55  
-**Total Repository Size:** 2.63 MB
+**Grand Total Files:** 59  
+**Total Repository Size:** 3.78 MB

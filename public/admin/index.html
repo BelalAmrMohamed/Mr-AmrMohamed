@@ -424,7 +424,7 @@
             headers: { Authorization: "Bearer " + accessToken },
           });
           if (resp.ok) {
-            window.location.replace("dashboard.html");
+            window.location.replace("/admin/dashboard.html");
             return true;
           }
           const data = await resp.json().catch(() => ({}));

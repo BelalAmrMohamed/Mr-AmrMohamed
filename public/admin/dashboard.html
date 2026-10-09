@@ -323,7 +323,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
   async function authedFetch(path, opts){
     var h = await authHeader();
-    if (!h) { window.location.replace("index.html"); return null; }
+    if (!h) { window.location.replace("/admin/"); return null; }
     opts = opts || {};
     opts.headers = Object.assign({}, opts.headers || {}, h);
     return fetch(path, opts);
@@ -345,10 +345,10 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
     var sessionRes = await supabase.auth.getSession();
     var session = sessionRes && sessionRes.data && sessionRes.data.session;
-    if (!session) { window.location.replace("index.html"); return; }
+    if (!session) { window.location.replace("/admin/"); return; }
 
     var meResp = await authedFetch("/api/admin/me");
-    if (!meResp || !meResp.ok) { window.location.replace("index.html"); return; }
+    if (!meResp || !meResp.ok) { window.location.replace("/admin/"); return; }
     var me = await meResp.json();
 
     document.getElementById("gate").style.display = "none";
@@ -362,7 +362,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
   document.getElementById("signout-btn").addEventListener("click", function(){
     (supabase ? supabase.auth.signOut() : Promise.resolve())
-      .finally(function(){ window.location.replace("index.html"); });
+      .finally(function(){ window.location.replace("/admin/"); });
   });
 
   // ---------------- data loading ----------------
@@ -378,7 +378,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
     authedFetch("/api/admin/stats")
       .then(function(r){
         if (!r) return null;
-        if (r.status === 401 || r.status === 403) { window.location.replace("index.html"); return null; }
+        if (r.status === 401 || r.status === 403) { window.location.replace("/admin/"); return null; }
         if (!r.ok) throw new Error("Failed to load stats (" + r.status + ")");
         return r.json();
       })

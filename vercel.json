@@ -1,4 +1,11 @@
 {
+  "redirects": [
+    {
+      "source": "/dashboard.html",
+      "destination": "/admin/dashboard.html",
+      "permanent": false
+    }
+  ],
   "crons": [
     {
       "path": "/api/admin/cleanup",
