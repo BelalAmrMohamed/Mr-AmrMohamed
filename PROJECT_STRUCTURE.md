@@ -11,6 +11,7 @@ Note: Some of the contents listed in this structure may not appear in the output
 
 ```text
 Mr. Amr Mohamed/
+├── mr-amr-fixed.zip
 ├── package-lock.json
 ├── package.json
 ├── PROJECT_STRUCTURE.md
@@ -52,7 +53,7 @@ Mr. Amr Mohamed/
 │       └── README.md
 │
 ├── public/ [1.26 MB, 6514 LOC]
-│   ├── admin/ [47.79 KB, 1157 LOC]
+│   ├── admin/ [47.78 KB, 1157 LOC]
 │   │   ├── dashboard.html
 │   │   └── index.html
 │   │
@@ -110,7 +111,7 @@ Mr. Amr Mohamed/
 | `docs` | 881 |
 | `supabase` | 602 |
 | `scripts` | 499 |
-| `(root)` | 198 |
+| `(root)` | 200 |
 
 ### Top 10 Largest Code Files
 
@@ -133,8 +134,8 @@ Mr. Amr Mohamed/
 |-----------|-------|---------------|------------|
 | .js | 23 | 6475 | 230.75 KB |
 | .md | 6 | 942 | 33.03 KB |
-| .html | 5 | 2346 | 104.7 KB |
-| .json | 5 | 222 | 7.03 KB |
+| .html | 5 | 2346 | 104.69 KB |
+| .json | 5 | 224 | 7.33 KB |
 | .sql | 3 | 187 | 8.91 KB |
 | .css | 2 | 2488 | 51.46 KB |
 | .ts | 1 | 82 | 1.91 KB |
@@ -142,7 +143,7 @@ Mr. Amr Mohamed/
 | .txt | 1 | 4 | 81 B |
 | .xml | 1 | 9 | 287 B |
 | .toml | 1 | 415 | 15.62 KB |
-| **Total** | **49** | **13191** | **454.83 KB** |
+| **Total** | **49** | **13193** | **455.11 KB** |
 
 ### Binary / Media Files (Physical Size)
 
@@ -150,8 +151,9 @@ Mr. Amr Mohamed/
 |-----------|-------|------------|
 | .jpg | 2 | 229.37 KB |
 | .png | 2 | 803.99 KB |
+| .zip | 1 | 1.14 MB |
 | .jpeg | 1 | 36.16 KB |
-| **Total** | **5** | **1.04 MB** |
+| **Total** | **6** | **2.18 MB** |
 
-**Grand Total Files:** 54  
-**Total Repository Size:** 1.49 MB
+**Grand Total Files:** 55  
+**Total Repository Size:** 2.63 MB
