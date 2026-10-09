@@ -157,7 +157,7 @@ Mr. Amr Mohamed/
 | `components` | 627 |
 | `supabase` | 602 |
 | `scripts` | 499 |
-| `(root)` | 235 |
+| `(root)` | 284 |
 | `app` | 164 |
 | `lib` | 35 |
 | `data` | 33 |
@@ -183,7 +183,7 @@ Mr. Amr Mohamed/
 |-----------|-------|---------------|------------|
 | .js | 34 | 3924 | 149.17 KB |
 | .jsx | 19 | 687 | 32.8 KB |
-| .md | 5 | 440 | 18.4 KB |
+| .md | 5 | 489 | 19.75 KB |
 | .json | 5 | 146 | 67.38 KB |
 | .html | 4 | 1765 | 71.12 KB |
 | .sql | 3 | 187 | 8.93 KB |
@@ -191,7 +191,7 @@ Mr. Amr Mohamed/
 | .txt | 1 | 4 | 81 B |
 | .xml | 1 | 9 | 287 B |
 | .toml | 1 | 415 | 15.62 KB |
-| **Total** | **75** | **8994** | **397.88 KB** |
+| **Total** | **75** | **9043** | **399.23 KB** |
 
 ### Binary / Media Files (Physical Size)
 
