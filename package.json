@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "npm run dev:vercel",
     "dev:static": "npx http-server public -p 8080 -o -c-1",
-    "dev:vercel": "vercel dev",
+    "vercel": "vercel dev",
     "commit": "node scripts/commit.js",
     "map": "node scripts/map.js",
     "zip": "node scripts/map.js && node scripts/commit.js && git archive --format=zip --output=mr-amr.zip HEAD && echo mr-amr.zip is ready!"

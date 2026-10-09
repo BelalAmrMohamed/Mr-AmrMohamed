@@ -277,12 +277,15 @@ footer.foot-note{text-align:center; font-size:0.75rem; color:var(--slate); paddi
   </main>
 </div>
 
-<script>
-(function(){
+<script type="module">
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+(async function(){
   "use strict";
 
   var POLL_MS = 15000;
   var pollTimer = null;
+  var supabase = null;
 
   function escapeHtml(s){
     return String(s || "").replace(/[&<>"']/g, function(c){
@@ -311,24 +314,53 @@ footer.foot-note{text-align:center; font-size:0.75rem; color:var(--slate); paddi
   }
 
   // ---------------- auth gate ----------------
-  fetch("/api/admin/me", { credentials:"include" })
-    .then(function(r){
-      if (!r.ok) { window.location.replace("index.html"); return null; }
-      return r.json();
-    })
-    .then(function(data){
-      if (!data) return;
-      document.getElementById("gate").style.display = "none";
-      var app = document.getElementById("app");
-      app.classList.add("is-ready");
-      document.getElementById("greeting").textContent =
-        "Welcome back, " + (data.admin.displayName || "Mr. Amr");
-      start();
-    })
-    .catch(function(){ window.location.replace("index.html"); });
+  async function authHeader(){
+    if (!supabase) return null;
+    var res = await supabase.auth.getSession();
+    var session = res && res.data && res.data.session;
+    return session ? { Authorization: "Bearer " + session.access_token } : null;
+  }
+
+  async function authedFetch(path, opts){
+    var h = await authHeader();
+    if (!h) { window.location.replace("index.html"); return null; }
+    opts = opts || {};
+    opts.headers = Object.assign({}, opts.headers || {}, h);
+    return fetch(path, opts);
+  }
+
+  async function init(){
+    var cfgResp;
+    try {
+      cfgResp = await fetch("/api/public-config");
+      if (!cfgResp.ok) throw new Error();
+    } catch(e) {
+      document.getElementById("gate").querySelector("p").textContent =
+        "Couldn't load configuration. Please refresh.";
+      return;
+    }
+    var config = await cfgResp.json();
+    supabase = createClient(config.supabaseUrl, config.supabasePublishableKey);
+
+    var sessionRes = await supabase.auth.getSession();
+    var session = sessionRes && sessionRes.data && sessionRes.data.session;
+    if (!session) { window.location.replace("index.html"); return; }
+
+    var meResp = await authedFetch("/api/admin/me");
+    if (!meResp || !meResp.ok) { window.location.replace("index.html"); return; }
+    var me = await meResp.json();
+
+    document.getElementById("gate").style.display = "none";
+    var app = document.getElementById("app");
+    app.classList.add("is-ready");
+    document.getElementById("greeting").textContent =
+      "Welcome back, " + (me.admin.name || "Mr. Amr");
+    start();
+  }
+  init();
 
   document.getElementById("signout-btn").addEventListener("click", function(){
-    fetch("/api/admin/logout", { method:"POST", credentials:"include" })
+    (supabase ? supabase.auth.signOut() : Promise.resolve())
       .finally(function(){ window.location.replace("index.html"); });
   });
 
@@ -342,9 +374,10 @@ footer.foot-note{text-align:center; font-size:0.75rem; color:var(--slate); paddi
   }
 
   function loadStats(){
-    fetch("/api/admin/stats", { credentials:"include" })
+    authedFetch("/api/admin/stats")
       .then(function(r){
-        if (r.status === 401) { window.location.replace("index.html"); return null; }
+        if (!r) return null;
+        if (r.status === 401 || r.status === 403) { window.location.replace("index.html"); return null; }
         if (!r.ok) throw new Error("Failed to load stats (" + r.status + ")");
         return r.json();
       })

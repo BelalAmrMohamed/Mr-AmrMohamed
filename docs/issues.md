@@ -18,10 +18,16 @@ Improve the SEO and GEO of the website:
 - Sign it in Google Search Console and bing search, too.
 
 ## Page For the Teacher — ✅ Done, see [docs/admin-dashboard-setup.md](admin-dashboard-setup.md)
-- `/admin` — sign-in page (adapted from the template, navy/gold themed)
+- `/admin` — sign-in page (adapted from the template, navy/gold themed),
+  "Continue with Google" via Supabase Auth — no password of ours anywhere,
+  so nothing to update when a Google password changes.
+- Access gated by an `admin_emails` allowlist table in the database (add/
+  remove admins there any time, no redeploy needed). Seeded with
+  `belalamrofficial@gmail.com` and `amrmohammed4111@gmail.com`.
 - `/admin/dashboard.html` — live visitor count, 30-day traffic chart, top
   pages/referrers/countries/devices/browsers, AI assistant usage stats,
   contact-click counts, and a recent-visitor feed. Auto-refreshes every 15s.
 - Own implementation (no Vercel Insights dependency): `public/js/analytics.js`
   beacons page views + heartbeats to `api/track.js`; Supabase stores it.
-- Setup steps (migration, env vars, creating the login): see the linked doc.
+- Setup steps (migration, env vars, enabling Google in Supabase): see the
+  linked doc.

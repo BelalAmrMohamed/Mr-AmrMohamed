@@ -1,8 +1,9 @@
 // api/admin/cleanup.js
-// Housekeeping: deletes expired sessions and stale heartbeats. Safe to call
-// repeatedly. Can be wired to a Vercel Cron Job (vercel.json "crons") hitting
-// this with the CRON_SECRET header, or triggered manually from the
-// dashboard. Requires either a valid admin session OR the cron secret.
+// Housekeeping: deletes stale "live visitor" heartbeats so the table stays
+// small. Safe to call repeatedly. Wired to a Vercel Cron Job (vercel.json
+// "crons") hitting this with the CRON_SECRET header; also callable by a
+// signed-in admin. (Session expiry is handled entirely by Supabase Auth now
+// — there's no session table of our own left to clean up.)
 
 import { db, isSupabaseConfigured } from '../lib/supabase.js';
 import { requireAdmin } from '../lib/auth.js';
@@ -40,14 +41,8 @@ export default async function handler(req, res) {
   }
 
   try {
-    const now = new Date().toISOString();
     const staleHeartbeat = new Date(Date.now() - 5 * 60 * 1000).toISOString(); // 5 min
-
-    await Promise.all([
-      db.delete('admin_sessions', `expires_at=lt.${now}`),
-      db.delete('visitor_heartbeats', `last_seen_at=lt.${staleHeartbeat}`),
-    ]);
-
+    await db.delete('visitor_heartbeats', `last_seen_at=lt.${staleHeartbeat}`);
     res.status(200).json({ ok: true });
   } catch (err) {
     console.error('[admin/cleanup] failed', err);

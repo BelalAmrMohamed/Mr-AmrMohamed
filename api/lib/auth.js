@@ -1,152 +1,78 @@
 // api/lib/auth.js
-// Password hashing (scrypt, Node built-in, no deps) + cookie session helpers
-// for the admin/teacher dashboard. Deliberately simple: one admin account
-// (the teacher), long-lived but revocable sessions stored in Postgres.
+// Admin auth, fully delegated to Supabase Auth (Google Sign-In). There is no
+// password of ours anywhere -- the teacher signs in with his Google account,
+// Supabase issues a JWT, the browser sends it on every /api/admin/* request,
+// and we verify it here by asking Supabase who it belongs to, then checking
+// that email against the admin_emails allowlist table. Changing a Google
+// password never touches this project at all.
 
-import { randomBytes, scrypt as scryptCb, timingSafeEqual } from 'node:crypto';
-import { promisify } from 'node:util';
 import { db } from './supabase.js';
 
-const scrypt = promisify(scryptCb);
+const URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-const SESSION_COOKIE = 'mramr_admin_session';
-const SESSION_TTL_DAYS = 30;
-
-// ---------------------------------------------------------------------------
-// Password hashing: scrypt with a random salt, stored as "salt:hash" hex.
-// ---------------------------------------------------------------------------
-export async function hashPassword(password) {
-  const salt = randomBytes(16);
-  const derived = await scrypt(password, salt, 64);
-  return `${salt.toString('hex')}:${derived.toString('hex')}`;
-}
-
-export async function verifyPassword(password, stored) {
-  if (!stored || !stored.includes(':')) return false;
-  const [saltHex, hashHex] = stored.split(':');
-  const salt = Buffer.from(saltHex, 'hex');
-  const expected = Buffer.from(hashHex, 'hex');
-  const derived = await scrypt(password, salt, 64);
-  if (derived.length !== expected.length) return false;
-  return timingSafeEqual(derived, expected);
-}
-
-// ---------------------------------------------------------------------------
-// Sessions
-// ---------------------------------------------------------------------------
-export function generateSessionToken() {
-  return randomBytes32Hex();
-}
-
-function randomBytes32Hex() {
-  return randomBytes(32).toString('hex');
-}
-
-export async function createSession(adminId, { userAgent, ip } = {}) {
-  const token = generateSessionToken();
-  const expiresAt = new Date(Date.now() + SESSION_TTL_DAYS * 24 * 60 * 60 * 1000);
-  await db.insert('admin_sessions', [
-    {
-      token,
-      admin_id: adminId,
-      expires_at: expiresAt.toISOString(),
-      user_agent: userAgent || null,
-      ip: ip || null,
+/**
+ * Verifies a Supabase access token (JWT) by asking Supabase Auth who it
+ * belongs to. This is a live API call rather than local JWT verification --
+ * simpler, no JWT-library dependency, and it also catches revoked/expired
+ * tokens immediately.
+ */
+async function getSupabaseUser(accessToken) {
+  if (!accessToken || !URL || !SERVICE_KEY) return null;
+  const resp = await fetch(`${URL}/auth/v1/user`, {
+    headers: {
+      apikey: SERVICE_KEY,
+      Authorization: `Bearer ${accessToken}`,
     },
-  ]);
-  return { token, expiresAt };
+  });
+  if (!resp.ok) return null;
+  const user = await resp.json().catch(() => null);
+  return user?.email ? user : null;
 }
 
-export async function destroySession(token) {
-  if (!token) return;
-  await db.delete('admin_sessions', `token=eq.${encodeURIComponent(token)}`);
-}
-
-export async function getSessionAdmin(token) {
-  if (!token) return null;
+async function isAllowedAdminEmail(email) {
+  if (!email) return false;
   const rows = await db.select(
-    'admin_sessions',
-    `select=token,expires_at,admin_users(id,email,display_name)&token=eq.${encodeURIComponent(token)}&limit=1`
+    'admin_emails',
+    `select=email&email=eq.${encodeURIComponent(email.toLowerCase())}&limit=1`
   );
-  const session = rows?.[0];
-  if (!session) return null;
-  if (new Date(session.expires_at).getTime() < Date.now()) {
-    // Expired — clean it up lazily.
-    await destroySession(token);
-    return null;
-  }
-  return session.admin_users || null;
+  return Boolean(rows?.[0]);
 }
 
-// ---------------------------------------------------------------------------
-// Cookie helpers (no framework — raw Vercel Node req/res)
-// ---------------------------------------------------------------------------
-export function parseCookies(req) {
-  const header = req.headers?.cookie;
-  const out = {};
-  if (!header) return out;
-  for (const part of header.split(';')) {
-    const idx = part.indexOf('=');
-    if (idx === -1) continue;
-    const key = part.slice(0, idx).trim();
-    const val = part.slice(idx + 1).trim();
-    if (key) out[key] = decodeURIComponent(val);
-  }
-  return out;
-}
-
-export function setSessionCookie(res, token, expiresAt) {
-  const maxAge = Math.max(0, Math.floor((expiresAt.getTime() - Date.now()) / 1000));
-  const cookie = [
-    `${SESSION_COOKIE}=${encodeURIComponent(token)}`,
-    'Path=/',
-    'HttpOnly',
-    'SameSite=Lax',
-    'Secure',
-    `Max-Age=${maxAge}`,
-  ].join('; ');
-  appendHeader(res, 'Set-Cookie', cookie);
-}
-
-export function clearSessionCookie(res) {
-  const cookie = [
-    `${SESSION_COOKIE}=`,
-    'Path=/',
-    'HttpOnly',
-    'SameSite=Lax',
-    'Secure',
-    'Max-Age=0',
-  ].join('; ');
-  appendHeader(res, 'Set-Cookie', cookie);
-}
-
-function appendHeader(res, name, value) {
-  const existing = res.getHeader(name);
-  if (!existing) {
-    res.setHeader(name, value);
-  } else if (Array.isArray(existing)) {
-    res.setHeader(name, [...existing, value]);
-  } else {
-    res.setHeader(name, [existing, value]);
-  }
-}
-
-export function getSessionTokenFromRequest(req) {
-  return parseCookies(req)[SESSION_COOKIE] || null;
+function getBearerToken(req) {
+  const header = req.headers?.authorization || '';
+  const match = /^Bearer\s+(.+)$/i.exec(header);
+  return match ? match[1] : null;
 }
 
 /**
- * Require a valid admin session. Returns the admin object, or writes a 401
- * response and returns null (caller should `if (!admin) return;`).
+ * Require a signed-in Google account whose email is on the admin_emails
+ * allowlist. Returns { email, name, avatarUrl } on success, or writes a
+ * 401/403 response and returns null (caller should `if (!admin) return;`).
  */
 export async function requireAdmin(req, res) {
-  const token = getSessionTokenFromRequest(req);
-  const admin = await getSessionAdmin(token);
-  if (!admin) {
+  const token = getBearerToken(req);
+  if (!token) {
     res.status(401).json({ error: 'Not signed in.' });
     return null;
   }
-  return admin;
-}
 
-export { SESSION_COOKIE };
+  const user = await getSupabaseUser(token);
+  if (!user) {
+    res.status(401).json({ error: 'Your session has expired. Please sign in again.' });
+    return null;
+  }
+
+  const allowed = await isAllowedAdminEmail(user.email);
+  if (!allowed) {
+    res.status(403).json({ error: `${user.email} is not authorized to view this dashboard.` });
+    return null;
+  }
+
+  const meta = user.user_metadata || {};
+  return {
+    email: user.email,
+    name: meta.full_name || meta.name || user.email.split('@')[0],
+    avatarUrl: meta.avatar_url || meta.picture || null,
+  };
+}

@@ -2,8 +2,14 @@
 
 A private dashboard for Mr. Amr at `/admin` showing live visitor count,
 traffic over time, top pages/referrers/countries/devices, AI assistant
-usage, and contact-link clicks. Nobody can reach it without the password —
-it isn't linked from the public site anywhere.
+usage, and contact-link clicks. Nobody can reach it without signing in with
+an authorized Google account — it isn't linked from the public site
+anywhere.
+
+Sign-in is "Continue with Google" via Supabase Auth. **There is no password
+of ours anywhere in this system** — when Mr. Amr changes his Google
+password, nothing here needs to change. Access is controlled purely by an
+email allowlist in the database.
 
 ## 1. Push the database migration
 
@@ -12,7 +18,8 @@ supabase db push
 ```
 
 This creates (in `supabase/migrations/20261009000000_admin_analytics.sql`):
-- `admin_users`, `admin_sessions` — the login
+- `admin_emails` — the allowlist of who can open the dashboard. Pre-seeded
+  with `belalamrofficial@gmail.com` and `amrmohammed4111@gmail.com`.
 - `page_views`, `visitor_heartbeats` — traffic + live count
 - `ai_chat_events` — AI usage counters (no message content is ever stored)
 - `contact_clicks` — which contact buttons get used
@@ -21,61 +28,81 @@ This creates (in `supabase/migrations/20261009000000_admin_analytics.sql`):
 
 ## 2. Set environment variables
 
-Add these in Vercel (Project → Settings → Environment Variables) and in
-your local `.env.local`. See the comments in `.env.example` for details on
-each:
+You already have the three that matter here:
 
 ```
-SUPABASE_SERVICE_ROLE_KEY=...   # Supabase → Project Settings → API → service_role (secret!)
-ADMIN_SETUP_SECRET=...          # any long random string, used once
-CRON_SECRET=...                 # any long random string, for the cleanup cron
+NEXT_PUBLIC_SUPABASE_URL
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+SUPABASE_SERVICE_ROLE_KEY
 ```
 
-`SUPABASE_SERVICE_ROLE_KEY` is **not** the same as the publishable key
-already in your `.env.example` — grab it from Supabase's API settings page.
-It must never start with `NEXT_PUBLIC_` and must never be sent to the
+The first two are also used by the admin pages directly (via
+`/api/public-config`, since this project has no build step to inject env
+vars into static HTML). `SUPABASE_SERVICE_ROLE_KEY` is used server-side
+only, to verify sessions and check the allowlist — never shipped to the
 browser.
 
-## 3. Create the teacher's login (one time)
+Also set, for the scheduled cleanup job (optional but recommended):
 
-Once the env vars above are live on Vercel, call the setup endpoint once:
-
-```bash
-curl -X POST https://mr-amr-mohamed.vercel.app/api/admin/setup \
-  -H "Content-Type: application/json" \
-  -d '{
-    "secret": "<the ADMIN_SETUP_SECRET value>",
-    "email": "amrmohammed4111@gmail.com",
-    "password": "<choose a strong password>",
-    "displayName": "Mr. Amr"
-  }'
+```
+CRON_SECRET=generate_a_long_random_string
 ```
 
-You can re-run this any time (e.g. to change the password) — it updates
-the existing account instead of making a duplicate.
+You do **not** need `ADMIN_SETUP_SECRET` anymore — that was for the old
+password system, which is gone.
 
-## 4. Sign in
+## 3. Enable Google as a sign-in provider in Supabase
 
-Visit `/admin` (`/admin/index.html`) and sign in with the email/password
-from step 3. You're redirected to `/admin/dashboard.html`, which refreshes
-itself every 15 seconds.
+You've already created the OAuth client in Google Cloud Console and
+connected it to Supabase — confirm these two things:
+
+1. **Supabase → Authentication → Sign In / Providers → Google** is
+   **Enabled**, with your Google Client ID and Secret filled in.
+2. **Supabase → Authentication → URL Configuration → Redirect URLs**
+   includes your site's admin URL, e.g.:
+   `https://mr-amr-mohamed.vercel.app/admin/index.html`
+   (add `http://localhost:8080/admin/index.html` too if you test locally.)
+
+That's it — no code or env vars needed for this part.
+
+## 4. Who can sign in
+
+Controlled entirely by the `admin_emails` table — already seeded with:
+
+| email | label |
+|---|---|
+| `belalamrofficial@gmail.com` | Belal (testing) |
+| `amrmohammed4111@gmail.com` | Mr. Amr |
+
+To add or remove someone later, open Supabase → Table Editor →
+`admin_emails` and insert/delete a row. No redeploy, no env var changes,
+nothing on Vercel. (Or via SQL: `insert into admin_emails (email, label)
+values ('someone@gmail.com', 'Label');`)
+
+Anyone who signs in with Google but isn't on this list gets a clear
+"not authorized" message and is signed back out automatically.
+
+## 5. Sign in
+
+Visit `/admin` and click **Continue with Google**. If your email is on the
+allowlist, you land on `/admin/dashboard.html`, which refreshes itself
+every 15 seconds.
 
 ## How it works, briefly
 
-- `public/js/analytics.js` runs on every page: it sends a `pageview` beacon
-  on load and a `heartbeat` every 20s while the tab is visible/open. No
-  cookies, no PII — just a random ID kept in `localStorage` so repeat
-  visits can be counted as the same visitor.
+- The sign-in page and dashboard load the Supabase JS client from a CDN and
+  talk to Supabase Auth directly for the Google OAuth flow — no password,
+  no session cookie of our own.
+- Every `/api/admin/*` call sends the Supabase access token as
+  `Authorization: Bearer <token>`. The server asks Supabase who that token
+  belongs to, then checks the email against `admin_emails`.
+- `public/js/analytics.js` runs on every public page: it sends a
+  `pageview` beacon on load and a `heartbeat` every 20s while the tab is
+  visible/open. No cookies, no PII — just a random ID kept in
+  `localStorage` so repeat visits can be counted as the same visitor.
 - "Live now" on the dashboard = heartbeats received in the last 60 seconds.
 - The AI chat widget (`public/ai/app.js`) reports anonymous usage events
   (chat started, message sent, tool used, quiz completed/score) — never
   the actual conversation text.
-- `api/admin/stats.js` is the one endpoint the dashboard polls; it requires
-  a valid session cookie.
 - `api/admin/cleanup.js` is wired to a Vercel Cron (`vercel.json`, every 6h)
-  to clear expired sessions and stale heartbeats so tables stay small.
-
-## Changing the password later
-
-Just re-run the `curl` command in step 3 with a new password — no need to
-touch the database directly.
+  to clear stale heartbeats so the table stays small.
