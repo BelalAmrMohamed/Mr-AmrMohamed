@@ -19,15 +19,20 @@ Improve the SEO and GEO of the website:
 
 ## Page For the Teacher — ✅ Done, see [docs/admin-dashboard-setup.md](admin-dashboard-setup.md)
 - `/admin` — sign-in page (adapted from the template, navy/gold themed),
-  "Continue with Google" via Supabase Auth — no password of ours anywhere,
-  so nothing to update when a Google password changes.
+  with **both** "Continue with Google" and an email/password form, both
+  via Supabase Auth — no password of ours anywhere, so nothing to update
+  when a Google password changes or an email/password login is reset.
 - Access gated by an `admin_emails` allowlist table in the database (add/
   remove admins there any time, no redeploy needed). Seeded with
   `belalamrofficial@gmail.com` and `amrmohammed4111@gmail.com`.
+- Schema ships as two migrations: `20261009000000_admin_analytics.sql`
+  (original, already pushed — do not edit) and
+  `20261009103000_admin_analytics_auth_update.sql` (adds `admin_emails`,
+  drops the superseded `admin_users`/`admin_sessions` tables).
 - `/admin/dashboard.html` — live visitor count, 30-day traffic chart, top
   pages/referrers/countries/devices/browsers, AI assistant usage stats,
   contact-click counts, and a recent-visitor feed. Auto-refreshes every 15s.
 - Own implementation (no Vercel Insights dependency): `public/js/analytics.js`
   beacons page views + heartbeats to `api/track.js`; Supabase stores it.
-- Setup steps (migration, env vars, enabling Google in Supabase): see the
-  linked doc.
+- Setup steps (migrations, env vars, enabling providers, creating
+  email/password accounts): see the linked doc.

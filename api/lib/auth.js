@@ -17,18 +17,45 @@ const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
  * belongs to. This is a live API call rather than local JWT verification --
  * simpler, no JWT-library dependency, and it also catches revoked/expired
  * tokens immediately.
+ *
+ * Returns { user } on success, or { error } with a specific, user-facing
+ * reason on failure -- never a bare null -- so a 401 always comes with an
+ * actionable message instead of a guess.
  */
 async function getSupabaseUser(accessToken) {
-  if (!accessToken || !URL || !SERVICE_KEY) return null;
-  const resp = await fetch(`${URL}/auth/v1/user`, {
-    headers: {
-      apikey: SERVICE_KEY,
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
-  if (!resp.ok) return null;
+  if (!URL || !SERVICE_KEY) {
+    return { error: 'Server is missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY.' };
+  }
+  if (!accessToken) {
+    return { error: 'Not signed in.' };
+  }
+
+  let resp;
+  try {
+    resp = await fetch(`${URL}/auth/v1/user`, {
+      headers: {
+        apikey: SERVICE_KEY,
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+  } catch (err) {
+    return { error: `Couldn't reach Supabase Auth: ${err.message}` };
+  }
+
+  if (!resp.ok) {
+    const body = await resp.text().catch(() => '');
+    return {
+      error: `Supabase rejected the session (${resp.status}). Please sign in again.${
+        body ? ` Details: ${body.slice(0, 200)}` : ''
+      }`,
+    };
+  }
+
   const user = await resp.json().catch(() => null);
-  return user?.email ? user : null;
+  if (!user?.email) {
+    return { error: 'Supabase session has no associated email.' };
+  }
+  return { user };
 }
 
 async function isAllowedAdminEmail(email) {
@@ -54,14 +81,9 @@ function getBearerToken(req) {
  */
 export async function requireAdmin(req, res) {
   const token = getBearerToken(req);
-  if (!token) {
-    res.status(401).json({ error: 'Not signed in.' });
-    return null;
-  }
-
-  const user = await getSupabaseUser(token);
+  const { user, error } = await getSupabaseUser(token);
   if (!user) {
-    res.status(401).json({ error: 'Your session has expired. Please sign in again.' });
+    res.status(401).json({ error: error || 'Your session has expired. Please sign in again.' });
     return null;
   }
 
