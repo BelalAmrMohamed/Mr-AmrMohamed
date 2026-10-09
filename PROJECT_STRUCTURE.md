@@ -11,7 +11,6 @@ Note: Some of the contents listed in this structure may not appear in the output
 
 ```text
 Mr. Amr Mohamed/
-├── mr-amr-fixed.zip
 ├── package-lock.json
 ├── package.json
 ├── PROJECT_STRUCTURE.md
@@ -111,7 +110,7 @@ Mr. Amr Mohamed/
 | `docs` | 881 |
 | `supabase` | 602 |
 | `scripts` | 499 |
-| `(root)` | 200 |
+| `(root)` | 201 |
 
 ### Top 10 Largest Code Files
 
@@ -133,9 +132,9 @@ Mr. Amr Mohamed/
 | Extension | Files | Lines of Code | Size |
 |-----------|-------|---------------|------------|
 | .js | 23 | 6475 | 230.75 KB |
-| .md | 6 | 942 | 33.03 KB |
+| .md | 6 | 943 | 33.08 KB |
 | .html | 5 | 2346 | 104.69 KB |
-| .json | 5 | 224 | 7.33 KB |
+| .json | 5 | 224 | 7.34 KB |
 | .sql | 3 | 187 | 8.91 KB |
 | .css | 2 | 2488 | 51.46 KB |
 | .ts | 1 | 82 | 1.91 KB |
@@ -143,7 +142,7 @@ Mr. Amr Mohamed/
 | .txt | 1 | 4 | 81 B |
 | .xml | 1 | 9 | 287 B |
 | .toml | 1 | 415 | 15.62 KB |
-| **Total** | **49** | **13193** | **455.11 KB** |
+| **Total** | **49** | **13194** | **455.18 KB** |
 
 ### Binary / Media Files (Physical Size)
 
@@ -151,9 +150,8 @@ Mr. Amr Mohamed/
 |-----------|-------|------------|
 | .jpg | 2 | 229.37 KB |
 | .png | 2 | 803.99 KB |
-| .zip | 1 | 1.14 MB |
 | .jpeg | 1 | 36.16 KB |
-| **Total** | **6** | **2.18 MB** |
+| **Total** | **5** | **1.04 MB** |
 
-**Grand Total Files:** 55  
-**Total Repository Size:** 2.63 MB
+**Grand Total Files:** 54  
+**Total Repository Size:** 1.49 MB
