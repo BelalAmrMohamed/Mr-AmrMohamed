@@ -344,6 +344,20 @@
   <script type="module">
     import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+    // Defensive: if the URL ever ends up with a doubled hash (e.g.
+    // "...#access_token=..." became "...##access_token=..." because the
+    // page was loaded with a stray trailing "#"), normalize it to a single
+    // "#" before supabase-js's own session-detection logic runs, so it can
+    // still find and parse the token fragment.
+    (function normalizeDoubleHash() {
+      const href = window.location.href;
+      const doubled = href.indexOf("##");
+      if (doubled !== -1) {
+        const fixed = href.slice(0, doubled) + "#" + href.slice(doubled + 2);
+        window.history.replaceState(null, "", fixed);
+      }
+    })();
+
     const SPINNER_ICON =
       '<svg class="icon spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
       'stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
@@ -448,9 +462,15 @@
       googleBtn.addEventListener("click", async () => {
         clearError();
         setGooglePending(true, "Redirecting to Google\u2026");
+        // Strip any existing hash/query before handing this back to Supabase
+        // as the post-login redirect target -- Supabase appends its own
+        // "#access_token=..." fragment, and a URL that already ends in a
+        // bare "#" produces "##access_token=...", which supabase-js's
+        // session-detection silently fails to parse.
+        const cleanRedirect = window.location.origin + window.location.pathname;
         const { error } = await supabase.auth.signInWithOAuth({
           provider: "google",
-          options: { redirectTo: window.location.href },
+          options: { redirectTo: cleanRedirect },
         });
         if (error) {
           showError(error.message || "Couldn't start Google sign-in.");
