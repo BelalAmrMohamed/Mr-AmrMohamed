@@ -32,4 +32,5 @@ yarn-error.log*
 *.local
 !.env.example
 
+# The whole platform in one file
 mr-amr.zip
