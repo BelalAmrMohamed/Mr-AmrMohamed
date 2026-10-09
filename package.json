@@ -6,7 +6,9 @@
     "dev": "next dev", 
     "build": "next build", 
     "start": "next start",
-    "commit": "node scripts/commit.js" 
+    "map": "node scripts/map.js",
+    "commit": "node scripts/commit.js",
+    "zip": "npm run map && npm run commit && git archive --format=zip --output=basmagi-quiz.zip HEAD && echo basmagi-quiz.zip is ready"
   },
   "dependencies": {
     "@react-three/fiber": "8.17.10",
