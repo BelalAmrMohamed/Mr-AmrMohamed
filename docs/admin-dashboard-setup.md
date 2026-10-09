@@ -147,10 +147,24 @@ seconds.
 
 ## Troubleshooting
 
-**"Missing environment variable(s): ..." / 500 from `/api/public-config`**
-`.env.local` (locally) or Vercel's env vars (in production) are missing or
-misname `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`.
-Fix the name/value and, locally, restart `vercel dev`/`npm run dev`.
+**"Missing environment variable(s): ..." / 500 from `/api/public-config`,
+or "Server is missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY"
+from `/api/admin/me`**
+
+First, visit `/api/admin/diag` (locally: `http://localhost:3000/api/admin/diag`)
+— it reports exactly which required env vars the *running* serverless
+process can see (never their values, just true/false), which is more
+reliable than re-reading `.env.local` by eye.
+
+If `.env.local` has the right names and values and the dev server has been
+restarted but `diag` still shows `false`, check **Vercel → Project Settings
+→ Environment Variables → (the var) → Environments**. `vercel dev` pulls
+Vercel's own **Development** environment when the project is linked (a
+`.vercel/` folder exists) — if a variable is scoped only to
+**Production**, `vercel dev` won't see it, even though `.env.local` has it
+and even though it works fine once actually deployed to production. Edit
+the variable and check **Development** (and **Preview**, for preview
+deployments) alongside Production, then restart `vercel dev`.
 
 **"X is not authorized to view this dashboard"**
 Their email isn't in `admin_emails` yet — add it there (step 5).
