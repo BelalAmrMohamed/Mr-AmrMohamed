@@ -5,12 +5,14 @@
 // on load instead of hardcoding it into a static HTML file, since this
 // project has no build step to inject env vars at build time.
 
+import { getEnv } from './lib/env.js';
+
 export default function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Cache-Control', 'public, max-age=300');
 
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || null;
-  const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || null;
+  const url = getEnv('NEXT_PUBLIC_SUPABASE_URL') || null;
+  const publishableKey = getEnv('NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY') || null;
 
   if (!url || !publishableKey) {
     const missing = [

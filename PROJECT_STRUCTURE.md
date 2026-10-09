@@ -11,23 +11,22 @@ Note: Some of the contents listed in this structure may not appear in the output
 
 ```text
 Mr. Amr Mohamed/
+├── mr-amr-fixed.zip
 ├── package-lock.json
 ├── package.json
 ├── PROJECT_STRUCTURE.md
 ├── README.md
 ├── vercel.json
-├── api/ [43.33 KB, 1199 LOC]
-│   ├── admin/ [17.38 KB, 511 LOC]
+├── api/ [39.88 KB, 1088 LOC]
+│   ├── admin/ [10.77 KB, 309 LOC]
 │   │   ├── cleanup.js
 │   │   ├── diag.js
-│   │   ├── login.js
-│   │   ├── logout.js
 │   │   ├── me.js
-│   │   ├── setup.js
 │   │   └── stats.js
 │   │
-│   ├── lib/ [7.56 KB, 224 LOC]
+│   ├── lib/ [10.64 KB, 311 LOC]
 │   │   ├── auth.js
+│   │   ├── env.js
 │   │   ├── request-meta.js
 │   │   └── supabase.js
 │   │
@@ -91,10 +90,11 @@ Mr. Amr Mohamed/
 │   ├── git-changes.js
 │   └── map.js
 │
-└── supabase/ [23.31 KB, 579 LOC]
-    ├── migrations/ [7.69 KB, 164 LOC]
+└── supabase/ [24.53 KB, 602 LOC]
+    ├── migrations/ [8.91 KB, 187 LOC]
     │   ├── 20261009000000_admin_analytics.sql
-    │   └── 20261009103000_admin_analytics_auth_update.sql
+    │   ├── 20261009103000_admin_analytics_auth_update.sql
+    │   └── 20261009150000_grant_service_role.sql
     │
     └── config.toml
 ```
@@ -107,9 +107,9 @@ Mr. Amr Mohamed/
 |-----------|---------------|
 | `public` | 6514 |
 | `node_modules` | 3409 |
-| `api` | 1199 |
+| `api` | 1088 |
 | `docs` | 881 |
-| `supabase` | 579 |
+| `supabase` | 602 |
 | `scripts` | 499 |
 | `(root)` | 191 |
 
@@ -132,18 +132,18 @@ Mr. Amr Mohamed/
 
 | Extension | Files | Lines of Code | Size |
 |-----------|-------|---------------|------------|
-| .js | 25 | 6586 | 234.18 KB |
+| .js | 23 | 6475 | 230.73 KB |
 | .md | 6 | 942 | 33.03 KB |
 | .html | 5 | 2346 | 104.71 KB |
-| .json | 5 | 215 | 6.89 KB |
+| .json | 5 | 215 | 6.88 KB |
+| .sql | 3 | 187 | 8.91 KB |
 | .css | 2 | 2488 | 51.46 KB |
-| .sql | 2 | 164 | 7.69 KB |
 | .ts | 1 | 82 | 1.91 KB |
 | (no extension) | 1 | 21 | 1.07 KB |
 | .txt | 1 | 4 | 81 B |
 | .xml | 1 | 9 | 287 B |
 | .toml | 1 | 415 | 15.62 KB |
-| **Total** | **50** | **13272** | **456.91 KB** |
+| **Total** | **49** | **13184** | **454.68 KB** |
 
 ### Binary / Media Files (Physical Size)
 
@@ -151,8 +151,9 @@ Mr. Amr Mohamed/
 |-----------|-------|------------|
 | .jpg | 2 | 229.37 KB |
 | .png | 2 | 803.99 KB |
+| .zip | 1 | 1.14 MB |
 | .jpeg | 1 | 36.16 KB |
-| **Total** | **5** | **1.04 MB** |
+| **Total** | **6** | **2.18 MB** |
 
 **Grand Total Files:** 55  
-**Total Repository Size:** 1.49 MB
+**Total Repository Size:** 2.63 MB

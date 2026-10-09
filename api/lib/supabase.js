@@ -3,11 +3,14 @@
 // dependency needed. Always uses the service role key, server-side only.
 // NEVER import this file from anything that ships to the browser.
 
-const URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+import { getEnv } from './env.js';
+
+// Resolved lazily (per call) so env loading can never be frozen as undefined.
+const getUrl = () => getEnv('NEXT_PUBLIC_SUPABASE_URL');
+const getServiceKey = () => getEnv('SUPABASE_SERVICE_ROLE_KEY');
 
 function assertConfigured() {
-  if (!URL || !SERVICE_KEY) {
+  if (!getUrl() || !getServiceKey()) {
     throw new Error(
       'Supabase is not configured (missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY).'
     );
@@ -21,7 +24,8 @@ function assertConfigured() {
  */
 async function restRequest(table, { method = 'GET', query = '', body, headers = {} } = {}) {
   assertConfigured();
-  const url = `${URL}/rest/v1/${table}${query ? `?${query}` : ''}`;
+  const SERVICE_KEY = getServiceKey();
+  const url = `${getUrl()}/rest/v1/${table}${query ? `?${query}` : ''}`;
   const resp = await fetch(url, {
     method,
     headers: {
@@ -73,5 +77,5 @@ export const db = {
 };
 
 export function isSupabaseConfigured() {
-  return Boolean(URL && SERVICE_KEY);
+  return Boolean(getUrl() && getServiceKey());
 }

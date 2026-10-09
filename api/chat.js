@@ -3,6 +3,8 @@
 // The API key(s) never reach the client. This is a plain Vercel Node
 // serverless function (no framework) — export a default handler.
 
+import { getEnv } from './lib/env.js';
+
 const MODEL = 'gemini-flash-lite-latest';
 const API_BASE = 'https://generativelanguage.googleapis.com/v1beta/models';
 
@@ -12,7 +14,7 @@ const API_BASE = 'https://generativelanguage.googleapis.com/v1beta/models';
 // assistant down.
 // ---------------------------------------------------------------------
 function getKeys() {
-  const raw = process.env.PUBLIC_ASSISTANT_GEMINI_API_KEYS || '';
+  const raw = getEnv('PUBLIC_ASSISTANT_GEMINI_API_KEYS') || '';
   return raw.split(',').map((k) => k.trim()).filter(Boolean);
 }
 

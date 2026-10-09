@@ -7,6 +7,7 @@
 
 import { db, isSupabaseConfigured } from '../lib/supabase.js';
 import { requireAdmin } from '../lib/auth.js';
+import { getEnv } from '../lib/env.js';
 
 function setCors(res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -31,7 +32,7 @@ export default async function handler(req, res) {
     return;
   }
 
-  const cronSecret = process.env.CRON_SECRET;
+  const cronSecret = getEnv('CRON_SECRET');
   const authHeader = req.headers.authorization || '';
   const isCron = cronSecret && authHeader === `Bearer ${cronSecret}`;
 

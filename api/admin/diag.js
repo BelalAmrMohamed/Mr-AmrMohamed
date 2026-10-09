@@ -7,14 +7,16 @@
 // (e.g. a var scoped to "Production" only, which vercel dev won't see
 // when running in Development mode).
 
+import { getEnv } from '../lib/env.js';
+
 export default function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
 
   const report = {
-    NEXT_PUBLIC_SUPABASE_URL: Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL),
-    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: Boolean(process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY),
-    SUPABASE_SERVICE_ROLE_KEY: Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY),
-    CRON_SECRET: Boolean(process.env.CRON_SECRET),
+    NEXT_PUBLIC_SUPABASE_URL: Boolean(getEnv('NEXT_PUBLIC_SUPABASE_URL')),
+    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: Boolean(getEnv('NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY')),
+    SUPABASE_SERVICE_ROLE_KEY: Boolean(getEnv('SUPABASE_SERVICE_ROLE_KEY')),
+    CRON_SECRET: Boolean(getEnv('CRON_SECRET')),
     VERCEL_ENV: process.env.VERCEL_ENV || '(not set -- likely vercel dev / local)',
     NODE_ENV: process.env.NODE_ENV || null,
   };

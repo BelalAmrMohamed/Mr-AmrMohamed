@@ -8,9 +8,7 @@
 // used to sign in -- a valid Supabase session is a valid Supabase session.
 
 import { db } from './supabase.js';
-
-const URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+import { getEnv } from './env.js';
 
 /**
  * Verifies a Supabase access token (JWT) by asking Supabase Auth who it
@@ -23,6 +21,8 @@ const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
  * actionable message instead of a guess.
  */
 async function getSupabaseUser(accessToken) {
+  const URL = getEnv('NEXT_PUBLIC_SUPABASE_URL');
+  const SERVICE_KEY = getEnv('SUPABASE_SERVICE_ROLE_KEY');
   if (!URL || !SERVICE_KEY) {
     return { error: 'Server is missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY.' };
   }
@@ -87,7 +87,16 @@ export async function requireAdmin(req, res) {
     return null;
   }
 
-  const allowed = await isAllowedAdminEmail(user.email);
+  let allowed;
+  try {
+    allowed = await isAllowedAdminEmail(user.email);
+  } catch (err) {
+    // Without this, a database error here was an unhandled rejection that
+    // killed the whole dev server instead of returning a clean 500.
+    console.error('[auth] admin allowlist lookup failed', err);
+    res.status(500).json({ error: 'Could not check the admin allowlist. See server logs.' });
+    return null;
+  }
   if (!allowed) {
     res.status(403).json({ error: `${user.email} is not authorized to view this dashboard.` });
     return null;
