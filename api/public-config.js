@@ -5,7 +5,7 @@
 // on load instead of hardcoding it into a static HTML file, since this
 // project has no build step to inject env vars at build time.
 
-import { getEnv } from './lib/env.js';
+import { getEnv } from './_lib/env.js';
 
 export default function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');

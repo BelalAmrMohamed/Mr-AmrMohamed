@@ -7,7 +7,7 @@
 // (e.g. a var scoped to "Production" only, which vercel dev won't see
 // when running in Development mode).
 
-import { getEnv } from '../lib/env.js';
+import { getEnv } from '../_lib/env.js';
 
 export default function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');

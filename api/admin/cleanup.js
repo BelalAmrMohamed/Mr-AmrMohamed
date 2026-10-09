@@ -5,9 +5,9 @@
 // signed-in admin. (Session expiry is handled entirely by Supabase Auth now
 // — there's no session table of our own left to clean up.)
 
-import { db, isSupabaseConfigured } from '../lib/supabase.js';
-import { requireAdmin } from '../lib/auth.js';
-import { getEnv } from '../lib/env.js';
+import { db, isSupabaseConfigured } from '../_lib/supabase.js';
+import { requireAdmin } from '../_lib/auth.js';
+import { getEnv } from '../_lib/env.js';
 
 function setCors(res) {
   res.setHeader('Access-Control-Allow-Origin', '*');

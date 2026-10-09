@@ -8,8 +8,8 @@
 // via the db helper, so RLS on the underlying tables doesn't need public
 // policies at all.
 
-import { db, isSupabaseConfigured } from '../lib/supabase.js';
-import { requireAdmin } from '../lib/auth.js';
+import { db, isSupabaseConfigured } from '../_lib/supabase.js';
+import { requireAdmin } from '../_lib/auth.js';
 
 function setCors(res) {
   res.setHeader('Access-Control-Allow-Origin', '*');

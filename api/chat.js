@@ -3,7 +3,7 @@
 // The API key(s) never reach the client. This is a plain Vercel Node
 // serverless function (no framework) — export a default handler.
 
-import { getEnv } from './lib/env.js';
+import { getEnv } from './_lib/env.js';
 
 const MODEL = 'gemini-flash-lite-latest';
 const API_BASE = 'https://generativelanguage.googleapis.com/v1beta/models';

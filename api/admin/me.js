@@ -3,7 +3,7 @@
 // admin_emails allowlist), or 401/403. The dashboard calls this on load
 // to decide whether to show the dashboard or bounce to sign-in.
 
-import { requireAdmin } from '../lib/auth.js';
+import { requireAdmin } from '../_lib/auth.js';
 
 function setCors(res) {
   res.setHeader('Access-Control-Allow-Origin', '*');

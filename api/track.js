@@ -6,8 +6,8 @@
 // No PII is collected: visitor_id/session_id are random IDs the client
 // generates and keeps in localStorage/sessionStorage, not tied to identity.
 
-import { db, isSupabaseConfigured } from './lib/supabase.js';
-import { getGeo, parseUserAgent } from './lib/request-meta.js';
+import { db, isSupabaseConfigured } from './_lib/supabase.js';
+import { getGeo, parseUserAgent } from './_lib/request-meta.js';
 
 function setCors(res) {
   res.setHeader('Access-Control-Allow-Origin', '*');

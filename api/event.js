@@ -4,7 +4,7 @@
 //  - Contact-method clicks (whatsapp/email/telegram/linkedin)
 // No message content is ever sent or stored here — only counters/metadata.
 
-import { db, isSupabaseConfigured } from './lib/supabase.js';
+import { db, isSupabaseConfigured } from './_lib/supabase.js';
 
 function setCors(res) {
   res.setHeader('Access-Control-Allow-Origin', '*');

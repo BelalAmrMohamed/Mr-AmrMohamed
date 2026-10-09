@@ -11,21 +11,19 @@ Note: Some of the contents listed in this structure may not appear in the output
 
 ```text
 Mr. Amr Mohamed/
-├── mr-amr-fixed (1).zip
-├── mr-amr-fixed.zip
 ├── package-lock.json
 ├── package.json
 ├── PROJECT_STRUCTURE.md
 ├── README.md
 ├── vercel.json
-├── api/ [39.88 KB, 1088 LOC]
+├── api/ [39.89 KB, 1088 LOC]
 │   ├── _lib/ [10.64 KB, 311 LOC]
 │   │   ├── auth.js
 │   │   ├── env.js
 │   │   ├── request-meta.js
 │   │   └── supabase.js
 │   │
-│   ├── admin/ [10.77 KB, 309 LOC]
+│   ├── admin/ [10.78 KB, 309 LOC]
 │   │   ├── cleanup.js
 │   │   ├── diag.js
 │   │   ├── me.js
@@ -112,7 +110,7 @@ Mr. Amr Mohamed/
 | `docs` | 881 |
 | `supabase` | 602 |
 | `scripts` | 499 |
-| `(root)` | 203 |
+| `(root)` | 198 |
 
 ### Top 10 Largest Code Files
 
@@ -133,8 +131,8 @@ Mr. Amr Mohamed/
 
 | Extension | Files | Lines of Code | Size |
 |-----------|-------|---------------|------------|
-| .js | 23 | 6475 | 230.73 KB |
-| .md | 6 | 947 | 33.2 KB |
+| .js | 23 | 6475 | 230.75 KB |
+| .md | 6 | 942 | 33.03 KB |
 | .html | 5 | 2346 | 104.7 KB |
 | .json | 5 | 222 | 7.03 KB |
 | .sql | 3 | 187 | 8.91 KB |
@@ -144,17 +142,16 @@ Mr. Amr Mohamed/
 | .txt | 1 | 4 | 81 B |
 | .xml | 1 | 9 | 287 B |
 | .toml | 1 | 415 | 15.62 KB |
-| **Total** | **49** | **13196** | **454.99 KB** |
+| **Total** | **49** | **13191** | **454.83 KB** |
 
 ### Binary / Media Files (Physical Size)
 
 | Extension | Files | Size |
 |-----------|-------|------------|
-| .zip | 2 | 2.28 MB |
 | .jpg | 2 | 229.37 KB |
 | .png | 2 | 803.99 KB |
 | .jpeg | 1 | 36.16 KB |
-| **Total** | **7** | **3.33 MB** |
+| **Total** | **5** | **1.04 MB** |
 
-**Grand Total Files:** 56  
-**Total Repository Size:** 3.77 MB
+**Grand Total Files:** 54  
+**Total Repository Size:** 1.49 MB
