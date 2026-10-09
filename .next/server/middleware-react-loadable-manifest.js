@@ -1,0 +1,1 @@
+self.__REACT_LOADABLE_MANIFEST="{\"components\\\\Hero.jsx -> ./Scene\":{\"id\":\"components\\\\Hero.jsx -> ./Scene\",\"files\":[\"static/chunks/_app-pages-browser_components_Scene_jsx.js\"]},\"components\\\\ServicesFly.jsx -> ./Tunnel\":{\"id\":\"components\\\\ServicesFly.jsx -> ./Tunnel\",\"files\":[\"static/chunks/_app-pages-browser_components_Tunnel_jsx.js\"]}}"

@@ -1,0 +1,29 @@
+@tailwind base; @tailwind components; @tailwind utilities;
+:root{--bg:247 244 238;--fg:15 23 42;--muted:96 104 122;--accent:30 58 95;--gold:176 120 20}
+.dark{--bg:9 12 20;--fg:243 240 232;--muted:148 155 172;--accent:232 176 74;--gold:232 176 74}
+html{background:rgb(var(--bg));color-scheme:light}.dark{color-scheme:dark}
+html.lenis,html.lenis body{height:auto}.lenis.lenis-smooth{scroll-behavior:auto!important}
+body{@apply bg-bg text-fg font-sans antialiased;transition:background .4s,color .4s}
+::selection{background:rgb(var(--gold)/.35)}
+/* In the components layer so Tailwind utilities (hidden, absolute, ...) always win over these */
+@layer components{
+.container-x{@apply mx-auto w-full max-w-6xl px-5 md:px-8}
+.eyebrow{@apply text-xs font-semibold uppercase tracking-[.22em] text-gold}
+.h2{@apply font-display text-4xl leading-[1.05] tracking-tight md:text-6xl}
+.card{@apply overflow-hidden rounded-3xl border border-fg/10 bg-fg/[.035]}
+.spot{@apply relative}
+.spot::before{content:"";position:absolute;inset:0;opacity:0;transition:opacity .3s;pointer-events:none;
+  background:radial-gradient(420px circle at var(--mx,50%) var(--my,50%),rgb(var(--gold)/.18),transparent 60%)}
+.spot:hover::before{opacity:1}
+.btn{@apply inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold transition-colors}
+.btn-gold{@apply bg-gold text-bg hover:bg-fg}
+.btn-line{@apply border border-fg/20 text-fg hover:border-gold hover:text-gold}
+.field{@apply w-full rounded-2xl border border-fg/10 bg-fg/[.04] px-4 py-3 text-sm outline-none transition focus:border-gold}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* The AI widget (public/ai/chat.css) was written against the old stylesheet's palette.
+   Re-declare those variables here so it renders as designed (a light panel in both themes). */
+.ai-widget-btn,.ai-modal{--navy-blue:#1e3a5f;--dark-navy:#152844;--rich-gold:#c9a961;--crisp-white:#fff;--slate-gray:#4a5568;
+  --light-gray:#f7fafc;--emerald-green:#059669;--font-heading:var(--font-display),Georgia,serif;--font-accent:var(--font-sans),system-ui,sans-serif;
+  --shadow-sm:0 2px 8px rgba(0,0,0,.1);--shadow-lg:0 8px 24px rgba(0,0,0,.2);--transition:all .3s ease;color:#1e293b}
