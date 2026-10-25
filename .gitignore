@@ -1,6 +1,8 @@
 # Vercel
 .vercel
 
+.next
+
 node_modules
 
 # OS Files
