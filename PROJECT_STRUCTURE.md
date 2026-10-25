@@ -73,7 +73,7 @@ Mr. Amr Mohamed/
 ├── data/ [3.02 KB, 33 LOC]
 │   └── content.js
 │
-├── docs/ [35.81 KB, 881 LOC]
+├── docs/ [36.8 KB, 894 LOC]
 │   ├── animated-ui-components/ [23.29 KB, 607 LOC]
 │   │   └── sign-in-page-template.html
 │   │
@@ -153,7 +153,7 @@ Mr. Amr Mohamed/
 |-----------|---------------|
 | `public` | 4830 |
 | `server` | 1088 |
-| `docs` | 881 |
+| `docs` | 894 |
 | `components` | 627 |
 | `supabase` | 602 |
 | `scripts` | 499 |
@@ -183,7 +183,7 @@ Mr. Amr Mohamed/
 |-----------|-------|---------------|------------|
 | .js | 34 | 3924 | 149.17 KB |
 | .jsx | 19 | 687 | 32.8 KB |
-| .md | 5 | 489 | 19.75 KB |
+| .md | 5 | 502 | 20.74 KB |
 | .json | 5 | 146 | 67.37 KB |
 | .html | 4 | 1765 | 71.12 KB |
 | .sql | 3 | 187 | 8.93 KB |
@@ -191,7 +191,7 @@ Mr. Amr Mohamed/
 | .txt | 1 | 4 | 81 B |
 | .xml | 1 | 9 | 287 B |
 | .toml | 1 | 415 | 15.62 KB |
-| **Total** | **75** | **9043** | **399.22 KB** |
+| **Total** | **75** | **9056** | **400.21 KB** |
 
 ### Binary / Media Files (Physical Size)
 
@@ -203,4 +203,4 @@ Mr. Amr Mohamed/
 | **Total** | **5** | **1.04 MB** |
 
 **Grand Total Files:** 80  
-**Total Repository Size:** 1.43 MB
+**Total Repository Size:** 1.44 MB
