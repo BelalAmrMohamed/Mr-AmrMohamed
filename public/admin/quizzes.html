@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Quizzes — Amr Mohamed Ahmed</title>
+<link rel="icon" href="../favicon.png" type="image/png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/quiz/quiz.css" />
+</head>
+<body>
+<div id="gate"><div class="spinner" aria-hidden="true"></div><p>Checking your session…</p></div>
+
+<div id="app" hidden>
+  <div class="topbar">
+    <div class="topbar-left">
+      <span class="brand-mark">AM</span>
+      <div>
+        <div class="topbar-title">Quizzes</div>
+        <div class="topbar-sub">Amr Mohamed Ahmed — Admin</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <a class="link-btn" href="/admin/dashboard">Dashboard</a>
+      <button class="link-btn" id="signout-btn" type="button">Sign out</button>
+    </div>
+  </div>
+
+  <main>
+    <div id="msg"></div>
+
+    <!-- ================= LIST VIEW ================= -->
+    <section id="list-view">
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Your quizzes</h2>
+          <button class="btn btn-gold" id="new-btn" type="button">+ New quiz</button>
+        </div>
+        <div class="table-wrap">
+          <table class="t" id="quiz-table" hidden>
+            <thead><tr><th>Quiz</th><th>Status</th><th>Questions</th><th>Attempts</th><th></th></tr></thead>
+            <tbody id="quiz-rows"></tbody>
+          </table>
+        </div>
+        <p class="empty-note" id="list-empty" hidden>No quizzes yet. Press “New quiz” to create your first one.</p>
+        <p class="empty-note" id="list-loading">Loading…</p>
+      </div>
+      <p class="note">Students open a quiz through its link. A quiz marked “listed” also appears on the public quizzes page (/quiz).</p>
+    </section>
+
+    <!-- ================= EDITOR VIEW ================= -->
+    <section id="edit-view" hidden>
+      <div class="panel">
+        <div class="panel-head">
+          <h2 id="edit-title">New quiz</h2>
+          <button class="btn btn-sm" id="back-btn" type="button">← All quizzes</button>
+        </div>
+
+        <div id="share-slot"></div>
+
+        <div class="grid-2">
+          <label class="field">Title
+            <input type="text" id="f-title" maxlength="200" placeholder="e.g. Unit 3 — Past Tenses" />
+          </label>
+          <label class="field">Time limit (minutes, optional)
+            <input type="number" id="f-time" min="1" max="600" placeholder="No limit" />
+          </label>
+        </div>
+        <label class="field" style="margin-top:.9rem">Instructions for students (optional)
+          <textarea id="f-desc" maxlength="2000" placeholder="Shown before the quiz starts"></textarea>
+        </label>
+
+        <div class="grid-2" style="margin-top:.9rem">
+          <label class="field">Who can take it?
+            <select id="f-identity">
+              <option value="google_or_name">Google sign-in or typed name</option>
+              <option value="google_only">Google sign-in required</option>
+              <option value="name_only">Typed name only</option>
+            </select>
+          </label>
+          <label class="field">After submitting, show the student…
+            <select id="f-reveal">
+              <option value="score">Their score only</option>
+              <option value="full">Score + correct answers + explanations</option>
+              <option value="none">Nothing (just “thank you”)</option>
+            </select>
+          </label>
+        </div>
+
+        <div style="display:grid;gap:.7rem;margin-top:1rem">
+          <label class="check"><input type="checkbox" id="f-auto" />
+            <span>Grade answers automatically when a student submits
+              <small>Turn this off to just collect answers (like a survey) and grade later, or by hand, from the results page.</small></span>
+          </label>
+          <label class="check"><input type="checkbox" id="f-published" />
+            <span>Open for students (anyone with the link can take it)
+              <small>Leave off while you are still writing.</small></span>
+          </label>
+          <label class="check"><input type="checkbox" id="f-listed" />
+            <span>Also list it on the public quizzes page
+              <small>Otherwise only people you send the link to can find it.</small></span>
+          </label>
+        </div>
+      </div>
+
+      <div id="q-list"></div>
+
+      <div class="panel">
+        <div class="btn-row">
+          <span class="note" style="margin-right:.4rem">Add a question:</span>
+          <button class="btn btn-sm" data-add="single" type="button">Multiple choice (one answer)</button>
+          <button class="btn btn-sm" data-add="multi" type="button">Multiple choice (one or more)</button>
+          <button class="btn btn-sm" data-add="true_false" type="button">True / False</button>
+          <button class="btn btn-sm" data-add="essay" type="button">Essay</button>
+        </div>
+      </div>
+
+      <div class="btn-row" style="justify-content:flex-end">
+        <button class="btn" id="cancel-btn" type="button">Cancel</button>
+        <button class="btn btn-primary" id="save-btn" type="button">Save quiz</button>
+      </div>
+      <p class="note" style="text-align:right;margin-top:.5rem">Changing a correct answer does not re-grade attempts that were already submitted.</p>
+    </section>
+  </main>
+</div>
+
+<script type="module">
+import { initAdmin, escapeHtml as esc } from "/admin/quiz-admin.js";
+
+(async function () {
+  "use strict";
+  let ctx;
+  try { ctx = await initAdmin(); } catch (e) { return; }
+  const { api } = ctx;
+
+  const $ = (id) => document.getElementById(id);
+  const TYPE_LABEL = { single: "Multiple choice — one answer", multi: "Multiple choice — one or more answers", true_false: "True / False", essay: "Essay" };
+
+  // ---------- state ----------
+  let quizzes = [];
+  let editing = null;   // { id?, code?, fields..., questions: [] }
+  let saving = false;
+  let dirty = false;
+
+  const shareUrl = (code) => location.origin + "/quiz/take?c=" + code;
+
+  function flash(text, kind) {
+    $("msg").innerHTML = text ? `<div class="${kind === "ok" ? "ok-state" : "error-state"}">${esc(text)}</div>` : "";
+    if (text) window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  async function copy(text) {
+    try { await navigator.clipboard.writeText(text); flash("Link copied.", "ok"); }
+    catch { window.prompt("Copy this link:", text); }
+  }
+
+  // ---------- list view ----------
+  function statusBadge(q) {
+    if (!q.is_published) return '<span class="badge grey">Draft</span>';
+    return q.is_listed ? '<span class="badge green">Open · listed</span>' : '<span class="badge green">Open · link only</span>';
+  }
+
+  function renderList() {
+    $("list-loading").hidden = true;
+    $("quiz-table").hidden = !quizzes.length;
+    $("list-empty").hidden = quizzes.length > 0;
+    $("quiz-rows").innerHTML = quizzes.map((q) => `
+      <tr>
+        <td><strong>${esc(q.title)}</strong><div class="muted" style="font-size:.75rem">Code: ${esc(q.code)}</div></td>
+        <td>${statusBadge(q)}${q.auto_grade ? "" : ' <span class="badge amber">Manual grading</span>'}</td>
+        <td>${q.question_count}</td>
+        <td>${q.attempt_count}${q.pending_count ? ` <span class="badge amber">${q.pending_count} to grade</span>` : ""}</td>
+        <td style="text-align:right;white-space:nowrap">
+          <a class="btn btn-sm" href="/admin/quiz-results?id=${q.id}">Results</a>
+          <button class="btn btn-sm" data-act="edit" data-id="${q.id}" type="button">Edit</button>
+          <button class="btn btn-sm" data-act="copy" data-code="${esc(q.code)}" type="button">Copy link</button>
+          <button class="btn btn-sm btn-danger" data-act="delete" data-id="${q.id}" type="button">Delete</button>
+        </td>
+      </tr>`).join("");
+  }
+
+  async function loadList() {
+    try {
+      const d = await api("/api/admin/quizzes");
+      quizzes = d.quizzes || [];
+      renderList();
+    } catch (e) {
+      $("list-loading").hidden = true;
+      flash(e.message);
+    }
+  }
+
+  $("quiz-rows").addEventListener("click", async (ev) => {
+    const b = ev.target.closest("button[data-act]");
+    if (!b) return;
+    const act = b.dataset.act;
+    if (act === "copy") return copy(shareUrl(b.dataset.code));
+    if (act === "edit") return openEditor(b.dataset.id);
+    if (act === "delete") {
+      const q = quizzes.find((x) => x.id === b.dataset.id);
+      if (!q) return;
+      const msg = `Delete “${q.title}”?\n\nThis also deletes its ${q.attempt_count} student attempt(s) and cannot be undone.`;
+      if (!window.confirm(msg)) return;
+      b.disabled = true;
+      try {
+        await api("/api/admin/quizzes?id=" + q.id, { method: "DELETE" });
+        flash("Quiz deleted.", "ok");
+        await loadList();
+      } catch (e) { flash(e.message); b.disabled = false; }
+    }
+  });
+
+  // ---------- editor model ----------
+  let optSeq = 0;
+  const newOpt = (text = "") => ({ id: "o" + Date.now().toString(36) + (optSeq++), text });
+
+  function blankQuestion(type) {
+    const q = { type, prompt: "", points: 1, explanation: "", partial: false, options: [], correct: null, kw: [""], min_words: 0 };
+    if (type === "single" || type === "multi") {
+      q.options = [newOpt(), newOpt()];
+      q.correct = type === "single" ? null : [];
+    }
+    if (type === "true_false") q.correct = null;
+    return q;
+  }
+
+  function fromServerQuestion(s) {
+    const q = blankQuestion(s.type);
+    q.id = s.id;
+    q.prompt = s.prompt || "";
+    q.points = Number(s.points) || 1;
+    q.explanation = s.explanation || "";
+    q.partial = !!s.partial;
+    if (s.type === "single" || s.type === "multi") {
+      q.options = (s.options || []).map((o) => ({ id: o.id, text: o.text }));
+      q.correct = s.type === "single" ? s.correct : [...(s.correct || [])];
+    } else if (s.type === "true_false") {
+      q.correct = s.correct === true || s.correct === false ? s.correct : null;
+    } else {
+      q.kw = (s.correct?.keywords || []).map((g) => (g.words || []).join(", "));
+      if (!q.kw.length) q.kw = [""];
+      q.min_words = Number(s.correct?.min_words) || 0;
+    }
+    return q;
+  }
+
+  function toServerQuestion(q) {
+    const out = { id: q.id, type: q.type, prompt: q.prompt, points: Number(q.points), explanation: q.explanation };
+    if (q.type === "single" || q.type === "multi") {
+      out.options = q.options.filter((o) => o.text.trim());
+      const ids = new Set(out.options.map((o) => o.id));
+      out.correct = q.type === "single" ? (ids.has(q.correct) ? q.correct : null) : q.correct.filter((id) => ids.has(id));
+      out.partial = q.type === "multi" ? !!q.partial : false;
+    } else if (q.type === "true_false") {
+      out.correct = q.correct;
+    } else {
+      out.correct = {
+        keywords: q.kw.map((line) => ({ words: line.split(",").map((w) => w.trim()).filter(Boolean) })).filter((g) => g.words.length),
+        min_words: Number(q.min_words) || 0,
+      };
+    }
+    return out;
+  }
+
+  function fillForm(e) {
+    $("edit-title").textContent = e.id ? "Edit quiz" : "New quiz";
+    $("f-title").value = e.title;
+    $("f-desc").value = e.description;
+    $("f-time").value = e.time_limit_minutes ?? "";
+    $("f-identity").value = e.identity_mode;
+    $("f-reveal").value = e.reveal;
+    $("f-auto").checked = e.auto_grade;
+    $("f-published").checked = e.is_published;
+    $("f-listed").checked = e.is_listed;
+    renderShare();
+    renderQuestions();
+  }
+
+  function renderShare() {
+    const slot = $("share-slot");
+    if (!editing.code) { slot.innerHTML = ""; return; }
+    const url = shareUrl(editing.code);
+    slot.innerHTML = `<div class="share-box" style="margin-bottom:1rem">
+        <span><strong>Student link:</strong> <a href="${esc(url)}" target="_blank" rel="noopener">${esc(url)}</a></span>
+        <button class="btn btn-sm" type="button" id="copy-share">Copy</button>
+        ${editing.is_published ? "" : '<span class="note">(not open yet — tick “Open for students” and save)</span>'}
+      </div>`;
+    $("copy-share").onclick = () => copy(url);
+  }
+
+  async function openEditor(id) {
+    flash("");
+    if (!id) {
+      editing = {
+        title: "", description: "", time_limit_minutes: null, identity_mode: "google_or_name", reveal: "score",
+        auto_grade: true, is_published: false, is_listed: false, questions: [blankQuestion("single")],
+      };
+    } else {
+      try {
+        const d = await api("/api/admin/quizzes?id=" + id);
+        editing = { ...d.quiz, description: d.quiz.description || "", questions: d.questions.map(fromServerQuestion) };
+      } catch (e) { return flash(e.message); }
+    }
+    $("list-view").hidden = true;
+    $("edit-view").hidden = false;
+    fillForm(editing);
+    dirty = false;
+    window.scrollTo({ top: 0 });
+  }
+
+  function closeEditor() {
+    editing = null;
+    dirty = false;
+    $("edit-view").hidden = true;
+    $("list-view").hidden = false;
+    loadList();
+  }
+
+  $("new-btn").onclick = () => openEditor(null);
+  $("back-btn").onclick = $("cancel-btn").onclick = () => {
+    if (!dirty || window.confirm("Leave without saving your changes?")) closeEditor();
+  };
+
+  // quiz-level fields -> state
+  const bind = (id, key, get) => $(id).addEventListener("input", () => { editing[key] = get($(id)); });
+  bind("f-title", "title", (el) => el.value);
+  bind("f-desc", "description", (el) => el.value);
+  bind("f-time", "time_limit_minutes", (el) => (el.value === "" ? null : Number(el.value)));
+  bind("f-identity", "identity_mode", (el) => el.value);
+  bind("f-reveal", "reveal", (el) => el.value);
+  bind("f-auto", "auto_grade", (el) => el.checked);
+  bind("f-published", "is_published", (el) => el.checked);
+  bind("f-listed", "is_listed", (el) => el.checked);
+
+  // ---------- question cards ----------
+  function renderQuestion(q, i, total) {
+    const n = i + 1;
+    let body = "";
+    if (q.type === "single" || q.type === "multi") {
+      const isSingle = q.type === "single";
+      body += `<div class="sub-label">Answer options — ${isSingle ? "select the one correct answer" : "tick every correct answer"}</div>`;
+      body += q.options.map((o, oi) => `
+        <div class="opt-row">
+          <input type="${isSingle ? "radio" : "checkbox"}" name="correct-${i}" data-f="correct" data-qi="${i}" data-oid="${esc(o.id)}"
+            ${isSingle ? (q.correct === o.id ? "checked" : "") : (q.correct.includes(o.id) ? "checked" : "")} aria-label="Mark option ${oi + 1} as correct" />
+          <input type="text" class="inp" data-f="opt-text" data-qi="${i}" data-oi="${oi}" value="${esc(o.text)}" maxlength="500" placeholder="Option ${oi + 1}" />
+          <button class="btn btn-sm btn-danger" type="button" data-act="del-opt" data-qi="${i}" data-oi="${oi}" ${q.options.length <= 2 ? "disabled" : ""} aria-label="Remove option ${oi + 1}">✕</button>
+        </div>`).join("");
+      body += `<div class="btn-row" style="margin-top:.4rem">
+          <button class="btn btn-sm" type="button" data-act="add-opt" data-qi="${i}" ${q.options.length >= 10 ? "disabled" : ""}>+ Add option</button>
+          ${isSingle ? "" : `<label class="check" style="margin-left:.6rem"><input type="checkbox" data-f="partial" data-qi="${i}" ${q.partial ? "checked" : ""} />
+            <span>Give partial credit<small>Otherwise the student must tick exactly the right set.</small></span></label>`}
+        </div>`;
+    } else if (q.type === "true_false") {
+      body += `<div class="sub-label">The correct answer is</div>
+        <div class="seg" role="group" aria-label="Correct answer">
+          <button type="button" data-act="tf" data-qi="${i}" data-v="true" class="${q.correct === true ? "on" : ""}">True</button>
+          <button type="button" data-act="tf" data-qi="${i}" data-v="false" class="${q.correct === false ? "on" : ""}">False</button>
+        </div>`;
+    } else {
+      body += `<div class="sub-label">Key ideas the answer should contain</div>
+        <p class="hint">One line per idea. Separate alternative words with commas — any one of them counts (e.g. <em>because, due to, since</em>). The score is points × ideas found ÷ total ideas. Matching ignores capitals and punctuation, and matches whole words only.</p>`;
+      body += q.kw.map((line, ki) => `
+        <div class="kw-row">
+          <input type="text" class="inp" data-f="kw" data-qi="${i}" data-ki="${ki}" value="${esc(line)}" maxlength="300" placeholder="Idea ${ki + 1}: word one, word two, …" />
+          <button class="btn btn-sm btn-danger" type="button" data-act="del-kw" data-qi="${i}" data-ki="${ki}" ${q.kw.length <= 1 ? "disabled" : ""} aria-label="Remove idea ${ki + 1}">✕</button>
+        </div>`).join("");
+      body += `<div class="btn-row" style="margin-top:.4rem">
+          <button class="btn btn-sm" type="button" data-act="add-kw" data-qi="${i}" ${q.kw.length >= 30 ? "disabled" : ""}>+ Add idea</button>
+          <label class="field" style="flex-direction:row;align-items:center;gap:.5rem;margin-left:.6rem">Minimum words
+            <input type="number" class="inp" style="width:6rem" min="0" max="5000" data-f="min_words" data-qi="${i}" value="${Number(q.min_words) || 0}" /></label>
+        </div>
+        <p class="hint">Leave all ideas empty and turn off auto-grading to mark this essay by hand.</p>`;
+    }
+    return `
+      <div class="q-card" data-qi="${i}">
+        <div class="q-head">
+          <span class="q-num">Question ${n}</span>
+          <span class="badge">${esc(TYPE_LABEL[q.type])}</span>
+          <span class="spacer"></span>
+          <button class="btn btn-sm" type="button" data-act="up" data-qi="${i}" ${i === 0 ? "disabled" : ""} aria-label="Move up">↑</button>
+          <button class="btn btn-sm" type="button" data-act="down" data-qi="${i}" ${i === total - 1 ? "disabled" : ""} aria-label="Move down">↓</button>
+          <button class="btn btn-sm btn-danger" type="button" data-act="del-q" data-qi="${i}">Delete</button>
+        </div>
+        <div class="grid-2" style="grid-template-columns:1fr 8rem">
+          <label class="field">Question
+            <textarea class="inp" data-f="prompt" data-qi="${i}" maxlength="2000" style="min-height:4rem" placeholder="Type the question">${esc(q.prompt)}</textarea>
+          </label>
+          <label class="field">Points
+            <input type="number" class="inp" data-f="points" data-qi="${i}" min="0.5" max="1000" step="0.5" value="${Number(q.points) || 1}" />
+          </label>
+        </div>
+        ${body}
+        <label class="field" style="margin-top:.9rem">Explanation shown after submitting (optional)
+          <input type="text" class="inp" data-f="explanation" data-qi="${i}" maxlength="2000" value="${esc(q.explanation)}" placeholder="Why is this the right answer?" />
+        </label>
+      </div>`;
+  }
+
+  function renderQuestions() {
+    const qs = editing.questions;
+    $("q-list").innerHTML = qs.length
+      ? qs.map((q, i) => renderQuestion(q, i, qs.length)).join("")
+      : '<div class="panel"><p class="empty-note">No questions yet — add one below.</p></div>';
+  }
+
+  document.querySelectorAll("[data-add]").forEach((b) =>
+    b.addEventListener("click", () => {
+      editing.questions.push(blankQuestion(b.dataset.add));
+      renderQuestions();
+      const cards = document.querySelectorAll(".q-card");
+      cards[cards.length - 1]?.scrollIntoView({ behavior: "smooth", block: "center" });
+    })
+  );
+
+  const ql = $("q-list");
+
+  ql.addEventListener("input", (ev) => {
+    const el = ev.target;
+    const f = el.dataset.f;
+    if (!f || f === "correct" || f === "partial") return;
+    const q = editing.questions[Number(el.dataset.qi)];
+    if (!q) return;
+    if (f === "prompt") q.prompt = el.value;
+    else if (f === "explanation") q.explanation = el.value;
+    else if (f === "points") q.points = el.value;
+    else if (f === "min_words") q.min_words = el.value;
+    else if (f === "opt-text") q.options[Number(el.dataset.oi)].text = el.value;
+    else if (f === "kw") q.kw[Number(el.dataset.ki)] = el.value;
+  });
+
+  ql.addEventListener("change", (ev) => {
+    const el = ev.target;
+    const q = editing.questions[Number(el.dataset.qi)];
+    if (!q) return;
+    if (el.dataset.f === "partial") q.partial = el.checked;
+    if (el.dataset.f === "correct") {
+      const oid = el.dataset.oid;
+      if (q.type === "single") q.correct = oid;
+      else q.correct = el.checked ? [...new Set([...q.correct, oid])] : q.correct.filter((x) => x !== oid);
+    }
+  });
+
+  ql.addEventListener("click", (ev) => {
+    const b = ev.target.closest("button[data-act]");
+    if (!b) return;
+    const qs = editing.questions;
+    const i = Number(b.dataset.qi);
+    const q = qs[i];
+    switch (b.dataset.act) {
+      case "up": if (i > 0) [qs[i - 1], qs[i]] = [qs[i], qs[i - 1]]; break;
+      case "down": if (i < qs.length - 1) [qs[i + 1], qs[i]] = [qs[i], qs[i + 1]]; break;
+      case "del-q":
+        if (!window.confirm(`Delete question ${i + 1}?` + (q.id ? "\n\nStudents' stored answers to it are deleted when you save." : ""))) return;
+        qs.splice(i, 1);
+        break;
+      case "add-opt": q.options.push(newOpt()); break;
+      case "del-opt": {
+        const o = q.options.splice(Number(b.dataset.oi), 1)[0];
+        if (q.type === "single" && q.correct === o.id) q.correct = null;
+        if (q.type === "multi") q.correct = q.correct.filter((x) => x !== o.id);
+        break;
+      }
+      case "tf": q.correct = b.dataset.v === "true"; break;
+      case "add-kw": q.kw.push(""); break;
+      case "del-kw": q.kw.splice(Number(b.dataset.ki), 1); break;
+      default: return;
+    }
+    renderQuestions();
+  });
+
+  // ---------- save ----------
+  // Keep focus where it is on mousedown: the browser can otherwise scroll the page when the focused
+  // field blurs, moving the button out from under the pointer so the click is lost. Every field already
+  // updates its state on `input`, so nothing is lost by not blurring first.
+  $("save-btn").addEventListener("mousedown", (ev) => ev.preventDefault());
+  $("save-btn").onclick = async () => {
+    if (saving || !editing) return;
+    saving = true;
+    const btn = $("save-btn");
+    btn.disabled = true;
+    btn.textContent = "Saving…";
+    flash("");
+    try {
+      const payload = {
+        quiz: {
+          id: editing.id,
+          title: editing.title,
+          description: editing.description,
+          time_limit_minutes: editing.time_limit_minutes,
+          identity_mode: editing.identity_mode,
+          reveal: editing.reveal,
+          auto_grade: editing.auto_grade,
+          is_published: editing.is_published,
+          is_listed: editing.is_listed,
+        },
+        questions: editing.questions.map(toServerQuestion),
+      };
+      const d = await api("/api/admin/quizzes", { method: "POST", body: payload });
+      editing = { ...d.quiz, description: d.quiz.description || "", questions: d.questions.map(fromServerQuestion) };
+      fillForm(editing);
+      dirty = false;
+      flash("Saved. Share the student link above with your students.", "ok");
+    } catch (e) {
+      flash(e.message);
+    } finally {
+      saving = false;
+      btn.disabled = false;
+      btn.textContent = "Save quiz";
+    }
+  };
+
+  window.addEventListener("beforeunload", (ev) => {
+    if (editing && dirty) { ev.preventDefault(); ev.returnValue = ""; }
+  });
+  $("edit-view").addEventListener("input", () => { dirty = true; });
+  $("edit-view").addEventListener("change", () => { dirty = true; });
+  $("edit-view").addEventListener("click", (ev) => { if (ev.target.closest("[data-act],[data-add]")) dirty = true; });
+
+  await loadList();
+  const params = new URLSearchParams(location.search);
+  if (params.get("new") === "1") openEditor(null);
+  else if (params.get("edit")) openEditor(params.get("edit"));
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Quizzes — Mr. Amr Mohamed Ahmed</title>
+<meta name="description" content="Practice quizzes from Mr. Amr Mohamed Ahmed, Senior English Language Expert and AUC Certified Trainer." />
+<link rel="canonical" href="https://mr-amr-mohamed.vercel.app/quiz/" />
+<link rel="icon" href="/favicon.png" type="image/png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/quiz/quiz.css" />
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-left">
+    <span class="brand-mark">AM</span>
+    <div>
+      <div class="topbar-title">Mr. Amr Mohamed Ahmed</div>
+      <div class="topbar-sub">English Language Quizzes</div>
+    </div>
+  </div>
+  <div class="topbar-right"><a class="link-btn" href="/">← Back to website</a></div>
+</div>
+
+<main>
+  <div class="hero">
+    <h1>Practice quizzes</h1>
+    <p>Pick a quiz to start. You can sign in with Google or just type your name.</p>
+  </div>
+  <div id="list"><p class="empty-note">Loading quizzes…</p></div>
+  <p class="note" style="margin-top:1rem">Looking for a quiz your teacher sent you? Open the link they gave you.</p>
+</main>
+
+<script>
+(function () {
+  var list = document.getElementById("list");
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  fetch("/api/quiz/list")
+    .then(function (r) { return r.json().then(function (d) { if (!r.ok) throw new Error(d.error || "Could not load quizzes."); return d; }); })
+    .then(function (d) {
+      var qs = d.quizzes || [];
+      if (!qs.length) { list.innerHTML = '<p class="empty-note">No quizzes are open right now. Please check back soon.</p>'; return; }
+      list.innerHTML = qs.map(function (q) {
+        var meta = q.question_count + " question" + (q.question_count === 1 ? "" : "s") + (q.time_limit_minutes ? " · " + q.time_limit_minutes + " min" : "");
+        return '<a class="quiz-card" href="/quiz/take?c=' + encodeURIComponent(q.code) + '">' +
+          "<h3>" + esc(q.title) + "</h3>" +
+          (q.description ? '<p class="muted" style="margin-bottom:.4rem">' + esc(q.description).slice(0, 220) + "</p>" : "") +
+          '<span class="badge">' + esc(meta) + "</span></a>";
+      }).join("");
+    })
+    .catch(function (e) { list.innerHTML = '<div class="error-state">' + esc(e.message) + "</div>"; });
+})();
+</script>
+</body>
+</html>

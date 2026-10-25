@@ -20,38 +20,54 @@ Mr. Amr Mohamed/
 ├── README.md
 ├── tailwind.config.js
 ├── vercel.json
-├── app/ [7.49 KB, 164 LOC]
-│   ├── api/ [2.36 KB, 72 LOC]
-│   │   ├── admin/ [1.19 KB, 36 LOC]
-│   │   │   ├── cleanup/ [307 B, 9 LOC]
+├── app/ [9.17 KB, 209 LOC]
+│   ├── api/ [3.96 KB, 117 LOC]
+│   │   ├── admin/ [1.84 KB, 54 LOC]
+│   │   │   ├── cleanup/ [315 B, 9 LOC]
 │   │   │   │   └── route.js
 │   │   │   │
-│   │   │   ├── diag/ [304 B, 9 LOC]
+│   │   │   ├── diag/ [312 B, 9 LOC]
 │   │   │   │   └── route.js
 │   │   │   │
-│   │   │   ├── me/ [302 B, 9 LOC]
+│   │   │   ├── me/ [310 B, 9 LOC]
 │   │   │   │   └── route.js
 │   │   │   │
-│   │   │   └── stats/ [305 B, 9 LOC]
+│   │   │   ├── quiz-results/ [320 B, 9 LOC]
+│   │   │   │   └── route.js
+│   │   │   │
+│   │   │   ├── quizzes/ [315 B, 9 LOC]
+│   │   │   │   └── route.js
+│   │   │   │
+│   │   │   └── stats/ [313 B, 9 LOC]
 │   │   │       └── route.js
 │   │   │
-│   │   ├── chat/ [298 B, 9 LOC]
+│   │   ├── chat/ [306 B, 9 LOC]
 │   │   │   └── route.js
 │   │   │
-│   │   ├── event/ [299 B, 9 LOC]
+│   │   ├── event/ [307 B, 9 LOC]
 │   │   │   └── route.js
 │   │   │
-│   │   ├── public-config/ [307 B, 9 LOC]
+│   │   ├── public-config/ [315 B, 9 LOC]
 │   │   │   └── route.js
 │   │   │
-│   │   └── track/ [299 B, 9 LOC]
+│   │   ├── quiz/ [934 B, 27 LOC]
+│   │   │   ├── get/ [310 B, 9 LOC]
+│   │   │   │   └── route.js
+│   │   │   │
+│   │   │   ├── list/ [311 B, 9 LOC]
+│   │   │   │   └── route.js
+│   │   │   │
+│   │   │   └── submit/ [313 B, 9 LOC]
+│   │   │       └── route.js
+│   │   │
+│   │   └── track/ [307 B, 9 LOC]
 │   │       └── route.js
 │   │
 │   ├── globals.css
 │   ├── layout.jsx
 │   └── page.jsx
 │
-├── components/ [29.99 KB, 627 LOC]
+├── components/ [30.59 KB, 627 LOC]
 │   ├── About.jsx
 │   ├── AboutFlat.jsx
 │   ├── AboutPan.jsx
@@ -70,24 +86,28 @@ Mr. Amr Mohamed/
 │   ├── Tunnel.jsx
 │   └── ui.jsx
 │
-├── data/ [3.02 KB, 33 LOC]
+├── data/ [3.05 KB, 33 LOC]
 │   └── content.js
 │
-├── docs/ [36.8 KB, 894 LOC]
+├── docs/ [40.59 KB, 961 LOC]
 │   ├── animated-ui-components/ [23.29 KB, 607 LOC]
 │   │   └── sign-in-page-template.html
 │   │
 │   ├── admin-dashboard-setup.md
 │   ├── issues.md
+│   ├── quizzes-setup.md
 │   └── teacher-info.md
 │
-├── lib/ [1.76 KB, 35 LOC]
+├── lib/ [1.79 KB, 35 LOC]
 │   └── vercel-adapter.js
 │
-├── public/ [1.21 MB, 4830 LOC]
-│   ├── admin/ [47.78 KB, 1157 LOC]
+├── public/ [1.28 MB, 6398 LOC]
+│   ├── admin/ [92.52 KB, 2127 LOC]
 │   │   ├── dashboard.html
-│   │   └── index.html
+│   │   ├── index.html
+│   │   ├── quiz-admin.js
+│   │   ├── quiz-results.html
+│   │   └── quizzes.html
 │   │
 │   ├── ai/ [93.16 KB, 2875 LOC]
 │   │   ├── api.js
@@ -106,6 +126,11 @@ Mr. Amr Mohamed/
 │   │   ├── analytics.js
 │   │   └── main.js
 │   │
+│   ├── quiz/ [31.6 KB, 593 LOC]
+│   │   ├── index.html
+│   │   ├── quiz.css
+│   │   └── take.html
+│   │
 │   ├── favicon.png
 │   ├── google0c1df2c3df22a824.html
 │   ├── manifest.json
@@ -113,34 +138,46 @@ Mr. Amr Mohamed/
 │   ├── sitemap.xml
 │   └── storage.js
 │
-├── scripts/ [17.77 KB, 499 LOC]
+├── scripts/ [38.11 KB, 915 LOC]
 │   ├── commit.js
 │   ├── git-changes.js
-│   └── map.js
+│   ├── map.js
+│   ├── test-quiz-api.mjs
+│   └── test-quiz-grade.mjs
 │
-├── server/ [39.96 KB, 1088 LOC]
-│   ├── _lib/ [10.71 KB, 311 LOC]
+├── server/ [71.95 KB, 1977 LOC]
+│   ├── _lib/ [16.46 KB, 478 LOC]
 │   │   ├── auth.js
 │   │   ├── env.js
+│   │   ├── quiz-grade.js
+│   │   ├── quiz-util.js
 │   │   ├── request-meta.js
 │   │   └── supabase.js
 │   │
-│   ├── admin/ [10.78 KB, 309 LOC]
+│   ├── admin/ [27.5 KB, 742 LOC]
 │   │   ├── cleanup.js
 │   │   ├── diag.js
 │   │   ├── me.js
+│   │   ├── quiz-results.js
+│   │   ├── quizzes.js
 │   │   └── stats.js
+│   │
+│   ├── quiz/ [9.53 KB, 289 LOC]
+│   │   ├── get.js
+│   │   ├── list.js
+│   │   └── submit.js
 │   │
 │   ├── chat.js
 │   ├── event.js
 │   ├── public-config.js
 │   └── track.js
 │
-└── supabase/ [24.55 KB, 602 LOC]
-    ├── migrations/ [8.93 KB, 187 LOC]
+└── supabase/ [28.47 KB, 680 LOC]
+    ├── migrations/ [12.85 KB, 265 LOC]
     │   ├── 20261009000000_admin_analytics.sql
     │   ├── 20261009103000_admin_analytics_auth_update.sql
-    │   └── 20261009150000_grant_service_role.sql
+    │   ├── 20261009150000_grant_service_role.sql
+    │   └── 20261025000000_quizzes.sql
     │
     └── config.toml
 ```
@@ -151,14 +188,14 @@ Mr. Amr Mohamed/
 
 | Directory | Lines of Code |
 |-----------|---------------|
-| `public` | 4830 |
-| `server` | 1088 |
-| `docs` | 894 |
+| `public` | 6398 |
+| `server` | 1977 |
+| `docs` | 961 |
+| `scripts` | 915 |
+| `supabase` | 680 |
 | `components` | 627 |
-| `supabase` | 602 |
-| `scripts` | 499 |
-| `(root)` | 284 |
-| `app` | 164 |
+| `(root)` | 303 |
+| `app` | 209 |
 | `lib` | 35 |
 | `data` | 33 |
 
@@ -169,29 +206,30 @@ Mr. Amr Mohamed/
 | `public/ai/chat.css` | 1385 |
 | `public/ai/app.js` | 874 |
 | `docs/animated-ui-components/sign-in-page-template.html` | 607 |
-| `public/admin/dashboard.html` | 587 |
+| `public/admin/dashboard.html` | 588 |
 | `public/admin/index.html` | 570 |
+| `public/admin/quizzes.html` | 531 |
 | `public/ai/tools.js` | 440 |
 | `supabase/config.toml` | 415 |
-| `scripts/map.js` | 341 |
-| `public/js/main.js` | 340 |
-| `server/chat.js` | 238 |
+| `public/quiz/take.html` | 382 |
+| `public/admin/quiz-results.html` | 361 |
 
 ### Code Files
 
 | Extension | Files | Lines of Code | Size |
 |-----------|-------|---------------|------------|
-| .js | 34 | 3924 | 149.17 KB |
-| .jsx | 19 | 687 | 32.8 KB |
-| .md | 5 | 502 | 20.74 KB |
-| .json | 5 | 146 | 67.37 KB |
-| .html | 4 | 1765 | 71.12 KB |
-| .sql | 3 | 187 | 8.93 KB |
-| .css | 2 | 1417 | 34.1 KB |
+| .js | 47 | 4948 | 186.08 KB |
+| .jsx | 19 | 687 | 33.46 KB |
+| .html | 8 | 3098 | 133.2 KB |
+| .md | 6 | 570 | 24.85 KB |
+| .json | 5 | 151 | 69.67 KB |
+| .sql | 4 | 265 | 12.85 KB |
+| .css | 3 | 1570 | 45.65 KB |
+| .mjs | 2 | 416 | 20.34 KB |
 | .txt | 1 | 4 | 81 B |
-| .xml | 1 | 9 | 287 B |
+| .xml | 1 | 14 | 430 B |
 | .toml | 1 | 415 | 15.62 KB |
-| **Total** | **75** | **9056** | **400.21 KB** |
+| **Total** | **97** | **12138** | **542.2 KB** |
 
 ### Binary / Media Files (Physical Size)
 
@@ -202,5 +240,5 @@ Mr. Amr Mohamed/
 | .jpeg | 1 | 36.16 KB |
 | **Total** | **5** | **1.04 MB** |
 
-**Grand Total Files:** 80  
-**Total Repository Size:** 1.44 MB
+**Grand Total Files:** 102  
+**Total Repository Size:** 1.57 MB

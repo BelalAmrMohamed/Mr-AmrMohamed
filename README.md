@@ -5,3 +5,4 @@
 - `public/`, `server/` (your old `api/` handlers, unchanged), `supabase/`, `vercel.json`: carried over. `app/api/*/route.js` expose each handler at the same /api/... URL via `lib/vercel-adapter.js`
 - Copy `.env.example` to `.env.local` and fill in your keys (the AI chat and analytics need them)
 - Before deploying, delete the old `public/index.html`, `public/css/` and `public/js/main.js` (still in your repo).
+- Quizzes: teacher builds at `/admin/quizzes`, students use `/quiz`; setup + how it works in `docs/quizzes-setup.md`

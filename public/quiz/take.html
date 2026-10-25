@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Quiz — Mr. Amr Mohamed Ahmed</title>
+<link rel="icon" href="/favicon.png" type="image/png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/quiz/quiz.css" />
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-left">
+    <span class="brand-mark">AM</span>
+    <div>
+      <div class="topbar-title">Mr. Amr Mohamed Ahmed</div>
+      <div class="topbar-sub">English Language Quizzes</div>
+    </div>
+  </div>
+  <div class="topbar-right"><span class="timer" id="timer" hidden></span><a class="link-btn" href="/quiz/" id="all-link">All quizzes</a></div>
+</div>
+
+<main>
+  <div id="msg"></div>
+  <div id="loading"><p class="empty-note">Loading quiz…</p></div>
+
+  <!-- start screen -->
+  <section id="start" hidden>
+    <div class="hero"><h1 id="s-title"></h1><p id="s-desc"></p></div>
+    <div class="panel">
+      <p class="note" id="s-meta" style="margin-bottom:1rem"></p>
+      <div id="id-google" hidden>
+        <button class="btn btn-google" id="google-btn" type="button">
+          <svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z"/><path fill="#FBBC05" d="M10.5 28.7a14.5 14.5 0 0 1 0-9.4l-7.9-6.1a24 24 0 0 0 0 21.6l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.8 2.3-8.4 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>
+          Continue with Google
+        </button>
+        <div class="divider" id="or-divider">or</div>
+      </div>
+      <div id="signed-in" class="who" hidden style="margin-bottom:1rem">
+        <img id="who-img" alt="" hidden /><span>Signed in as <strong id="who-name"></strong> <span class="muted" id="who-email"></span></span>
+        <button class="btn btn-sm" id="signout-btn" type="button" style="margin-left:auto">Not you?</button>
+      </div>
+      <label class="field" id="name-field">Your name
+        <input type="text" id="name" maxlength="80" autocomplete="name" placeholder="Type your full name" />
+      </label>
+      <div class="btn-row" style="margin-top:1.2rem">
+        <button class="btn btn-primary" id="begin-btn" type="button">Start quiz</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- question screen -->
+  <section id="run" hidden>
+    <div class="q-meta"><span id="q-count"></span><span id="q-points"></span></div>
+    <div class="progress" aria-hidden="true"><span id="bar"></span></div>
+    <div class="panel" id="q-box"></div>
+    <div class="btn-row" style="justify-content:space-between">
+      <button class="btn" id="prev-btn" type="button">← Back</button>
+      <div class="btn-row">
+        <span class="note" id="unanswered"></span>
+        <button class="btn btn-primary" id="next-btn" type="button">Next →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- result screen -->
+  <section id="done" hidden>
+    <div class="panel" style="text-align:center">
+      <h2 id="d-title" style="margin-bottom:.4rem">Thank you!</h2>
+      <div id="d-score" hidden>
+        <div class="score-big" id="d-num"></div>
+        <p class="note" id="d-pct" style="margin-top:.3rem"></p>
+      </div>
+      <p id="d-text" style="margin-top:.8rem"></p>
+      <div class="btn-row" style="justify-content:center;margin-top:1.2rem"><a class="btn" href="/quiz/">More quizzes</a><a class="btn" href="/">Back to website</a></div>
+    </div>
+    <div class="panel" id="review" hidden></div>
+  </section>
+</main>
+
+<script type="module">
+(async function () {
+  "use strict";
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+  // supabase-js can't parse a doubled "##access_token" fragment; normalise it (same fix as /admin).
+  (function () {
+    const i = location.href.indexOf("##");
+    if (i !== -1) history.replaceState(null, "", location.href.slice(0, i) + "#" + location.href.slice(i + 2));
+  })();
+
+  const code = (new URLSearchParams(location.search).get("c") || "").trim().toLowerCase();
+  const fail = (text) => { $("loading").hidden = true; $("msg").innerHTML = `<div class="error-state">${esc(text)}</div>`; };
+  if (!/^[a-z0-9]{4,12}$/.test(code)) return fail("This quiz link is not valid. Please ask your teacher for the correct link.");
+
+  // ---------- load quiz ----------
+  let quiz, questions;
+  try {
+    const r = await fetch("/api/quiz/get?c=" + encodeURIComponent(code));
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(d.error || "Could not load this quiz.");
+    quiz = d.quiz;
+    questions = d.questions;
+  } catch (e) { return fail(e.message); }
+  if (!questions.length) return fail("This quiz has no questions yet.");
+  document.title = quiz.title + " — Mr. Amr Mohamed Ahmed";
+
+  // ---------- identity (Google optional) ----------
+  let supabase = null;
+  let session = null;
+  const canGoogle = quiz.identity_mode !== "name_only";
+  if (canGoogle) {
+    try {
+      const r = await fetch("/api/public-config");
+      const cfg = await r.json();
+      if (r.ok) {
+        // loaded on demand so a CDN hiccup can never stop a student from typing their name and taking the quiz
+        const { createClient } = await import("https://esm.sh/@supabase/supabase-js@2");
+        supabase = createClient(cfg.supabaseUrl, cfg.supabasePublishableKey);
+        session = (await supabase.auth.getSession()).data.session;
+      }
+    } catch { /* Google unavailable: typed name still works unless google_only */ }
+  }
+
+  function whoName() {
+    const m = session?.user?.user_metadata || {};
+    return m.full_name || m.name || (session?.user?.email || "").split("@")[0];
+  }
+
+  function renderIdentity() {
+    $("id-google").hidden = !(canGoogle && supabase && !session);
+    $("or-divider").hidden = quiz.identity_mode === "google_only";
+    $("signed-in").hidden = !session;
+    if (session) {
+      $("who-name").textContent = whoName();
+      $("who-email").textContent = "(" + session.user.email + ")";
+      const pic = session.user.user_metadata?.avatar_url || session.user.user_metadata?.picture;
+      $("who-img").hidden = !pic;
+      if (pic) $("who-img").src = pic;
+      if (!$("name").value) $("name").value = whoName();
+    }
+    // The name box is hidden when only Google sign-in is allowed and nobody is signed in yet.
+    $("name-field").hidden = quiz.identity_mode === "google_only" && !session;
+    $("begin-btn").hidden = quiz.identity_mode === "google_only" && !session;
+    if (quiz.identity_mode === "google_only" && !supabase) {
+      $("msg").innerHTML = '<div class="error-state">Google sign-in is not available right now. Please try again later.</div>';
+    }
+  }
+
+  // ---------- start screen ----------
+  $("loading").hidden = true;
+  $("start").hidden = false;
+  $("s-title").textContent = quiz.title;
+  $("s-desc").textContent = quiz.description || "Read each question carefully, then press Submit at the end.";
+  const totalPoints = questions.reduce((s, q) => s + Number(q.points || 0), 0);
+  $("s-meta").textContent =
+    `${questions.length} question${questions.length === 1 ? "" : "s"} · ${totalPoints} point${totalPoints === 1 ? "" : "s"}` +
+    (quiz.time_limit_minutes ? ` · ${quiz.time_limit_minutes} minute${quiz.time_limit_minutes === 1 ? "" : "s"} once you start` : "");
+  renderIdentity();
+
+  $("google-btn")?.addEventListener("click", async () => {
+    $("google-btn").disabled = true;
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      // keep ?c=<code>, drop any hash (a trailing "#" would become "##access_token")
+      options: { redirectTo: location.origin + location.pathname + location.search.replace(/#.*$/, "") },
+    });
+    if (error) {
+      $("google-btn").disabled = false;
+      $("msg").innerHTML = `<div class="error-state">${esc(error.message || "Couldn't start Google sign-in.")}</div>`;
+    }
+  });
+
+  $("signout-btn").addEventListener("click", async () => {
+    await supabase.auth.signOut();
+    session = null;
+    $("name").value = "";
+    renderIdentity();
+  });
+
+  // ---------- running the quiz ----------
+  const answers = {};          // questionId -> value
+  const attemptId = crypto.randomUUID();
+  let startedAt = null;
+  let index = 0;
+  let submitting = false;
+  let finished = false;
+  let deadline = null;
+  let tick = null;
+
+  const hasAnswer = (q) => {
+    const a = answers[q.id];
+    if (q.type === "multi") return Array.isArray(a) && a.length > 0;
+    if (q.type === "essay") return typeof a === "string" && a.trim().length > 0;
+    return a !== undefined && a !== null;
+  };
+
+  $("begin-btn").addEventListener("click", () => {
+    $("msg").innerHTML = "";
+    const typed = $("name").value.trim();
+    if (!typed && !session) { $("msg").innerHTML = '<div class="error-state">Please type your name first.</div>'; $("name").focus(); return; }
+    startedAt = new Date().toISOString();
+    $("start").hidden = true;
+    $("run").hidden = false;
+    $("all-link").hidden = true;
+    if (quiz.time_limit_minutes) {
+      deadline = Date.now() + quiz.time_limit_minutes * 60000;
+      $("timer").hidden = false;
+      tick = setInterval(updateTimer, 500);
+      updateTimer();
+    }
+    renderQuestion();
+  });
+
+  function fmt(ms) {
+    const s = Math.max(0, Math.ceil(ms / 1000));
+    return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
+  }
+  function updateTimer() {
+    const left = deadline - Date.now();
+    $("timer").textContent = "⏱ " + fmt(left);
+    $("timer").classList.toggle("low", left < 60000);
+    if (left <= 0) { clearInterval(tick); submit(true); }
+  }
+
+  function renderQuestion() {
+    const q = questions[index];
+    $("q-count").textContent = `Question ${index + 1} of ${questions.length}`;
+    $("q-points").textContent = `${q.points} point${Number(q.points) === 1 ? "" : "s"}`;
+    $("bar").style.width = (index / questions.length) * 100 + "%";
+    let html = `<div class="q-prompt">${esc(q.prompt)}</div>`;
+
+    if (q.type === "single" || q.type === "multi") {
+      const picked = answers[q.id];
+      html += q.type === "multi" ? '<p class="hint">Select all the correct answers.</p>' : "";
+      html += q.options.map((o) => {
+        const on = q.type === "single" ? picked === o.id : Array.isArray(picked) && picked.includes(o.id);
+        return `<button type="button" class="choice ${on ? "on" : ""}" data-oid="${esc(o.id)}" role="${q.type === "single" ? "radio" : "checkbox"}" aria-checked="${on}">
+          <span class="mark ${q.type === "single" ? "round" : "sq"}"></span><span>${esc(o.text)}</span></button>`;
+      }).join("");
+    } else if (q.type === "true_false") {
+      const a = answers[q.id];
+      html += `<div class="tf-row">
+        <button type="button" class="choice ${a === true ? "on" : ""}" data-tf="true" role="radio" aria-checked="${a === true}">True</button>
+        <button type="button" class="choice ${a === false ? "on" : ""}" data-tf="false" role="radio" aria-checked="${a === false}">False</button></div>`;
+    } else {
+      html += `<textarea class="essay" id="essay" maxlength="5000" placeholder="Write your answer here…">${esc(answers[q.id] || "")}</textarea>
+        <div class="wc muted" id="wc"></div>`;
+    }
+    $("q-box").innerHTML = html;
+    if (q.type === "essay") {
+      const upd = () => {
+        const n = (answers[q.id] || "").trim().split(/\s+/).filter(Boolean).length;
+        $("wc").textContent = n + " word" + (n === 1 ? "" : "s") + (q.min_words ? ` (at least ${q.min_words} expected)` : "");
+      };
+      $("essay").addEventListener("input", (e) => { answers[q.id] = e.target.value; upd(); refreshUnanswered(); });
+      upd();
+    }
+    const last = index === questions.length - 1;
+    $("prev-btn").disabled = index === 0;
+    $("next-btn").textContent = last ? "Submit" : "Next →";
+    $("next-btn").className = "btn " + (last ? "btn-gold" : "btn-primary");
+    refreshUnanswered();
+  }
+
+  function refreshUnanswered() {
+    const left = questions.filter((x) => !hasAnswer(x)).length;
+    $("unanswered").textContent = index === questions.length - 1 && left ? `${left} unanswered` : "";
+  }
+
+  $("q-box").addEventListener("click", (ev) => {
+    const q = questions[index];
+    const b = ev.target.closest("button.choice");
+    if (!b) return;
+    if (b.dataset.tf) answers[q.id] = b.dataset.tf === "true";
+    else if (q.type === "single") answers[q.id] = b.dataset.oid;
+    else {
+      const cur = Array.isArray(answers[q.id]) ? answers[q.id] : [];
+      answers[q.id] = cur.includes(b.dataset.oid) ? cur.filter((x) => x !== b.dataset.oid) : [...cur, b.dataset.oid];
+    }
+    renderQuestion();
+  });
+
+  $("prev-btn").addEventListener("click", () => { if (index > 0) { index--; renderQuestion(); } });
+  $("next-btn").addEventListener("click", () => {
+    if (index < questions.length - 1) { index++; renderQuestion(); window.scrollTo({ top: 0 }); return; }
+    const left = questions.filter((x) => !hasAnswer(x)).length;
+    if (left && !window.confirm(`You left ${left} question${left === 1 ? "" : "s"} unanswered. Submit anyway?`)) return;
+    submit(false);
+  });
+
+  window.addEventListener("beforeunload", (ev) => {
+    if (startedAt && !finished) { ev.preventDefault(); ev.returnValue = ""; }
+  });
+
+  // ---------- submit ----------
+  async function submit(auto) {
+    if (submitting || finished) return;
+    submitting = true;
+    $("next-btn").disabled = $("prev-btn").disabled = true;
+    $("next-btn").textContent = "Submitting…";
+    clearInterval(tick);
+    try {
+      const headers = { "Content-Type": "application/json" };
+      if (session) {
+        // refresh in case the token expired while the student was working
+        const fresh = (await supabase.auth.getSession()).data.session;
+        if (fresh) headers.Authorization = "Bearer " + fresh.access_token;
+      }
+      const r = await fetch("/api/quiz/submit", {
+        method: "POST",
+        headers,
+        body: JSON.stringify({ c: code, attemptId, name: $("name").value.trim(), startedAt, answers }),
+      });
+      const d = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(d.error || "Could not submit. Please try again.");
+      finished = true;
+      showDone(d, auto);
+    } catch (e) {
+      submitting = false;
+      $("next-btn").disabled = false;
+      $("prev-btn").disabled = index === 0;
+      $("next-btn").textContent = "Submit";
+      $("msg").innerHTML = `<div class="error-state">${esc(e.message)} Your answers are still here — press Submit again.</div>`;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }
+
+  function showAnswer(q, v) {
+    if (v === null || v === undefined || v === "" || (Array.isArray(v) && !v.length)) return "<em>No answer</em>";
+    if (q.type === "single") return esc(q.options.find((o) => o.id === v)?.text ?? v);
+    if (q.type === "multi") return v.map((id) => esc(q.options.find((o) => o.id === id)?.text ?? id)).join("<br>");
+    if (q.type === "true_false") return v ? "True" : "False";
+    return esc(v);
+  }
+
+  function showDone(d, auto) {
+    $("run").hidden = true;
+    $("timer").hidden = true;
+    $("all-link").hidden = false;
+    $("done").hidden = false;
+    $("msg").innerHTML = "";
+    $("d-text").textContent = auto ? "Time is up — your answers were submitted automatically." : "Your answers were submitted.";
+    if (d.status === "graded" && d.max_score !== undefined) {
+      $("d-title").textContent = "Your result";
+      $("d-score").hidden = false;
+      $("d-num").textContent = `${d.score} / ${d.max_score}`;
+      $("d-pct").textContent = d.max_score > 0 ? Math.round((d.score / d.max_score) * 100) + "%" : "";
+    } else if (d.status === "pending") {
+      $("d-text").textContent += " Your teacher will review your answers.";
+    }
+    if (d.results) {
+      const byQ = new Map(d.results.map((r) => [r.questionId, r]));
+      $("review").hidden = false;
+      $("review").innerHTML = "<h2 style='margin-bottom:.5rem'>Review</h2>" + questions.map((q, i) => {
+        const r = byQ.get(q.id) || {};
+        const badge = r.is_correct === true ? '<span class="badge green">Correct</span>'
+          : r.is_correct === false ? '<span class="badge red">Incorrect</span>'
+          : '<span class="badge amber">Partly correct</span>';
+        let correct = "";
+        if (q.type !== "essay" && r.is_correct !== true) correct = `<div class="ans"><strong>Correct answer:</strong> ${showAnswer(q, r.correctAnswer)}</div>`;
+        return `<div class="review-item">
+          <div class="q-meta"><strong>Question ${i + 1}</strong><span>${badge} ${r.points ?? 0} / ${q.points}</span></div>
+          <div style="font-weight:600;color:var(--dark-navy)">${esc(q.prompt)}</div>
+          <div class="ans"><strong>Your answer:</strong> ${showAnswer(q, r.yourAnswer)}</div>
+          ${correct}
+          ${r.feedback ? `<div class="ans muted">${esc(r.feedback)}</div>` : ""}
+          ${r.explanation ? `<div class="ans muted"><strong>Explanation:</strong> ${esc(r.explanation)}</div>` : ""}
+        </div>`;
+      }).join("");
+    }
+    window.scrollTo({ top: 0 });
+  }
+})();
+</script>
+</body>
+</html>

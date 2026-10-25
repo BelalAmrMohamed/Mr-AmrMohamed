@@ -20,7 +20,7 @@ import { getEnv } from './env.js';
  * reason on failure -- never a bare null -- so a 401 always comes with an
  * actionable message instead of a guess.
  */
-async function getSupabaseUser(accessToken) {
+export async function getSupabaseUser(accessToken) {
   const URL = getEnv('NEXT_PUBLIC_SUPABASE_URL');
   const SERVICE_KEY = getEnv('SUPABASE_SERVICE_ROLE_KEY');
   if (!URL || !SERVICE_KEY) {
@@ -67,7 +67,7 @@ async function isAllowedAdminEmail(email) {
   return Boolean(rows?.[0]);
 }
 
-function getBearerToken(req) {
+export function getBearerToken(req) {
   const header = req.headers?.authorization || '';
   const match = /^Bearer\s+(.+)$/i.exec(header);
   return match ? match[1] : null;

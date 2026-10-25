@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Quiz results — Amr Mohamed Ahmed</title>
+<link rel="icon" href="../favicon.png" type="image/png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/quiz/quiz.css" />
+</head>
+<body>
+<div id="gate"><div class="spinner" aria-hidden="true"></div><p>Checking your session…</p></div>
+
+<div id="app" hidden>
+  <div class="topbar">
+    <div class="topbar-left">
+      <span class="brand-mark">AM</span>
+      <div>
+        <div class="topbar-title">Quiz results</div>
+        <div class="topbar-sub">Amr Mohamed Ahmed — Admin</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <a class="link-btn" href="/admin/quizzes">All quizzes</a>
+      <a class="link-btn" href="/admin/dashboard">Dashboard</a>
+      <button class="link-btn" id="signout-btn" type="button">Sign out</button>
+    </div>
+  </div>
+
+  <main class="wide">
+    <div id="msg"></div>
+    <div id="loading"><p class="empty-note">Loading results…</p></div>
+
+    <div id="page" hidden>
+      <div class="panel-head" style="margin-bottom:.8rem">
+        <div>
+          <h1 id="quiz-title" style="font-size:1.7rem"></h1>
+          <p class="note" id="quiz-sub"></p>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-gold" id="grade-btn" type="button" hidden>Auto-grade pending</button>
+          <button class="btn" id="csv-btn" type="button">Export CSV</button>
+          <a class="btn" id="edit-link" href="#">Edit quiz</a>
+          <button class="btn" id="copy-btn" type="button">Copy student link</button>
+        </div>
+      </div>
+
+      <div class="stat-row" id="stats"></div>
+
+      <div id="list-view">
+        <div class="tabs" role="tablist">
+          <button class="on" data-tab="students" type="button" role="tab">Students</button>
+          <button data-tab="questions" type="button" role="tab">Questions</button>
+        </div>
+
+        <div id="tab-students" class="panel">
+          <div class="panel-head">
+            <h2>Every attempt</h2>
+            <input type="text" class="inp" id="search" placeholder="Search name or email" style="max-width:16rem" />
+          </div>
+          <div class="table-wrap">
+            <table class="t" id="att-table" hidden>
+              <thead><tr><th>Student</th><th>Submitted</th><th>Time</th><th>Score</th><th>Status</th></tr></thead>
+              <tbody id="att-rows"></tbody>
+            </table>
+          </div>
+          <p class="empty-note" id="att-empty" hidden>No one has taken this quiz yet.</p>
+        </div>
+
+        <div id="tab-questions" class="panel" hidden>
+          <div class="panel-head"><h2>How each question went</h2><span class="note">Based on graded answers only</span></div>
+          <div id="q-stats"></div>
+        </div>
+      </div>
+
+      <div id="detail-view" hidden></div>
+    </div>
+  </main>
+</div>
+
+<script type="module">
+import { initAdmin, escapeHtml as esc, fmtDate } from "/admin/quiz-admin.js";
+
+(async function () {
+  "use strict";
+  let ctx;
+  try { ctx = await initAdmin(); } catch (e) { return; }
+  const { api, authedFetch } = ctx;
+  const $ = (id) => document.getElementById(id);
+
+  const quizId = new URLSearchParams(location.search).get("id");
+  let quiz, questions, attempts;
+  let openId = null;
+
+  const num = (v) => (v === null || v === undefined ? null : Number(v));
+  const fmtN = (v) => (Math.round(Number(v) * 100) / 100).toString();
+  const shareUrl = () => location.origin + "/quiz/take?c=" + quiz.code;
+
+  function flash(text, kind) {
+    $("msg").innerHTML = text ? `<div class="${kind === "ok" ? "ok-state" : "error-state"}">${esc(text)}</div>` : "";
+    if (text) window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  if (!quizId) { $("loading").hidden = true; return flash("No quiz selected. Go back to the quiz list."); }
+
+  async function load() {
+    const d = await api("/api/admin/quiz-results?id=" + encodeURIComponent(quizId));
+    quiz = d.quiz; questions = d.questions; attempts = d.attempts;
+    render();
+  }
+
+  // ---------- header + stats ----------
+  const pct = (a) => (a.status === "graded" && num(a.max_score) > 0 ? (num(a.score) / num(a.max_score)) * 100 : null);
+
+  function renderHeader() {
+    $("quiz-title").textContent = quiz.title;
+    $("quiz-sub").textContent = `Code ${quiz.code} · ${quiz.is_published ? "open for students" : "not open (draft)"} · ${quiz.auto_grade ? "auto-graded" : "manual grading"}`;
+    $("edit-link").href = "/admin/quizzes?edit=" + quiz.id;
+    const pending = attempts.filter((a) => a.status === "pending").length;
+    $("grade-btn").hidden = pending === 0;
+    $("grade-btn").textContent = `Auto-grade ${pending} pending`;
+    const graded = attempts.map(pct).filter((p) => p !== null);
+    const avg = graded.length ? Math.round(graded.reduce((s, p) => s + p, 0) / graded.length) : null;
+    const best = graded.length ? Math.round(Math.max(...graded)) : null;
+    $("stats").innerHTML = [
+      [attempts.length, "Attempts"],
+      [new Set(attempts.map((a) => (a.student_email || a.student_name).toLowerCase())).size, "Different students"],
+      [avg === null ? "—" : avg + "%", "Average score"],
+      [best === null ? "—" : best + "%", "Best score"],
+      [pending, "Waiting to be graded"],
+    ].map(([n, l]) => `<div class="stat"><div class="n">${esc(n)}</div><div class="l">${esc(l)}</div></div>`).join("");
+  }
+
+  // ---------- students tab ----------
+  function statusBadge(a) {
+    return a.status === "graded" ? '<span class="badge green">Graded</span>' : '<span class="badge amber">Needs grading</span>';
+  }
+  function took(a) {
+    if (!a.started_at) return "";
+    const s = Math.round((new Date(a.submitted_at) - new Date(a.started_at)) / 1000);
+    if (!Number.isFinite(s) || s < 0) return "";
+    return Math.floor(s / 60) + "m " + String(s % 60).padStart(2, "0") + "s";
+  }
+  function scoreCell(a) {
+    if (a.score === null || a.score === undefined) return '<span class="muted">—</span>';
+    const p = pct(a);
+    return `<strong>${fmtN(a.score)} / ${fmtN(a.max_score)}</strong>${p !== null ? ` <span class="muted">(${Math.round(p)}%)</span>` : ""}`;
+  }
+
+  function renderStudents() {
+    const term = $("search").value.trim().toLowerCase();
+    const rows = attempts.filter((a) => !term || a.student_name.toLowerCase().includes(term) || (a.student_email || "").toLowerCase().includes(term));
+    $("att-table").hidden = rows.length === 0;
+    $("att-empty").hidden = rows.length > 0;
+    $("att-empty").textContent = attempts.length ? "No attempts match your search." : "No one has taken this quiz yet.";
+    $("att-rows").innerHTML = rows.map((a) => `
+      <tr class="clickable" data-id="${a.id}" tabindex="0">
+        <td><strong>${esc(a.student_name)}</strong>${a.student_email ? `<div class="muted" style="font-size:.75rem">${esc(a.student_email)}</div>` : '<div class="muted" style="font-size:.75rem">typed name</div>'}</td>
+        <td>${esc(fmtDate(a.submitted_at))}</td>
+        <td>${esc(took(a))}</td>
+        <td>${scoreCell(a)}</td>
+        <td>${statusBadge(a)}</td>
+      </tr>`).join("");
+  }
+  $("search").addEventListener("input", renderStudents);
+  $("att-rows").addEventListener("click", (ev) => { const tr = ev.target.closest("tr[data-id]"); if (tr) openDetail(tr.dataset.id); });
+  $("att-rows").addEventListener("keydown", (ev) => { if (ev.key === "Enter") { const tr = ev.target.closest("tr[data-id]"); if (tr) openDetail(tr.dataset.id); } });
+
+  // ---------- questions tab ----------
+  function renderQuestionStats() {
+    $("q-stats").innerHTML = questions.map((q, i) => {
+      const ans = attempts.flatMap((a) => a.answers.filter((x) => x.question_id === q.id));
+      const graded = ans.filter((x) => x.points_awarded !== null);
+      const max = Number(q.points) || 1;
+      const avg = graded.length ? graded.reduce((s, x) => s + Number(x.points_awarded), 0) / graded.length / max : null;
+      let extra = "";
+      if (q.type === "single" || q.type === "multi") {
+        const counts = {};
+        for (const x of ans) for (const id of [].concat(x.answer ?? [])) counts[id] = (counts[id] || 0) + 1;
+        const correct = new Set([].concat(q.correct));
+        extra = `<div style="margin-top:.6rem">` + q.options.map((o) => {
+          const c = counts[o.id] || 0;
+          const share = ans.length ? (c / ans.length) * 100 : 0;
+          return `<div style="display:grid;grid-template-columns:minmax(8rem,16rem) 1fr 4rem;gap:.6rem;align-items:center;font-size:.82rem;margin-bottom:.3rem">
+            <span>${correct.has(o.id) ? "✓ " : ""}${esc(o.text)}</span><div class="bar"><span style="width:${share}%"></span></div><span class="muted">${c} (${Math.round(share)}%)</span></div>`;
+        }).join("") + "</div>";
+      } else if (q.type === "true_false") {
+        const t = ans.filter((x) => x.answer === true).length, f = ans.filter((x) => x.answer === false).length;
+        extra = `<p class="note" style="margin-top:.5rem">Answered True: ${t} · Answered False: ${f} · Correct: ${q.correct ? "True" : "False"}</p>`;
+      }
+      return `<div class="review-item">
+        <div class="q-meta"><strong>Question ${i + 1} · ${esc(q.type.replace("_", "/"))}</strong>
+          <span>${avg === null ? "Not graded yet" : `Average ${Math.round(avg * 100)}% of ${fmtN(max)} pt`} · ${ans.length} answer${ans.length === 1 ? "" : "s"}</span></div>
+        <div style="font-weight:600;color:var(--dark-navy);white-space:pre-wrap">${esc(q.prompt)}</div>${extra}</div>`;
+    }).join("") || '<p class="empty-note">No questions.</p>';
+  }
+
+  document.querySelectorAll(".tabs button").forEach((b) =>
+    b.addEventListener("click", () => {
+      document.querySelectorAll(".tabs button").forEach((x) => x.classList.toggle("on", x === b));
+      $("tab-students").hidden = b.dataset.tab !== "students";
+      $("tab-questions").hidden = b.dataset.tab !== "questions";
+    })
+  );
+
+  // ---------- detail view ----------
+  function optionLines(q, a) {
+    const picked = new Set([].concat(a?.answer ?? []));
+    const correct = new Set([].concat(q.correct ?? []));
+    return q.options.map((o) => {
+      const cls = correct.has(o.id) ? "right" : picked.has(o.id) ? "wrong" : "";
+      const tags = [correct.has(o.id) ? "correct answer" : "", picked.has(o.id) ? "student chose this" : ""].filter(Boolean).join(" · ");
+      return `<div class="choice ${cls}" style="cursor:default;margin-bottom:.35rem;padding:.55rem .8rem;font-size:.9rem"><span class="mark ${q.type === "single" ? "round" : "sq"}" style="${picked.has(o.id) ? "background:var(--navy);border-color:var(--navy);box-shadow:inset 0 0 0 3px #fff" : ""}"></span><span>${esc(o.text)}${tags ? ` <span class="muted" style="font-size:.74rem">— ${esc(tags)}</span>` : ""}</span></div>`;
+    }).join("");
+  }
+
+  function renderDetail(att) {
+    const byQ = new Map(att.answers.map((x) => [x.question_id, x]));
+    const cards = questions.map((q, i) => {
+      const a = byQ.get(q.id);
+      let body;
+      if (q.type === "single" || q.type === "multi") body = optionLines(q, a);
+      else if (q.type === "true_false") {
+        const given = a?.answer === true ? "True" : a?.answer === false ? "False" : "No answer";
+        body = `<div class="ans-box">Student answered: <strong>${given}</strong> · Correct answer: <strong>${q.correct ? "True" : "False"}</strong></div>`;
+      } else {
+        const kws = (q.correct?.keywords || []).map((g) => esc((g.words || []).join(" / "))).join(" · ");
+        body = `<div class="ans-box">${a?.answer ? esc(a.answer) : "<em>No answer</em>"}</div>` +
+          (kws ? `<p class="hint" style="margin-top:.4rem">Key ideas: ${kws}${q.correct?.min_words ? ` · min ${q.correct.min_words} words` : ""}</p>` : "");
+      }
+      const max = fmtN(q.points);
+      const pts = a && a.points_awarded !== null ? fmtN(a.points_awarded) : "";
+      return `<div class="q-card">
+        <div class="q-head"><span class="q-num">Question ${i + 1}</span><span class="badge">${esc(q.type.replace("_", "/"))}</span><span class="spacer"></span>
+          ${a ? (a.points_awarded === null ? '<span class="badge amber">Not graded</span>' : a.is_correct === true ? '<span class="badge green">Correct</span>' : a.is_correct === false ? '<span class="badge red">Incorrect</span>' : '<span class="badge amber">Partial</span>') : ""}
+          ${a?.teacher_override ? '<span class="badge grey">Set by you</span>' : ""}</div>
+        <div style="font-weight:600;color:var(--dark-navy);white-space:pre-wrap;margin-bottom:.7rem">${esc(q.prompt)}</div>
+        ${body}
+        ${a?.feedback ? `<p class="hint" style="margin-top:.5rem">${esc(a.feedback)}</p>` : ""}
+        ${a ? `<div class="btn-row" style="margin-top:.8rem">
+            <label class="field" style="flex-direction:row;align-items:center;gap:.4rem">Points
+              <input type="number" class="inp pts-input" min="0" max="${max}" step="0.5" value="${pts}" placeholder="—" data-pts="${a.id}" /> / ${max}</label>
+            <input type="text" class="inp" style="flex:1;min-width:10rem" maxlength="1000" placeholder="Comment for your records (optional)" value="${esc(a.feedback || "")}" data-fb="${a.id}" />
+            <button class="btn btn-sm btn-primary" type="button" data-save="${a.id}">Save score</button></div>` : '<p class="hint">No answer was stored for this question.</p>'}
+      </div>`;
+    }).join("");
+
+    $("detail-view").innerHTML = `
+      <div class="panel">
+        <div class="panel-head">
+          <button class="btn btn-sm" id="detail-back" type="button">← All students</button>
+          <div class="btn-row"><button class="btn btn-sm btn-danger" id="detail-del" type="button">Delete this attempt</button></div>
+        </div>
+        <h2 style="font-size:1.5rem">${esc(att.student_name)}</h2>
+        <p class="note">${att.student_email ? esc(att.student_email) + " · Google sign-in" : "Typed name (not verified)"} · submitted ${esc(fmtDate(att.submitted_at))}${took(att) ? " · took " + esc(took(att)) : ""}</p>
+        <div class="stat-row" style="margin:1rem 0 0">
+          <div class="stat"><div class="n" id="d-score">${att.score === null ? "—" : fmtN(att.score) + " / " + fmtN(att.max_score)}</div><div class="l">Total score</div></div>
+          <div class="stat"><div class="n">${att.status === "graded" ? "Graded" : "Needs grading"}</div><div class="l">Status</div></div>
+        </div>
+      </div>${cards}`;
+  }
+
+  function openDetail(id) {
+    const att = attempts.find((a) => a.id === id);
+    if (!att) return;
+    openId = id;
+    flash("");
+    $("list-view").hidden = true;
+    $("detail-view").hidden = false;
+    renderDetail(att);
+    window.scrollTo({ top: 0 });
+  }
+  function closeDetail() {
+    openId = null;
+    $("detail-view").hidden = true;
+    $("list-view").hidden = false;
+    renderHeader(); renderStudents(); renderQuestionStats();
+  }
+
+  $("detail-view").addEventListener("click", async (ev) => {
+    if (ev.target.id === "detail-back") return closeDetail();
+    const att = attempts.find((a) => a.id === openId);
+    if (!att) return;
+    if (ev.target.id === "detail-del") {
+      if (!window.confirm(`Delete ${att.student_name}'s attempt? This cannot be undone.`)) return;
+      try {
+        await api("/api/admin/quiz-results", { method: "POST", body: { action: "delete_attempt", attemptId: att.id } });
+        attempts = attempts.filter((a) => a.id !== att.id);
+        closeDetail();
+        flash("Attempt deleted.", "ok");
+      } catch (e) { flash(e.message); }
+      return;
+    }
+    const save = ev.target.closest("[data-save]");
+    if (save) {
+      const aid = save.dataset.save;
+      const pts = document.querySelector(`[data-pts="${aid}"]`).value;
+      const fb = document.querySelector(`[data-fb="${aid}"]`).value;
+      if (pts === "") return flash("Enter the points to give for this answer.");
+      save.disabled = true;
+      try {
+        const r = await api("/api/admin/quiz-results", { method: "POST", body: { action: "override", answerId: aid, points: Number(pts), feedback: fb } });
+        const ans = att.answers.find((x) => x.id === aid);
+        const q = questions.find((x) => x.id === ans.question_id);
+        const max = Number(q.points);
+        ans.points_awarded = Number(pts);
+        ans.is_correct = Number(pts) >= max ? true : Number(pts) <= 0 ? false : null;
+        ans.feedback = fb || null;
+        ans.teacher_override = true;
+        att.score = r.score; att.status = r.status;
+        renderDetail(att);
+        flash("Score saved.", "ok");
+      } catch (e) { flash(e.message); save.disabled = false; }
+    }
+  });
+
+  // ---------- header buttons ----------
+  $("grade-btn").onclick = async () => {
+    $("grade-btn").disabled = true;
+    try {
+      const r = await api("/api/admin/quiz-results", { method: "POST", body: { action: "autograde", quizId: quiz.id } });
+      await load();
+      flash(`Graded ${r.attempts_processed} attempt(s). Essays without key ideas still need a score from you.`, "ok");
+    } catch (e) { flash(e.message); }
+    $("grade-btn").disabled = false;
+  };
+  $("copy-btn").onclick = async () => {
+    try { await navigator.clipboard.writeText(shareUrl()); flash("Link copied.", "ok"); }
+    catch { window.prompt("Copy this link:", shareUrl()); }
+  };
+  $("csv-btn").onclick = async () => {
+    $("csv-btn").disabled = true;
+    try {
+      const resp = await authedFetch("/api/admin/quiz-results?id=" + encodeURIComponent(quiz.id) + "&format=csv");
+      if (!resp.ok) throw new Error("Could not export (" + resp.status + ").");
+      const url = URL.createObjectURL(await resp.blob());
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = (quiz.title.replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, "") || "quiz") + "-results.csv";
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 2000);
+    } catch (e) { flash(e.message); }
+    $("csv-btn").disabled = false;
+  };
+
+  function render() {
+    $("loading").hidden = true;
+    $("page").hidden = false;
+    renderHeader(); renderStudents(); renderQuestionStats();
+    if (openId && attempts.some((a) => a.id === openId)) openDetail(openId);
+  }
+
+  try { await load(); } catch (e) { $("loading").hidden = true; flash(e.message); }
+})();
+</script>
+</body>
+</html>

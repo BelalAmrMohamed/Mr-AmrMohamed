@@ -11,7 +11,8 @@
     "release": "node scripts/release.js",
     "zip": "node scripts/map.js && node scripts/commit.js && git archive --format=zip --output=mr-amr.zip HEAD && echo mr-amr.zip is ready",
     "push": "git switch production && git merge main && git push && git switch main",
-    "push:all": "npm run zip && git push && npm run push"
+    "push:all": "npm run zip && git push && npm run push",
+    "test:quiz": "node --no-warnings scripts/test-quiz-grade.mjs && node --no-warnings scripts/test-quiz-api.mjs"
   },
   "dependencies": {
     "@react-three/fiber": "8.17.10",

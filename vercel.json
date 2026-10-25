@@ -6,7 +6,11 @@
     { "source": "/dashboard.html", "destination": "/admin/dashboard", "permanent": true }
   ],
   "rewrites": [
-    { "source": "/admin/dashboard", "destination": "/admin/dashboard.html" }
+    { "source": "/admin/dashboard", "destination": "/admin/dashboard.html" },
+    { "source": "/admin/quizzes", "destination": "/admin/quizzes.html" },
+    { "source": "/admin/quiz-results", "destination": "/admin/quiz-results.html" },
+    { "source": "/quiz", "destination": "/quiz/index.html" },
+    { "source": "/quiz/take", "destination": "/quiz/take.html" }
   ],
   "crons": [
     {

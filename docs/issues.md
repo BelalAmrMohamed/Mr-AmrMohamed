@@ -1,6 +1,6 @@
 ## Platform Improvement
 
-## Interactive Quizzes
+## Interactive Quizzes — ✅ Done, see [docs/quizzes-setup.md](quizzes-setup.md)
 - The owner wants to be able to upload quizzez.
 - The quizzes must be interactive and advanced system:
   - MCQ (Single option selection).
