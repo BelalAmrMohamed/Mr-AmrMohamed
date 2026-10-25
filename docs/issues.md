@@ -48,4 +48,4 @@ Improve the SEO and GEO of the website:
 - Own implementation (no Vercel Insights dependency): `public/js/analytics.js`
   beacons page views + heartbeats to `api/track.js`; Supabase stores it.
 - Setup steps (migrations, env vars, enabling providers, creating
-  email/password accounts): see the linked doc.
+  email/password accounts): see the linked doc.

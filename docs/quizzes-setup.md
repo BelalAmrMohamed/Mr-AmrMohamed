@@ -13,7 +13,11 @@ from a "Quizzes" button on the dashboard).
 
 ## One-time setup
 
-1. **Google Cloud → OAuth consent screen → Audience** — set it to **In production** and keep only the
+1. **Database** — `supabase db push` applies `supabase/migrations/20261025000000_quizzes.sql`
+   (4 tables: `quizzes`, `quiz_questions`, `quiz_attempts`, `quiz_answers`; RLS on, no public policies).
+2. **Supabase → Authentication → URL Configuration** — add `https://mr-amr-mohamed.vercel.app/**`
+   to *Redirect URLs* (the Google provider is already on for `/admin`).
+3. **Google Cloud → OAuth consent screen → Audience** — set it to **In production** and keep only the
    default scopes (`email`, `profile`, `openid`).
    The "100 users" cap applies to apps that request *sensitive/restricted* scopes; name + email sign-in is
    exempt and needs no Google verification. (While left in *Testing*, only listed test users could sign in.)
