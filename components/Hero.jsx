@@ -32,6 +32,7 @@ export default function Hero() {
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.05, duration: 0.8 }} className="mt-10 flex flex-wrap gap-3">
             <Magnetic href={wa()} target="_blank" rel="noopener noreferrer" className="btn-gold">Schedule free consultation →</Magnetic>
             <Magnetic href="#lesson" className="btn-line">Watch a sample lesson</Magnetic>
+            <Magnetic href="/quiz/" className="btn-line">Practice a quiz →</Magnetic>
           </motion.div>
         </div>
         <motion.div initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.5, duration: 1.2, ease }} className="relative mx-auto w-full max-w-xs md:max-w-none">

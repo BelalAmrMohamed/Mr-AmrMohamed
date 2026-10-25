@@ -2,6 +2,8 @@
 :root{--bg:247 244 238;--fg:15 23 42;--muted:96 104 122;--accent:30 58 95;--gold:176 120 20}
 .dark{--bg:9 12 20;--fg:243 240 232;--muted:148 155 172;--accent:232 176 74;--gold:232 176 74}
 html{background:rgb(var(--bg));color-scheme:light}.dark{color-scheme:dark}
+html{scroll-padding-top:6rem}
+section[id]{scroll-margin-top:6rem}
 html.lenis,html.lenis body{height:auto}.lenis.lenis-smooth{scroll-behavior:auto!important}
 body{@apply bg-bg text-fg font-sans antialiased;transition:background .4s,color .4s}
 ::selection{background:rgb(var(--gold)/.35)}

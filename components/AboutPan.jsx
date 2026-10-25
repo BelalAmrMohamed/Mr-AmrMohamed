@@ -26,7 +26,7 @@ export default function AboutPan() {
     apply();
     const ctx = gsap.context(() => {
       gsap.to(proxy, { p: 1, ease: "none", onUpdate: apply,
-        scrollTrigger: { trigger: root.current, start: "top top", end: `+=${N * 90}%`, pin: true, scrub: 0.8 } });
+        scrollTrigger: { trigger: root.current, start: "top top", end: `+=${N * 90}%`, pin: true, scrub: 0.45 } });
     }, root);
     return () => ctx.revert();
   }, [N]);

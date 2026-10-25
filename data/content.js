@@ -2,7 +2,7 @@ export const WA = "201205452322";
 export const wa = (t = "Hello Mr. Amr, I'd like to schedule a consultation") =>
   `https://wa.me/${WA}?text=${encodeURIComponent(t)}`;
 
-export const nav = [["About", "#about"], ["Services", "#services"], ["Lesson", "#lesson"], ["Contact", "#contact"]];
+export const nav = [["About", "#about"], ["Services", "#services"], ["Lesson", "#lesson"], ["Student quizzes", "/quiz/"], ["Contact", "#contact"]];
 export const words = ["IELTS", "TOEFL", "Academic Writing", "Conversational English", "Gulf Curricula", "Teacher Training", "Digital Pedagogy", "Egyptian Curriculum"];
 export const stats = [[32, "", "Years teaching, since 1995"], [9, "", "Years in Saudi Arabia"], [5, "", "Gulf curricula mastered"], [5, "+", "Years online instruction"]];
 
