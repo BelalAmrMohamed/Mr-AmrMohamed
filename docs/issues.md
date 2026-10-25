@@ -1,5 +1,18 @@
 ## Platform Improvement
 
+## Interactive Quizzes
+- The owner wants to be able to upload quizzez.
+- The quizzes must be interactive and advanced system:
+  - MCQ (Single option selection).
+  - MCQ (Multiple option selection, but the correct might be one or more).
+  - True or False.
+  - Essay with an automatic correction system.
+- He asked he wants it to be like Google Forms where he can view each student's answers after he takes the quiz.
+  - From that I understood that he might not need for the questions to be corrected always, so that must be an option for him to enable auto question correction or not.
+  - He wants to know the students (We will use Google Sign in or Email sign in. But the platform isn't verified in Google, so I don't know what is the exact number, but it's about 100, a 100 allowed emails to sign in before the sign-in with Google stops. But douple check that)
+  - We might implement a simpler opiton where students just write their name manually.
+  - He wants to view the answers of each student.
+
 ## AI Chat
 - The stop AI button doesn't work; if I click it, the AI doesn't stop, it keeps generating the response and consuming credits.
 - The interactive quiz is now messy: I myself don't even understand the problem with it so far. In the one test I ran after the latest changes, instead of generating a quiz in one card with next and previous buttons to go through the questions, it generated 3 cards, 2 of which where 1-question each, the 3rd was a quiz on its own and a score to it. But then in another test, it generated the quiz correctly, five questions in one card. If the problem is from the model itself not the tooling, try to make the tooling way simpler for the model.
